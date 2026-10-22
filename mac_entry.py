@@ -2,6 +2,7 @@
 import os
 import runpy
 import sys
+sys.dont_write_bytecode=True
 from platform_support import resources
 
 def main():

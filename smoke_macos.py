@@ -24,7 +24,8 @@ def main():
                 command=[str(args.app/'Contents/MacOS/OTONova'),'--wfl-backend',str(base/'WFL'),str(base/relative)]
             else:command=backend_command(base,resource,base/'WFL',base/relative)
             request=json.dumps({'wav':str(wav),'phones':['SP',phone,'SP']})+'\n'+json.dumps({'close':True})+'\n'
-            result=subprocess.run(command,input=request,text=True,encoding='utf-8',capture_output=True,timeout=180)
+            environment=os.environ.copy();environment.pop('PYTHONDONTWRITEBYTECODE',None)
+            result=subprocess.run(command,env=environment,input=request,text=True,encoding='utf-8',capture_output=True,timeout=180)
             if result.returncode:raise RuntimeError(language+': '+result.stderr[-8000:])
             lines=[json.loads(line) for line in result.stdout.splitlines() if line.strip()]
             assert lines[0].get('ready'),lines
@@ -32,5 +33,6 @@ def main():
             assert 'error' not in response,response
             assert [r[2] for r in response['intervals']]==['SP',phone,'SP'],response
             assert all(0<=r[0]<r[1]<=1.01 for r in response['intervals']),response
+            if args.app:assert not list((base/'WFL').rglob('__pycache__')),'Worker modified signed app resources'
             print(language+': model load and constrained alignment passed',flush=True)
 if __name__=='__main__':main()

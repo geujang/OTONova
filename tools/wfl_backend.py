@@ -1,5 +1,6 @@
 """Local WFL JSON-lines server. Never writes beside the original model or WAV."""
 import os,sys,json,contextlib,traceback
+sys.dont_write_bytecode=True
 from pathlib import Path
 root=Path(sys.argv[1]).resolve()
 folder_argument=Path(sys.argv[2]).resolve() if len(sys.argv)>2 else None
