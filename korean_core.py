@@ -1,6 +1,6 @@
 """Korean filename phonemes and direct constrained WFL alignment."""
 from pathlib import Path
-import json,re,sys,subprocess,hashlib
+import json,re,sys,subprocess,hashlib,unicodedata
 
 MODEL_ROOT=Path(__file__).resolve().parent/'WFL'
 VOWELS={'a','e','eo','eu','i','o','u'}
@@ -12,6 +12,7 @@ AUXILIARY={'dh':('en','dh','d'),'ts':('ja','ts','ch'),'er':('en','r','L'),'@r':(
 ROMAN=sorted(KNOWN|{'f','v','z','th','rr','H','l'},key=len,reverse=True)
 
 def legacy_filename_phones(stem):
+    stem=unicodedata.normalize('NFC',stem)
     text=re.sub(r'\(([^)]+)\)',r' \1 ',stem)
     if text.casefold()=='breath':return ['SP','AP','SP']
     result=[];pos=0

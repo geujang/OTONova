@@ -1,5 +1,5 @@
 """Parse reclist spellings without changing alias spellings to model symbols."""
-import re
+import re,unicodedata
 
 VOWELS={'a','i','u','e','o','eu','eo','er','@r'}
 CODA={'n':'N','m':'M','ng':'NG','l':'L','k':'K','t':'T','p':'P'}
@@ -9,7 +9,7 @@ TOKENS=sorted(set(['gg','dd','bb','kk','tt','pp','jj','ss','ch','th','dh','ts','
 
 def transcribe(stem,mode):
     from korean_core import PHONE_SUBSTITUTIONS,legacy_filename_phones
-    text=stem
+    text=unicodedata.normalize('NFC',stem)
     if text in ['R','息']:
         return ['SP','AP','SP'],['SP',text,'SP'],['pause','breath','pause']
     both_style=re.search(r'\((vf|cl)\)$',text)

@@ -10,6 +10,13 @@ class KoreanTests(unittest.TestCase):
         self.assertEqual(filename_phones('_baNG\'baN\'baM\'baL\'ba'),
             ['SP','b','a','NG','b','a','N','b','a','M','b','a','L','b','a','SP'])
         self.assertEqual(filename_phones('가나'),['SP','g','a','n','a','SP'])
+    def test_decomposed_macos_hangul_filename(self):
+        import unicodedata
+        from korean_formats import transcribe
+        stem='가나';decomposed=unicodedata.normalize('NFD',stem)
+        self.assertNotEqual(stem,decomposed)
+        self.assertEqual(filename_phones(stem),filename_phones(decomposed))
+        self.assertEqual(transcribe(stem,'ko_cv'),transcribe(decomposed,'ko_cv'))
     def test_user_substitutions(self):
         self.assertEqual(filename_phones('fa_va_za_rra_aH'),['SP','h','a','s','a','s','a','L','a','a','axh','SP'])
         self.assertEqual(filename_phones('tha_lwa'),['SP','h','a','L','w','a','SP'])
