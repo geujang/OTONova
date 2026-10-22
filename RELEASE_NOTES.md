@@ -16,6 +16,6 @@
 
 `OTONova-V1.0-Setup.exe`를 실행해 비어 있는 새 폴더에 설치합니다. Windows x64용이며 Python과 모델이 포함됩니다. SHA-256은 같은 릴리스의 `SHA256SUMS.txt`로 확인할 수 있습니다.
 
-**중국어 음원 지원은 앞으로 추가할 예정입니다.** 현재 중국어는 UI 표시 언어입니다.
+**중국어 음원 지원은 앞으로 추가할 예정입니다. 한국어 COC·CBNN·CMPX·VCCV도 추가 예정이며 현재 버전에는 포함되지 않습니다.** 현재 중국어는 UI 표시 언어입니다.
 
 [지원·리스트](SUPPORTED_FORMATS.md) · [모델 축약 설명](MODEL_COMPRESSION.md) · [원본 크레딧](CREDITS.md) · [제3자 자료](THIRD_PARTY_NOTICES.md)
