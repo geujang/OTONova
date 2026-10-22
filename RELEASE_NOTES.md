@@ -26,6 +26,8 @@ Python과 영어·일본어·한국어 모델이 포함됩니다. / Python and t
 
 **중국어 음원과 한국어 COC·CBNN·CMPX·VCCV는 추가 예정이며 현재 지원하지 않습니다.** / **Chinese voicebanks and Korean COC, CBNN, CMPX and VCCV are planned, not currently supported.**
 
+**Android·iOS 지원은 추가 예정입니다. 현재 모바일 버전은 제공하지 않습니다.** / **Android and iOS support is planned; mobile versions are not available yet.**
+
 ## Mac 검증과 제한 / Mac validation and limits
 
 macOS 15 Apple Silicon에서 앱 빌드, 회귀 검사 67개(Windows 전용 2개 제외), 세 언어 모델 로딩·지정 음소열 정렬, GUI 시작·화면 캡처를 통과했습니다. DMG 마운트·전체 앱 파일 해시·심볼릭 링크·코드 서명 구조 검사도 통과했습니다.

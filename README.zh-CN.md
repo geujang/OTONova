@@ -24,7 +24,7 @@
 
 通过文件名、录音表和现有别名识别具体录音方式。若已有 oto.ini，则按照原有别名生成时间参数。
 
-**中文音源支持计划在未来加入。韩语 COC、CBNN、CMPX、VCCV 也属于计划功能，V1.0 暂不支持。** 目前中文仅作为界面语言提供。Android / iOS 应用尚处于考虑阶段，当前发行目标为 Windows x64 与 macOS Apple Silicon。
+**中文音源支持计划在未来加入。韩语 COC、CBNN、CMPX、VCCV 也属于计划功能，V1.0 暂不支持。** 目前中文仅作为界面语言提供。计划在未来支持 Android / iOS，当前发行目标为 Windows x64 与 macOS Apple Silicon。
 
 ## 主要功能
 

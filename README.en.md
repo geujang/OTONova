@@ -24,7 +24,7 @@ A [macOS build for Apple Silicon](https://github.com/geujang/OTONova/releases/ta
 
 Recording conventions are detected from filenames, recording lists, and existing aliases. When an oto.ini exists, timing values are configured using its aliases.
 
-**Chinese voicebank support is planned. Korean COC, CBNN, CMPX, and VCCV are also planned and are not supported in V1.0.** Chinese is currently available only as a UI language. Android and iOS apps are under consideration; current distributions target Windows x64 and macOS Apple Silicon.
+**Chinese voicebank support is planned. Korean COC, CBNN, CMPX, and VCCV are also planned and are not supported in V1.0.** Chinese is currently available only as a UI language. Android and iOS support is planned; current distributions target Windows x64 and macOS Apple Silicon.
 
 ## Features
 
