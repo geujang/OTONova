@@ -1,0 +1,174 @@
+{
+  "version": 30,
+  "model_compression": {
+    "English/last.ckpt": {
+      "original_bytes": 73886051,
+      "compressed_bytes": 68503684,
+      "original_sha256": "58d99dd726e4990aadcd803a172eaae0a82141a001413612218766e9f652bd00",
+      "roundtrip_exact": true
+    },
+    "Japanese/last.ckpt": {
+      "original_bytes": 73865507,
+      "compressed_bytes": 68195262,
+      "original_sha256": "922794fffc75c042e6743fb458a625600b8d5d77d7ff6125dd8bbdd4b9608525",
+      "roundtrip_exact": true
+    },
+    "WFL/Archivoice/korean/last.ckpt": {
+      "original_bytes": 73848804,
+      "compressed_bytes": 68195161,
+      "original_sha256": "1d0078d4b825b1b3ac60fbeb84065df205bb490a9f741065e61edcd64f2be2ff",
+      "roundtrip_exact": true
+    },
+    "WFL/encoder/encoder.pt": {
+      "original_bytes": 82391808,
+      "compressed_bytes": 48741087,
+      "original_sha256": "daad964d8b774ca740058a9726e6060291d93685054eaaccf70e5da59d0fed73",
+      "roundtrip_exact": true
+    }
+  },
+  "removed": [
+    {
+      "path": "runtime\\Lib\\site-packages\\scipy\\io\\_fast_matrix_market\\_fmm_core.cp311-win_amd64.pyd",
+      "bytes": 2842624
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\scipy\\stats\\_unuran\\unuran_wrapper.cp311-win_amd64.pyd",
+      "bytes": 1285120
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\scipy\\odr\\__odrpack.cp311-win_amd64.pyd",
+      "bytes": 689664
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\scipy\\cluster\\_hierarchy.cp311-win_amd64.pyd",
+      "bytes": 238592
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\scipy\\io\\matlab\\_mio5_utils.cp311-win_amd64.pyd",
+      "bytes": 181248
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\scipy\\cluster\\_optimal_leaf_ordering.cp311-win_amd64.pyd",
+      "bytes": 174592
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\scipy\\fftpack\\convolve.cp311-win_amd64.pyd",
+      "bytes": 114688
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\scipy\\io\\matlab\\_streams.cp311-win_amd64.pyd",
+      "bytes": 102912
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\scipy\\linalg\\_matfuncs_sqrtm_triu.cp311-win_amd64.pyd",
+      "bytes": 100864
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\scipy\\cluster\\_vq.cp311-win_amd64.pyd",
+      "bytes": 98304
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\scipy\\special\\_test_internal.cp311-win_amd64.pyd",
+      "bytes": 90624
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\scipy\\optimize\\cython_optimize\\_zeros.cp311-win_amd64.pyd",
+      "bytes": 74752
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\scipy\\ndimage\\_cytest.cp311-win_amd64.pyd",
+      "bytes": 68096
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\scipy\\_lib\\_test_ccallback.cp311-win_amd64.pyd",
+      "bytes": 52224
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\scipy\\io\\matlab\\_mio_utils.cp311-win_amd64.pyd",
+      "bytes": 51200
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\torch\\bin\\protoc.exe",
+      "bytes": 2809856
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\PySide6\\avcodec-61.dll",
+      "bytes": 14064952
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\PySide6\\avformat-61.dll",
+      "bytes": 2648888
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\PySide6\\avutil-59.dll",
+      "bytes": 1174328
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\PySide6\\swresample-5.dll",
+      "bytes": 243512
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\PySide6\\swscale-8.dll",
+      "bytes": 757560
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\PySide6\\plugins\\multimedia\\ffmpegmediaplugin.dll",
+      "bytes": 701752
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\tokenizers\\tokenizers.pyd",
+      "bytes": 7095296
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\tokenizers\\__init__.py",
+      "bytes": 2715
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\tokenizers\\tools\\visualizer-styles.css",
+      "bytes": 5020
+    },
+    {
+      "path": "runtime\\Lib\\site-packages\\tokenizers\\tools\\visualizer.py",
+      "bytes": 15027
+    }
+  ],
+  "media_backend": "windows",
+  "precision_changed": false,
+  "source_backup_tag": "before-extra-slim-v30",
+  "exact_inference_comparison": true,
+  "exact_v29_oto": true,
+  "focused_checks": 56,
+  "runtime_regression_checks": 37,
+  "wav_encodings_tested": [
+    "PCM_U8",
+    "PCM_16",
+    "PCM_24",
+    "PCM_32",
+    "FLOAT",
+    "DOUBLE",
+    "ULAW",
+    "ALAW",
+    "IMA_ADPCM",
+    "MS_ADPCM"
+  ],
+  "corrupt_compression_rejected": true,
+  "packaged_smoke": {
+    "en": {
+      "oto_entries": 9,
+      "exact_v29_oto": true
+    },
+    "ja": {
+      "oto_entries": 12,
+      "exact_v29_oto": true
+    },
+    "ko": {
+      "oto_entries": 17,
+      "exact_v29_oto": true
+    },
+    "gui_startup": true
+  },
+  "separate_pc_tested": false,
+  "bytes": 803245107,
+  "files": 955,
+  "exfat_allocated_bytes": 897712128
+}

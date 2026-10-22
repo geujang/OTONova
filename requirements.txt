@@ -1,0 +1,13 @@
+# Source development; the Windows installer already includes a validated runtime.
+PySide6>=6.8,<7
+numpy>=1.26
+scipy>=1.13
+soundfile>=0.12
+numba>=0.60
+torch>=2.5
+torchaudio>=2.5
+transformers>=4.46,<5
+PyYAML>=6
+pytorch-lightning>=2.4
+librosa>=0.10
+click>=8

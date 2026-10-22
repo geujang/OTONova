@@ -1,0 +1,29 @@
+{
+  "en": {
+    "logits_exact": true,
+    "offsets_exact": true,
+    "decoded_boundaries_exact": true,
+    "forced_boundaries_exact": true
+  },
+  "ja": {
+    "logits_exact": true,
+    "offsets_exact": true,
+    "decoded_boundaries_exact": true,
+    "forced_boundaries_exact": true
+  },
+  "ko": {
+    "logits_exact": true,
+    "offsets_exact": true,
+    "decoded_boundaries_exact": true,
+    "forced_boundaries_exact": true
+  },
+  "hybrid": {
+    "boundaries_exact": true,
+    "auxiliary_models_used": {
+      "@r": "en/r",
+      "dh": "en/dh",
+      "er": "en/r",
+      "ts": "ja/ts"
+    }
+  }
+}

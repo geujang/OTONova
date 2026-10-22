@@ -1,0 +1,31 @@
+{
+  "version": 29,
+  "single_runtime": true,
+  "model_weights_unchanged": true,
+  "exact_inference_comparison": true,
+  "focused_checks": 55,
+  "runtime_regression_checks": 36,
+  "spectrogram_15khz": true,
+  "wav_decoder": true,
+  "packaged_smoke": {
+    "en": {
+      "oto_entries": 9,
+      "intervals": 10
+    },
+    "ja": {
+      "oto_entries": 12,
+      "intervals": 13
+    },
+    "ko": {
+      "oto_entries": 17,
+      "intervals": 10
+    },
+    "gui_startup": true
+  },
+  "allocation_unit_bytes": 131072,
+  "source_backup_tag": "before-runtime-slim-v29",
+  "separate_pc_tested": false,
+  "bytes": 889295363,
+  "files": 980,
+  "exfat_allocated_bytes": 985268224
+}

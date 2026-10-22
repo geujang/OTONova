@@ -1,0 +1,32 @@
+{
+  "format": "wfl-shared-encoder-v1",
+  "backup_tag": "before-model-slim-v28",
+  "models": {
+    "English": {
+      "original_bytes": 451793259,
+      "original_sha256": "82be6a22bfa30e2c716fd1d49977f24e4e215fc8920a44b0ae23ecf3ffe847b1",
+      "tensors": 173,
+      "compact_bytes": 73886051,
+      "all_tensors_exact": true
+    },
+    "Japanese": {
+      "original_bytes": 304001083,
+      "original_sha256": "3c7c4820266e8ffc4c57da1aeb2efb7626ffd09ae75516f3cb72b690d98ee8ba",
+      "tensors": 173,
+      "compact_bytes": 73865507,
+      "all_tensors_exact": true
+    },
+    "WFL/Archivoice/korean": {
+      "original_bytes": 303951423,
+      "original_sha256": "d0143ddfd9d8b679e635915d996e33883437912c18a93ed95dd98b8e4e8de89c",
+      "tensors": 172,
+      "compact_bytes": 73848804,
+      "all_tensors_exact": true
+    }
+  },
+  "removed_base_model_bytes": 290402464,
+  "shared_encoder_bytes": 82391808,
+  "shared_encoder_sha256": "daad964d8b774ca740058a9726e6060291d93685054eaaccf70e5da59d0fed73",
+  "original_total_bytes": 1350148229,
+  "compact_total_bytes": 303992170
+}

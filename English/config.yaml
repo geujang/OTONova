@@ -1,0 +1,65 @@
+data:
+  data_dir: data/final-data-2_Cleaned_2
+  sample_rate: 16000
+  num_val_files: 4
+  max_seq_len: null
+  frame_duration: 0.02
+  n_mels: 80
+model:
+  encoder_type: whisper
+  whisper_model: openai/whisper-base
+  freeze_encoder: true
+  unfreeze_last_n_layers: 0
+  num_conformer_layers: 2
+  conformer_heads: 2
+  conformer_ff_expansion: 2
+  conformer_kernel_size: 15
+  conformer_dropout: 0.3
+  enable_dilated_conv: true
+  dilated_conv_depth: 2
+  dilated_conv_kernel: 3
+  subframe_loss_weight: 5.0
+  envelope_dim: 20
+  envelope_loss_weight: 0.5
+  lang_emb_dim: 64
+  num_languages: 1
+finetune:
+  enabled: false
+  checkpoint_path: path/to/pretrained_model.ckpt
+  freeze_backbone: false
+training:
+  batch_size: 192
+  gradient_accumulation_steps: 2
+  num_workers: 2
+  optimizer: Prodigy
+  optimizer_params:
+    betas:
+    - 0.9
+    - 0.99
+    eps: 1.0e-08
+    d_coef: 1.0
+    weight_decouple: true
+    bias_correction: false
+    safeguard_warmup: false
+  learning_rate: 1.0
+  weight_decay: 0.0001
+  max_epochs: 1000
+  check_val_every_n_epoch: 1
+  scheduler: ConstantLR
+  scheduler_params: {}
+  scheduler_step_on_update: false
+  max_checkpoints: 3
+  log_dir: logs/mega-5
+  merged_phoneme_groups: []
+augmentation:
+  enable: true
+  noise_std: 0.01
+  prob: 0.8
+  volume_range:
+  - 0.5
+  - 1.5
+output:
+  save_dir: checkpoints/mega-5-small
+postprocess:
+  median_filter: 1
+  merge_segments: right
