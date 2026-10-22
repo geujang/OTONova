@@ -2,7 +2,7 @@ name: Package macOS preview DMG
 on:
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 jobs:
   dmg:
     runs-on: macos-15
@@ -28,3 +28,7 @@ jobs:
             dist/OTONova-macOS-DMG-SHA256SUMS.txt
           if-no-files-found: error
           retention-days: 3
+      - name: Publish verified DMG to existing preview release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload v1.0.1-macos-preview dist/OTONova-macOS-arm64-experimental.dmg dist/OTONova-macOS-DMG-SHA256SUMS.txt
