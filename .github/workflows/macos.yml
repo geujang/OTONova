@@ -10,7 +10,7 @@ permissions:
   contents: read
 jobs:
   apple-silicon:
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 45
     env:
       QT_QPA_PLATFORM: offscreen
