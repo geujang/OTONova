@@ -674,9 +674,7 @@ if __name__=='__main__':
     app.setApplicationName('OTONova')
     app.setApplicationDisplayName('OTONova V1.0')
     app.setWindowIcon(QIcon(str(RESOURCE_ROOT/'assets/otonova.ico')))
-    font_path=Path('C:/Windows/Fonts/malgun.ttf')
-    if font_path.exists():QFontDatabase.addApplicationFont(str(font_path))
-    app.setFont(QFont('Malgun Gothic',10))
+    ui.apply_font()
     window=Window()
     if '--mode' in sys.argv:
         window.set_mode(sys.argv[sys.argv.index('--mode')+1])

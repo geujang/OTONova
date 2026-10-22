@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 
 os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
-os.environ['QT_MEDIA_BACKEND'] = 'windows'
+if sys.platform=='win32':os.environ['QT_MEDIA_BACKEND'] = 'windows'
 import numpy as np
 import soundfile as sf
 from PySide6.QtCore import QCoreApplication, QEventLoop, QTimer, QUrl

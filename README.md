@@ -6,6 +6,10 @@
 
 [설치 파일 다운로드](https://github.com/geujang/OTONova/releases/latest) · [지원 형식·참고 리스트](SUPPORTED_FORMATS.md) · [모델 용량 절감 방식](MODEL_COMPRESSION.md) · [원본 크레딧](CREDITS.md) · [V1.0 릴리스 노트](RELEASE_NOTES.md)
 
+## macOS 실험적 이식
+
+Apple Silicon용 macOS 실행·빌드 경로를 추가하고 검증 중입니다. 현재 안정 배포본은 Windows이며, Mac 실행법과 검증 범위는 [MACOS.md](MACOS.md)를 참고하세요.
+
 ## 지원 언어와 형식
 
 | 음원 언어 | 지원 형식 |

@@ -1,0 +1,44 @@
+name: macOS experimental build
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/macos-support]
+permissions:
+  contents: read
+jobs:
+  apple-silicon:
+    runs-on: macos-14
+    timeout-minutes: 45
+    env:
+      QT_QPA_PLATFORM: offscreen
+      PYTHONDONTWRITEBYTECODE: '1'
+      HF_HUB_OFFLINE: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: requirements-macos.txt
+      - name: Check Apple Silicon runner
+        run: test "$(uname -m)" = arm64
+      - name: Install native dependencies
+        run: python -m pip install -r requirements-macos.txt
+      - name: Extract verified platform-independent models
+        run: python prepare_macos_models.py
+      - name: Regression tests
+        run: python -B -m unittest test_platform_support test_audio_review test_audio_playback test_ui_settings test_stages test_detection test_english_vccv test_english_cvvc test_arpasing test_formats test_korean test_installer_shortcut
+      - name: Source model smoke test
+        run: python smoke_macos.py
+      - name: Build native app
+        run: python build_macos.py
+      - name: Frozen model smoke test
+        run: python smoke_macos.py --app dist/OTONova.app
+      - name: Frozen GUI startup
+        run: dist/OTONova.app/Contents/MacOS/OTONova --ui-check
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OTONova-macOS-arm64-experimental
+          path: dist/OTONova-macOS-*-experimental.zip
+          if-no-files-found: error
+          retention-days: 14

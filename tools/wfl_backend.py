@@ -3,7 +3,8 @@ import os,sys,json,contextlib,traceback
 from pathlib import Path
 root=Path(sys.argv[1]);os.chdir(root);sys.path.insert(0,str(root))
 os.environ['HF_HUB_OFFLINE']='1'
-os.environ['MPLCONFIGDIR']=str(Path(__file__).resolve().parent/'wfl-matplotlib-cache')
+os.environ.setdefault('NUMBA_CACHE_DIR',str(Path.home()/'.cache/OTONova/numba'))
+os.environ.setdefault('MPLCONFIGDIR',str(Path.home()/'.cache/OTONova/matplotlib'))
 with contextlib.redirect_stdout(sys.stderr):
     import torch,numpy as np,soundfile as sf,yaml
     from scipy.signal import resample_poly

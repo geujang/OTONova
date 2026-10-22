@@ -188,6 +188,13 @@ def apply_font():
     from pathlib import Path
     from PySide6.QtGui import QFont, QFontDatabase
     from PySide6.QtWidgets import QApplication
+    import sys
+    if sys.platform=='darwin':
+        families={'ko':['Apple SD Gothic Neo'], 'ja':['Hiragino Sans'], 'en':['Helvetica Neue'], 'zh':['PingFang SC']}
+        font=QFont();font.setFamilies(families[language]+['Arial Unicode MS','sans-serif']);font.setPointSize(10)
+        app=QApplication.instance()
+        if app:app.setFont(font)
+        return
     fonts={'ko':('malgun.ttf','Malgun Gothic'), 'ja':('meiryo.ttc','Meiryo'),
            'en':('malgun.ttf','Malgun Gothic'), 'zh':('msyh.ttc','Microsoft YaHei UI')}
     filename,family=fonts[language]

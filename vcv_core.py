@@ -21,7 +21,8 @@ if getattr(sys, 'frozen', False):
         if candidate.is_dir():
             DEFAULT_FOLDER = candidate
             break
-WORKSPACE = ((Path(sys.executable).parent if (Path(sys.executable).parent/'runtime/python.exe').exists() else Path(sys.executable).parent.parent.parent) if getattr(sys,'frozen',False) else ROOT)
+from platform_support import workspace
+WORKSPACE = workspace()
 TABLE = RESOURCE_ROOT / 'assets/kana2phonemes.table'
 VOWELS = {'a', 'i', 'u', 'e', 'o', 'N'}
 FIXED_LEAD = 0.04

@@ -131,14 +131,17 @@ class KoreanEngine:
         workspace=WORKSPACE
         self.workspace=workspace
         self.aux_signature='|'.join(str((workspace/name/'last.ckpt').stat().st_mtime_ns) if (workspace/name/'last.ckpt').exists() else 'missing' for name in ['English','Japanese'])
-        python=workspace/'runtime/python.exe' if (workspace/'runtime/python.exe').exists() else workspace/'.wfl-venv/Scripts/python.exe'
         model_root=workspace/'WFL' if (workspace/'WFL/model.py').exists() else MODEL_ROOT
-        if not python.exists():raise RuntimeError('WFL 실행 환경이 없습니다: '+str(python))
-        self.process=subprocess.Popen([str(python),'-B','-I',str(RESOURCE_ROOT/'tools/wfl_backend.py'),str(model_root),str(model_dir or model_root/'Archivoice/korean')],
-            stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=open(workspace/'wfl-runtime.log','w',encoding='utf-8'),
-            text=True,encoding='utf-8',creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
+        from platform_support import backend_command,log_path
+        command=backend_command(workspace,RESOURCE_ROOT,model_root,model_dir or model_root/'Archivoice/korean')
+        runtime_log=log_path('wfl-runtime.log')
+        with runtime_log.open('w',encoding='utf-8') as error_log:
+            self.process=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=error_log,
+                text=True,encoding='utf-8',creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0) if sys.platform=='win32' else 0)
         ready=self.process.stdout.readline()
-        if not ready:raise RuntimeError('WFL 모델 로드 실패. wfl-runtime.log를 확인해주세요.')
+        if not ready:
+            self.process.wait(timeout=5)
+            raise RuntimeError('WFL 모델 로드 실패: '+str(runtime_log))
         json.loads(ready)
     def request(self,path,phones=None):
         self.process.stdin.write(json.dumps({'wav':str(path.resolve()),'phones':phones,

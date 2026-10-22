@@ -13,7 +13,7 @@ def main():
         raise RuntimeError('Use a fresh distribution folder')
     shutil.copytree(ROOT/'release/OtoNova-Windows-v36', TARGET,
                     ignore=shutil.ignore_patterns('*.log', 'gui-preview.png', '__pycache__', '*.pyc', 'WFL-Oto.exe', 'OtoNova.exe'))
-    for name in ('vcv_gui.py', 'ui_settings.py', 'vcv_core.py', 'audio_view.py', 'audio_playback.py', 'formats.py', 'format_detection.py', 'english_cvvc.py', 'english_vccv.py', 'korean_core.py', 'arpasing_core.py', 'app_bootstrap.py', 'README.md'):
+    for name in ('vcv_gui.py', 'platform_support.py', 'ui_settings.py', 'vcv_core.py', 'audio_view.py', 'audio_playback.py', 'formats.py', 'format_detection.py', 'english_cvvc.py', 'english_vccv.py', 'korean_core.py', 'arpasing_core.py', 'app_bootstrap.py', 'README.md'):
         shutil.copy2(ROOT/name, TARGET/name)
     shutil.copytree(ROOT/'assets', TARGET/'assets', dirs_exist_ok=True)
     shutil.copy2(ROOT/'CREDITS.md', TARGET/'CREDITS.md')
