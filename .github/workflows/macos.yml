@@ -3,6 +3,9 @@ on:
   workflow_dispatch:
   push:
     branches: [codex/macos-support]
+concurrency:
+  group: macos-experimental-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
@@ -36,6 +39,8 @@ jobs:
         run: python smoke_macos.py --app dist/OTONova.app
       - name: Frozen GUI startup
         run: dist/OTONova.app/Contents/MacOS/OTONova --ui-check
+      - name: Check GUI capture
+        run: test -s "$HOME/Library/Logs/OTONova/gui-preview.png"
       - uses: actions/upload-artifact@v4
         with:
           name: OTONova-macOS-arm64-experimental

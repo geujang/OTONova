@@ -33,7 +33,7 @@ static class Launcher {
             using(var process=Process.Start(info)) {
                 process.WaitForExit();
                 if(process.ExitCode!=0 && args.Length==0)
-                    MessageBox.Show("실행 오류입니다. "+Path.Combine(root,"wfl-gui.log")+" 파일을 확인해주세요.","OTONova");
+                    MessageBox.Show("실행 오류입니다. "+Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"OTONova","Logs","wfl-gui.log")+" 파일을 확인해주세요.","OTONova");
                 return process.ExitCode;
             }
         } catch(Exception error) {

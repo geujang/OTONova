@@ -681,7 +681,10 @@ if __name__=='__main__':
     window.show()
     if '--ui-check' in sys.argv:
         from PySide6.QtCore import QTimer
-        preview=DEFAULT_FOLDER.parent/'gui-preview.png'
-        QTimer.singleShot(1200,lambda:window.grab().save(str(preview)))
-        QTimer.singleShot(1500,app.quit)
+        from platform_support import log_path
+        preview=log_path('gui-preview.png')
+        def capture_preview():
+            success=window.grab().save(str(preview))
+            app.exit(0 if success else 1)
+        QTimer.singleShot(1200,capture_preview)
     sys.exit(app.exec())
