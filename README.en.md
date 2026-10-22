@@ -12,7 +12,7 @@ The linked technical documents are currently in Korean.
 
 ## Official macOS support
 
-A [macOS build for Apple Silicon](https://github.com/geujang/OTONova/releases/tag/v1.0.1-macos-preview) is available. Native app builds, alignment with the three language models, and GUI startup checks passed on Mac. Windows x64 and macOS Apple Silicon are officially supported. The Mac release is V1.0.1. Intel Macs are unsupported. See [MACOS.md](MACOS.md) for instructions and validation limits. Apple Developer ID distribution signing and notarization have not been applied.
+A [macOS build for Apple Silicon](https://github.com/geujang/OTONova/releases/tag/v1.0.0) is available. Native app builds, alignment with the three language models, and GUI startup checks passed on Mac. Windows x64 and macOS Apple Silicon are officially supported. Windows and Mac downloads are provided together in the V1.0 release. Intel Macs are unsupported. See [MACOS.md](MACOS.md) for instructions and validation limits. Apple Developer ID distribution signing and notarization have not been applied.
 
 ## Supported voicebank languages and formats
 

@@ -12,7 +12,7 @@
 
 ## 正式支持 macOS
 
-提供适用于 Apple Silicon 的 [macOS 版本](https://github.com/geujang/OTONova/releases/tag/v1.0.1-macos-preview)。已在 Mac 环境中通过原生应用构建、三种语言模型的音素对齐和 GUI 启动检查。正式支持 Windows x64 与 macOS Apple Silicon。Mac 发行版本为 V1.0.1。不支持 Intel Mac。使用方法与验证范围见 [MACOS.md](MACOS.md)。目前尚未进行 Apple Developer ID 分发签名及公证。
+提供适用于 Apple Silicon 的 [macOS 版本](https://github.com/geujang/OTONova/releases/tag/v1.0.0)。已在 Mac 环境中通过原生应用构建、三种语言模型的音素对齐和 GUI 启动检查。正式支持 Windows x64 与 macOS Apple Silicon。Windows 与 Mac 版本在同一个 V1.0 发行页面提供。不支持 Intel Mac。使用方法与验证范围见 [MACOS.md](MACOS.md)。目前尚未进行 Apple Developer ID 分发签名及公证。
 
 ## 支持的音源语言与格式
 

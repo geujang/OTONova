@@ -18,7 +18,7 @@ def main():
         subprocess.run(['sips','-z',str(pixels),str(pixels),str(ROOT/'assets/otonova-logo.png'),'--out',str(iconset/('icon_'+filename+'.png'))],check=True,stdout=subprocess.DEVNULL)
     subprocess.run(['iconutil','-c','icns',str(iconset),'-o',str(ROOT/'build/otonova.icns')],check=True)
     subprocess.run([sys.executable,'-m','PyInstaller','--clean','--noconfirm',str(ROOT/'OTONova-macOS.spec')],cwd=ROOT,check=True)
-    output=ROOT/('dist/OTONova-macOS-'+platform.machine()+'-experimental.zip')
+    output=ROOT/('dist/OTONova-macOS-V1.0-'+platform.machine()+'.zip')
     subprocess.run(['ditto','-c','-k','--sequesterRsrc','--keepParent',str(ROOT/'dist/OTONova.app'),str(output)],check=True)
     print(output)
     from package_macos_dmg import package

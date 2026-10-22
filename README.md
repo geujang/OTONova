@@ -10,7 +10,7 @@
 
 ## macOS 정식 지원
 
-Apple Silicon용 [macOS 다운로드](https://github.com/geujang/OTONova/releases/tag/v1.0.1-macos-preview)를 제공합니다. Mac 환경에서 앱 빌드·세 언어 모델 정렬·GUI 시작 검사를 통과했습니다. Windows x64와 macOS Apple Silicon을 정식 지원합니다. Mac 배포본은 V1.0.1입니다. Intel Mac은 지원하지 않습니다. 실행법과 검증 범위는 [MACOS.md](MACOS.md)를 참고하세요.
+Apple Silicon용 [macOS 다운로드](https://github.com/geujang/OTONova/releases/tag/v1.0.0)를 제공합니다. Mac 환경에서 앱 빌드·세 언어 모델 정렬·GUI 시작 검사를 통과했습니다. Windows x64와 macOS Apple Silicon을 정식 지원합니다. Windows와 Mac 배포본은 하나의 V1.0 릴리스에서 제공합니다. Intel Mac은 지원하지 않습니다. 실행법과 검증 범위는 [MACOS.md](MACOS.md)를 참고하세요.
 
 ## 지원 언어와 형식
 

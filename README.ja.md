@@ -12,7 +12,7 @@
 
 ## macOS正式対応
 
-Apple Silicon向けの[macOS版](https://github.com/geujang/OTONova/releases/tag/v1.0.1-macos-preview)を公開しています。Mac上でのアプリビルド、3言語モデルによるアライメント、GUI起動の検査を通過しています。Windows x64とmacOS Apple Siliconに正式対応しています。Mac版はV1.0.1です。Intel Macには対応していません。実行方法と検証範囲は[MACOS.md](MACOS.md)をご覧ください。Apple Developer IDによる配布署名・公証は未実施です。
+Apple Silicon向けの[macOS版](https://github.com/geujang/OTONova/releases/tag/v1.0.0)を公開しています。Mac上でのアプリビルド、3言語モデルによるアライメント、GUI起動の検査を通過しています。Windows x64とmacOS Apple Siliconに正式対応しています。Windows版とMac版は同じV1.0リリースで配布しています。Intel Macには対応していません。実行方法と検証範囲は[MACOS.md](MACOS.md)をご覧ください。Apple Developer IDによる配布署名・公証は未実施です。
 
 ## 対応言語・音源形式
 
