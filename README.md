@@ -8,7 +8,7 @@
 
 ## macOS 실험적 이식
 
-Apple Silicon용 macOS 실행·빌드 경로를 추가하고 검증 중입니다. 현재 안정 배포본은 Windows이며, Mac 실행법과 검증 범위는 [MACOS.md](MACOS.md)를 참고하세요.
+Apple Silicon용 [macOS 실험판 다운로드](https://github.com/geujang/OTONova/releases/tag/v1.0.1-macos-preview)를 제공합니다. Mac 환경에서 앱 빌드·세 언어 모델 정렬·GUI 시작 검사를 통과했습니다. Windows V1.0은 안정 배포본이며 Mac은 별도 실험판입니다. Intel Mac은 지원하지 않습니다. 실행법과 검증 범위는 [MACOS.md](MACOS.md)를 참고하세요.
 
 ## 지원 언어와 형식
 

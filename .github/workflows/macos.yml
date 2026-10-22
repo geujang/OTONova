@@ -46,4 +46,4 @@ jobs:
           name: OTONova-macOS-arm64-experimental
           path: dist/OTONova-macOS-*-experimental.zip
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 1

@@ -49,3 +49,5 @@ OTONova V1.0은 기존 WFL 학습 모델을 추론용으로 재포장했습니�
 관련 코드: `slim_models.py`, `validate_slim_models.py`, `build_compact_runtime.py`, `build_extra_compact.py`, `tools/wfl_backend.py`.
 
 관련 기록: `validation/model-slim-validation.json`, `validation/model-inference-validation.json`, `validation/runtime-slim-validation.json`, `validation/extra-slim-validation.json`. 이 문서의 수치는 당시 기록을 바탕으로 하며 V1.0에서 추가된 UI·카탈로그·문서 파일 때문에 앱 전체 크기는 소폭 달라집니다.
+
+설치 후 약 804MB 수치는 Windows V1.0 기준입니다. macOS 실험판은 별도 네이티브 라이브러리로 묶으므로 같은 설치 용량을 보장하지 않습니다.

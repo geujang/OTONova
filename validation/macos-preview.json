@@ -1,0 +1,27 @@
+{
+  "status": "experimental",
+  "platform": "macOS 15",
+  "architecture": "arm64",
+  "python": "3.11",
+  "ci_run": "https://github.com/geujang/OTONova/actions/runs/39790851377",
+  "tested_source_commit": "ce1948317ed898989fe4f248e376c9affa019ade",
+  "windows_regression_tests": 69,
+  "macos_regression_tests": 69,
+  "macos_skipped_windows_only_tests": 2,
+  "source_model_languages": [
+    "en",
+    "ja",
+    "ko"
+  ],
+  "frozen_model_languages": [
+    "en",
+    "ja",
+    "ko"
+  ],
+  "frozen_gui_capture": true,
+  "signed_bundle_mutation_check": true,
+  "apple_developer_id_signed": false,
+  "apple_notarized": false,
+  "physical_device_audio_tested": false,
+  "intel_supported": false
+}

@@ -2,6 +2,14 @@
 
 현재 단계는 **Apple Silicon(arm64)용 실험적 이식**입니다. Windows V1.0 설치 파일을 Mac에서 실행하는 방식이 아니라, 동일한 모델과 소스를 Mac용 Python / PyTorch / Qt로 묶습니다. Intel Mac은 이번 초기 검증 대상에 포함하지 않습니다.
 
+## 다운로드와 검증 상태
+
+[OTONova macOS Preview](https://github.com/geujang/OTONova/releases/tag/v1.0.1-macos-preview)에서 ZIP을 내려받아 압축을 푼 뒤 `OTONova.app`을 Applications 폴더로 옮겨 사용합니다. Python과 모델이 앱에 포함됩니다.
+
+macOS 15 Apple Silicon CI에서 69개 회귀 검사(Windows 전용 2개 제외), 소스 및 frozen 앱의 영어·일본어·한국어 정렬, GUI 시작·화면 캡처 검사를 통과했습니다. [검증 실행](https://github.com/geujang/OTONova/actions/runs/39790851377), [검증 기록](validation/macos-preview.json).
+
+Apple Developer ID 배포 서명·공증은 적용하지 않은 실험판입니다. 실제 Mac의 스피커 청음, 다양한 외장 드라이브 권한, 긴 음원 작업은 별도 사용자 검증이 필요합니다. Intel Mac은 미지원입니다.
+
 ## 소스 실행
 
 Python 3.11이 설치된 Mac에서 저장소를 내려받고 다음을 실행합니다.
