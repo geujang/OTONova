@@ -4,13 +4,13 @@
 
 **한국어** · [English](README.en.md) · [日本語](README.ja.md) · [简体中文](README.zh-CN.md)
 
-**UTAU 음원을 위한 Windows 자동 원설기.** 파일명·녹음 리스트·기존 oto.ini에서 음소열을 만들고, WFL 모델로 경계를 강제 정렬한 뒤 지정 규칙으로 원설을 생성합니다.
+**UTAU 음원을 위한 Windows·macOS 자동 원설기.** 파일명·녹음 리스트·기존 oto.ini에서 음소열을 만들고, WFL 모델로 경계를 강제 정렬한 뒤 지정 규칙으로 원설을 생성합니다.
 
 [설치 파일 다운로드](https://github.com/geujang/OTONova/releases/latest) · [지원 형식·참고 리스트](SUPPORTED_FORMATS.md) · [모델 용량 절감 방식](MODEL_COMPRESSION.md) · [원본 크레딧](CREDITS.md) · [V1.0 릴리스 노트](RELEASE_NOTES.md)
 
-## macOS 실험적 이식
+## macOS 정식 지원
 
-Apple Silicon용 [macOS 실험판 다운로드](https://github.com/geujang/OTONova/releases/tag/v1.0.1-macos-preview)를 제공합니다. Mac 환경에서 앱 빌드·세 언어 모델 정렬·GUI 시작 검사를 통과했습니다. Windows V1.0은 안정 배포본이며 Mac은 별도 실험판입니다. Intel Mac은 지원하지 않습니다. 실행법과 검증 범위는 [MACOS.md](MACOS.md)를 참고하세요.
+Apple Silicon용 [macOS 다운로드](https://github.com/geujang/OTONova/releases/tag/v1.0.1-macos-preview)를 제공합니다. Mac 환경에서 앱 빌드·세 언어 모델 정렬·GUI 시작 검사를 통과했습니다. Windows x64와 macOS Apple Silicon을 정식 지원합니다. Mac 배포본은 V1.0.1입니다. Intel Mac은 지원하지 않습니다. 실행법과 검증 범위는 [MACOS.md](MACOS.md)를 참고하세요.
 
 ## 지원 언어와 형식
 
@@ -20,7 +20,7 @@ Apple Silicon용 [macOS 실험판 다운로드](https://github.com/geujang/OTONo
 | 한국어 | CV(단독음), CVVC, CVC, VCV |
 | 영어 | ARPAsing, CVVC(DELTA / Salem), VCCV(PaintedCz CORE) |
 
-세부 녹음 방식은 파일명·녹음 리스트·기존 에일리어스에서 인식합니다. 기존 oto.ini가 있으면 해당 에일리어스를 기준으로 시간 값을 설정합니다. **중국어 음원 지원은 향후 추가할 예정입니다. 한국어 COC·CBNN·CMPX·VCCV도 추가 예정이며, V1.0의 현재 지원 형식에는 포함되지 않습니다.** 현재 중국어는 UI 표시 언어로만 제공됩니다. Android / iOS 앱은 향후 검토 대상이며 V1.0 배포 대상은 Windows x64입니다.
+세부 녹음 방식은 파일명·녹음 리스트·기존 에일리어스에서 인식합니다. 기존 oto.ini가 있으면 해당 에일리어스를 기준으로 시간 값을 설정합니다. **중국어 음원 지원은 향후 추가할 예정입니다. 한국어 COC·CBNN·CMPX·VCCV도 추가 예정이며, V1.0의 현재 지원 형식에는 포함되지 않습니다.** 현재 중국어는 UI 표시 언어로만 제공됩니다. Android / iOS 앱은 향후 검토 대상이며 현재 배포 대상은 Windows x64와 macOS Apple Silicon입니다.
 
 ## 주요 기능
 

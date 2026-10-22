@@ -4,15 +4,15 @@
 
 [한국어](README.md) · **English** · [日本語](README.ja.md) · [简体中文](README.zh-CN.md)
 
-**An automatic oto.ini configuration tool for UTAU voicebanks on Windows.** OTONova derives phoneme sequences from filenames, recording lists, and existing oto.ini aliases, uses WFL models for forced alignment, and generates timing values with predefined rules.
+**An automatic oto.ini configuration tool for UTAU voicebanks on Windows and macOS.** OTONova derives phoneme sequences from filenames, recording lists, and existing oto.ini aliases, uses WFL models for forced alignment, and generates timing values with predefined rules.
 
 [Download Windows installer](https://github.com/geujang/OTONova/releases/latest) · [Supported formats and reference lists](SUPPORTED_FORMATS.md) · [Model size reduction](MODEL_COMPRESSION.md) · [Original credits](CREDITS.md) · [V1.0 release notes](RELEASE_NOTES.md)
 
 The linked technical documents are currently in Korean.
 
-## Experimental macOS port
+## Official macOS support
 
-An [experimental macOS build for Apple Silicon](https://github.com/geujang/OTONova/releases/tag/v1.0.1-macos-preview) is available. Native app builds, alignment with the three language models, and GUI startup checks passed on Mac. Windows V1.0 is the stable release; macOS is a separate preview. Intel Macs are unsupported. See [MACOS.md](MACOS.md) for instructions and validation limits. Apple Developer ID distribution signing and notarization have not been applied.
+A [macOS build for Apple Silicon](https://github.com/geujang/OTONova/releases/tag/v1.0.1-macos-preview) is available. Native app builds, alignment with the three language models, and GUI startup checks passed on Mac. Windows x64 and macOS Apple Silicon are officially supported. The Mac release is V1.0.1. Intel Macs are unsupported. See [MACOS.md](MACOS.md) for instructions and validation limits. Apple Developer ID distribution signing and notarization have not been applied.
 
 ## Supported voicebank languages and formats
 
@@ -24,7 +24,7 @@ An [experimental macOS build for Apple Silicon](https://github.com/geujang/OTONo
 
 Recording conventions are detected from filenames, recording lists, and existing aliases. When an oto.ini exists, timing values are configured using its aliases.
 
-**Chinese voicebank support is planned. Korean COC, CBNN, CMPX, and VCCV are also planned and are not supported in V1.0.** Chinese is currently available only as a UI language. Android and iOS apps are under consideration; the V1.0 distribution targets Windows x64.
+**Chinese voicebank support is planned. Korean COC, CBNN, CMPX, and VCCV are also planned and are not supported in V1.0.** Chinese is currently available only as a UI language. Android and iOS apps are under consideration; current distributions target Windows x64 and macOS Apple Silicon.
 
 ## Features
 

@@ -1,14 +1,14 @@
-# macOS 지원 작업
+# macOS 정식 지원
 
-현재 단계는 **Apple Silicon(arm64)용 실험적 이식**입니다. Windows V1.0 설치 파일을 Mac에서 실행하는 방식이 아니라, 동일한 모델과 소스를 Mac용 Python / PyTorch / Qt로 묶습니다. Intel Mac은 이번 초기 검증 대상에 포함하지 않습니다.
+**macOS Apple Silicon(arm64)을 정식 지원합니다.** Windows V1.0 설치 파일을 Mac에서 실행하는 방식이 아니라, 동일한 모델과 소스를 Mac용 Python / PyTorch / Qt로 묶습니다. Intel Mac은 지원하지 않습니다.
 
 ## 다운로드와 검증 상태
 
-[OTONova macOS Preview](https://github.com/geujang/OTONova/releases/tag/v1.0.1-macos-preview)에서 DMG를 내려받아 열고 `OTONova.app`을 옆의 Applications 폴더로 끌어 옮겨 사용합니다. ZIP 배포본도 제공합니다. Python과 모델이 앱에 포함됩니다.
+[OTONova V1.0.1 macOS](https://github.com/geujang/OTONova/releases/tag/v1.0.1-macos-preview)에서 DMG를 내려받아 열고 `OTONova.app`을 옆의 Applications 폴더로 끌어 옮겨 사용합니다. ZIP 배포본도 제공합니다. Python과 모델이 앱에 포함됩니다.
 
 macOS 15 Apple Silicon CI에서 69개 회귀 검사(Windows 전용 2개 제외), 소스 및 frozen 앱의 영어·일본어·한국어 정렬, GUI 시작·화면 캡처 검사를 통과했습니다. [검증 실행](https://github.com/geujang/OTONova/actions/runs/39790851377), [검증 기록](validation/macos-preview.json).
 
-Apple Developer ID 배포 서명·공증은 적용하지 않은 실험판입니다. 실제 Mac의 스피커 청음, 다양한 외장 드라이브 권한, 긴 음원 작업은 별도 사용자 검증이 필요합니다. Intel Mac은 미지원입니다.
+Apple Developer ID 배포 서명·공증은 아직 적용하지 않았습니다. 정식 지원 전환으로 추가 검증이나 공증이 수행된 것은 아닙니다. 실제 Mac의 스피커 청음, 다양한 외장 드라이브 권한, 긴 음원 작업은 별도 사용자 검증이 필요합니다. Intel Mac은 미지원입니다.
 
 ## 소스 실행
 
@@ -31,7 +31,7 @@ source .venv/bin/activate
 python build_macos.py
 ```
 
-`dist/OTONova.app`과 CPU 종류가 표시된 ZIP 및 DMG를 만듭니다. DMG는 읽기 전용으로 마운트하여 앱의 모든 파일 해시·심볼릭 링크와 코드 서명을 검증합니다. Mac용 빌드는 Mac에서 수행해야 합니다. 서명 인증서가 준비되어 있다면 `OTONOVA_CODESIGN_IDENTITY` 환경 변수로 PyInstaller에 전달할 수 있습니다. 초기 실험 빌드는 Apple 배포 인증서 서명·공증을 완료한 정식 배포본과 구분합니다.
+`dist/OTONova.app`과 CPU 종류가 표시된 ZIP 및 DMG를 만듭니다. DMG는 읽기 전용으로 마운트하여 앱의 모든 파일 해시·심볼릭 링크와 코드 서명을 검증합니다. Mac용 빌드는 Mac에서 수행해야 합니다. 서명 인증서가 준비되어 있다면 `OTONOVA_CODESIGN_IDENTITY` 환경 변수로 PyInstaller에 전달할 수 있습니다. 현재 배포본에는 Apple Developer ID 배포 서명·공증을 적용하지 않았습니다.
 
 ## 검증
 
@@ -51,3 +51,9 @@ QT_QPA_PLATFORM=offscreen dist/OTONova.app/Contents/MacOS/OTONova --ui-check
 - 로그: `~/Library/Logs/OTONova/`. 모델과 앱 번들을 수정하지 않습니다.
 - frozen `.app`은 같은 실행 파일을 `--wfl-backend` 모드로 실행해 Python 설치 없이 추론합니다.
 - 모델 가중치와 원설 규칙은 Windows와 공유합니다. CPU 추론부터 검증하며 MPS 가속은 적용하지 않습니다.
+
+## 배포 식별자
+
+기존 링크와 체크섬을 유지하기 위해 `v1.0.1-macos-preview` 태그와 `experimental`이 포함된 파일명은 보존합니다. 릴리스는 정식 배포 상태이며, 이 문자열은 초기 배포 당시의 식별자입니다. 바이너리와 검증 결과는 기존과 동일합니다.
+
+DMG 생성·마운트·전체 앱 파일 해시·심볼릭 링크·코드 서명 구조 검증: [Mac DMG 검증 실행](https://github.com/geujang/OTONova/actions/runs/39794929691).

@@ -4,15 +4,15 @@
 
 [한국어](README.md) · [English](README.en.md) · **日本語** · [简体中文](README.zh-CN.md)
 
-**UTAU音源向けのWindows用自動原音設定ツールです。** ファイル名・録音リスト・既存のoto.iniエイリアスから音素列を作成し、WFLモデルで強制アライメントを行い、所定のルールに従って原音設定値を生成します。
+**UTAU音源向けのWindows・macOS用自動原音設定ツールです。** ファイル名・録音リスト・既存のoto.iniエイリアスから音素列を作成し、WFLモデルで強制アライメントを行い、所定のルールに従って原音設定値を生成します。
 
 [Windowsインストーラー](https://github.com/geujang/OTONova/releases/latest) · [対応形式・参考リスト](SUPPORTED_FORMATS.md) · [モデル容量の削減方法](MODEL_COMPRESSION.md) · [原作者クレジット](CREDITS.md) · [V1.0リリースノート](RELEASE_NOTES.md)
 
 リンク先の技術資料は現在、韓国語で記載されています。
 
-## macOS実験版
+## macOS正式対応
 
-Apple Silicon向けの[macOS実験版](https://github.com/geujang/OTONova/releases/tag/v1.0.1-macos-preview)を公開しています。Mac上でのアプリビルド、3言語モデルによるアライメント、GUI起動の検査を通過しています。Windows V1.0は安定版、macOSは別途提供する実験版です。Intel Macには対応していません。実行方法と検証範囲は[MACOS.md](MACOS.md)をご覧ください。Apple Developer IDによる配布署名・公証は未実施です。
+Apple Silicon向けの[macOS版](https://github.com/geujang/OTONova/releases/tag/v1.0.1-macos-preview)を公開しています。Mac上でのアプリビルド、3言語モデルによるアライメント、GUI起動の検査を通過しています。Windows x64とmacOS Apple Siliconに正式対応しています。Mac版はV1.0.1です。Intel Macには対応していません。実行方法と検証範囲は[MACOS.md](MACOS.md)をご覧ください。Apple Developer IDによる配布署名・公証は未実施です。
 
 ## 対応言語・音源形式
 
@@ -24,7 +24,7 @@ Apple Silicon向けの[macOS実験版](https://github.com/geujang/OTONova/releas
 
 ファイル名・録音リスト・既存エイリアスから録音方式を判別します。既存のoto.iniがある場合は、そのエイリアスを基準に設定値を生成します。
 
-**中国語音源への対応は今後追加予定です。韓国語のCOC・CBNN・CMPX・VCCVも追加予定で、V1.0では未対応です。** 現在、中国語はUI表示言語としてのみ提供しています。Android / iOS版は今後の検討対象で、V1.0の配布対象はWindows x64です。
+**中国語音源への対応は今後追加予定です。韓国語のCOC・CBNN・CMPX・VCCVも追加予定で、V1.0では未対応です。** 現在、中国語はUI表示言語としてのみ提供しています。Android / iOS版は今後の検討対象で、現在の配布対象はWindows x64とmacOS Apple Siliconです。
 
 ## 主な機能
 

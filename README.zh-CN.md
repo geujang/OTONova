@@ -4,15 +4,15 @@
 
 [한국어](README.md) · [English](README.en.md) · [日本語](README.ja.md) · **简体中文**
 
-**面向 UTAU 音源的 Windows 自动原音设定工具。** 根据文件名、录音表和现有 oto.ini 别名生成音素序列，使用 WFL 模型进行强制对齐，再按照预设规则生成原音设定参数。
+**面向 UTAU 音源的 Windows／macOS 自动原音设定工具。** 根据文件名、录音表和现有 oto.ini 别名生成音素序列，使用 WFL 模型进行强制对齐，再按照预设规则生成原音设定参数。
 
 [下载 Windows 安装程序](https://github.com/geujang/OTONova/releases/latest) · [支持格式与参考录音表](SUPPORTED_FORMATS.md) · [模型体积优化方法](MODEL_COMPRESSION.md) · [原作者与鸣谢](CREDITS.md) · [V1.0 发行说明](RELEASE_NOTES.md)
 
 链接中的技术文档目前使用韩语编写。
 
-## macOS 实验版
+## 正式支持 macOS
 
-提供适用于 Apple Silicon 的 [macOS 实验版](https://github.com/geujang/OTONova/releases/tag/v1.0.1-macos-preview)。已在 Mac 环境中通过原生应用构建、三种语言模型的音素对齐和 GUI 启动检查。Windows V1.0 为稳定版，macOS 为单独提供的实验版。不支持 Intel Mac。使用方法与验证范围见 [MACOS.md](MACOS.md)。目前尚未进行 Apple Developer ID 分发签名及公证。
+提供适用于 Apple Silicon 的 [macOS 版本](https://github.com/geujang/OTONova/releases/tag/v1.0.1-macos-preview)。已在 Mac 环境中通过原生应用构建、三种语言模型的音素对齐和 GUI 启动检查。正式支持 Windows x64 与 macOS Apple Silicon。Mac 发行版本为 V1.0.1。不支持 Intel Mac。使用方法与验证范围见 [MACOS.md](MACOS.md)。目前尚未进行 Apple Developer ID 分发签名及公证。
 
 ## 支持的音源语言与格式
 
@@ -24,7 +24,7 @@
 
 通过文件名、录音表和现有别名识别具体录音方式。若已有 oto.ini，则按照原有别名生成时间参数。
 
-**中文音源支持计划在未来加入。韩语 COC、CBNN、CMPX、VCCV 也属于计划功能，V1.0 暂不支持。** 目前中文仅作为界面语言提供。Android / iOS 应用尚处于考虑阶段，V1.0 的发行目标为 Windows x64。
+**中文音源支持计划在未来加入。韩语 COC、CBNN、CMPX、VCCV 也属于计划功能，V1.0 暂不支持。** 目前中文仅作为界面语言提供。Android / iOS 应用尚处于考虑阶段，当前发行目标为 Windows x64 与 macOS Apple Silicon。
 
 ## 主要功能
 
