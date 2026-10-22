@@ -6,7 +6,7 @@
 
 **An automatic oto.ini configuration tool for UTAU voicebanks on Windows and macOS.** OTONova derives phoneme sequences from filenames, recording lists, and existing oto.ini aliases, uses WFL models for forced alignment, and generates timing values with predefined rules.
 
-[Download Windows installer](https://github.com/geujang/OTONova/releases/latest) · [Supported formats and reference lists](SUPPORTED_FORMATS.md) · [Model size reduction](MODEL_COMPRESSION.md) · [Original credits](CREDITS.md) · [V1.0 release notes](RELEASE_NOTES.md)
+[Download Windows installer](https://github.com/geujang/OTONova/releases/tag/v1.0.0) · [Supported formats and reference lists](SUPPORTED_FORMATS.md) · [Model size reduction](MODEL_COMPRESSION.md) · [Original credits](CREDITS.md) · [V1.0 release notes](RELEASE_NOTES.md)
 
 The linked technical documents are currently in Korean.
 
@@ -38,7 +38,7 @@ Recording conventions are detected from filenames, recording lists, and existing
 
 ## Installation and use
 
-1. Download `OTONova-V1.0-Setup.exe` from [Releases](https://github.com/geujang/OTONova/releases/latest).
+1. Download `OTONova-V1.0-Setup.exe` from [Releases](https://github.com/geujang/OTONova/releases/tag/v1.0.0).
 2. Install into a new, empty folder. Python and models are bundled; no separate installation is required. Choose whether to create a desktop shortcut.
 3. Launch `OTONova.exe`, select the voicebank folder, language, and recording format, then select phoneme alignment / oto generation.
 4. Review phoneme boundaries in **stage 1**, then adjust oto timings in **stage 2**.

@@ -6,7 +6,7 @@
 
 **面向 UTAU 音源的 Windows／macOS 自动原音设定工具。** 根据文件名、录音表和现有 oto.ini 别名生成音素序列，使用 WFL 模型进行强制对齐，再按照预设规则生成原音设定参数。
 
-[下载 Windows 安装程序](https://github.com/geujang/OTONova/releases/latest) · [支持格式与参考录音表](SUPPORTED_FORMATS.md) · [模型体积优化方法](MODEL_COMPRESSION.md) · [原作者与鸣谢](CREDITS.md) · [V1.0 发行说明](RELEASE_NOTES.md)
+[下载 Windows 安装程序](https://github.com/geujang/OTONova/releases/tag/v1.0.0) · [支持格式与参考录音表](SUPPORTED_FORMATS.md) · [模型体积优化方法](MODEL_COMPRESSION.md) · [原作者与鸣谢](CREDITS.md) · [V1.0 发行说明](RELEASE_NOTES.md)
 
 链接中的技术文档目前使用韩语编写。
 
@@ -38,7 +38,7 @@
 
 ## 安装与使用
 
-1. 从 [Releases](https://github.com/geujang/OTONova/releases/latest) 下载 `OTONova-V1.0-Setup.exe`。
+1. 从 [Releases](https://github.com/geujang/OTONova/releases/tag/v1.0.0) 下载 `OTONova-V1.0-Setup.exe`。
 2. 安装到一个新的空文件夹。已包含 Python 和模型，无需单独安装。可在安装界面选择是否创建桌面快捷方式。
 3. 运行 `OTONova.exe`，选择音源文件夹、语言与录音格式，再执行音素边界估计／原音设定生成。
 4. 在**第一阶段**检查音素边界，在**第二阶段**调整原音设定参数。

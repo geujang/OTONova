@@ -6,7 +6,7 @@
 
 **UTAU 음원을 위한 Windows·macOS 자동 원설기.** 파일명·녹음 리스트·기존 oto.ini에서 음소열을 만들고, WFL 모델로 경계를 강제 정렬한 뒤 지정 규칙으로 원설을 생성합니다.
 
-[설치 파일 다운로드](https://github.com/geujang/OTONova/releases/latest) · [지원 형식·참고 리스트](SUPPORTED_FORMATS.md) · [모델 용량 절감 방식](MODEL_COMPRESSION.md) · [원본 크레딧](CREDITS.md) · [V1.0 릴리스 노트](RELEASE_NOTES.md)
+[설치 파일 다운로드](https://github.com/geujang/OTONova/releases/tag/v1.0.0) · [지원 형식·참고 리스트](SUPPORTED_FORMATS.md) · [모델 용량 절감 방식](MODEL_COMPRESSION.md) · [원본 크레딧](CREDITS.md) · [V1.0 릴리스 노트](RELEASE_NOTES.md)
 
 ## macOS 정식 지원
 
@@ -34,7 +34,7 @@ Apple Silicon용 [macOS 다운로드](https://github.com/geujang/OTONova/release
 
 ## 설치 및 사용
 
-1. [Releases](https://github.com/geujang/OTONova/releases/latest)에서 `OTONova-V1.0-Setup.exe`를 내려받습니다.
+1. [Releases](https://github.com/geujang/OTONova/releases/tag/v1.0.0)에서 `OTONova-V1.0-Setup.exe`를 내려받습니다.
 2. 비어 있는 새 폴더에 설치합니다. Python과 모델이 포함되어 별도 설치 없이 실행할 수 있습니다. 설치 화면에서 바탕화면 바로가기 생성 여부를 선택할 수 있습니다.
 3. `OTONova.exe` 실행 → 음원 폴더 → 언어와 녹음 형식 → **음소 경계 추정 / 원설 생성**을 선택합니다.
 4. **1단계**에서 음소 경계를 검토하고, **2단계**에서 원설 값을 조정합니다.

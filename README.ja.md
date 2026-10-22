@@ -6,7 +6,7 @@
 
 **UTAU音源向けのWindows・macOS用自動原音設定ツールです。** ファイル名・録音リスト・既存のoto.iniエイリアスから音素列を作成し、WFLモデルで強制アライメントを行い、所定のルールに従って原音設定値を生成します。
 
-[Windowsインストーラー](https://github.com/geujang/OTONova/releases/latest) · [対応形式・参考リスト](SUPPORTED_FORMATS.md) · [モデル容量の削減方法](MODEL_COMPRESSION.md) · [原作者クレジット](CREDITS.md) · [V1.0リリースノート](RELEASE_NOTES.md)
+[Windowsインストーラー](https://github.com/geujang/OTONova/releases/tag/v1.0.0) · [対応形式・参考リスト](SUPPORTED_FORMATS.md) · [モデル容量の削減方法](MODEL_COMPRESSION.md) · [原作者クレジット](CREDITS.md) · [V1.0リリースノート](RELEASE_NOTES.md)
 
 リンク先の技術資料は現在、韓国語で記載されています。
 
@@ -38,7 +38,7 @@ Apple Silicon向けの[macOS版](https://github.com/geujang/OTONova/releases/tag
 
 ## インストールと使い方
 
-1. [Releases](https://github.com/geujang/OTONova/releases/latest)から`OTONova-V1.0-Setup.exe`をダウンロードします。
+1. [Releases](https://github.com/geujang/OTONova/releases/tag/v1.0.0)から`OTONova-V1.0-Setup.exe`をダウンロードします。
 2. 空の新規フォルダーにインストールします。Pythonとモデルが同梱されているため、別途インストールは不要です。デスクトップショートカットの作成も選択できます。
 3. `OTONova.exe`を起動し、音源フォルダー・言語・録音形式を選び、音素境界推定／原音設定生成を実行します。
 4. **第1段階**で音素境界を確認し、**第2段階**で原音設定値を調整します。
