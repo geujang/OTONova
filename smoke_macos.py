@@ -11,6 +11,7 @@ from platform_support import resources,backend_command,workspace
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--app',type=Path);args=parser.parse_args()
+    if args.app:args.app=args.app.resolve()
     with tempfile.TemporaryDirectory() as temporary:
         folder=Path(temporary);wav=folder/'smoke.wav'
         audio=np.zeros(16000,dtype=np.float32);audio[1600:14400]=.1*np.sin(np.arange(12800)*2*np.pi*220/16000)

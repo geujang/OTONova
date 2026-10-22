@@ -1,7 +1,9 @@
 """Local WFL JSON-lines server. Never writes beside the original model or WAV."""
 import os,sys,json,contextlib,traceback
 from pathlib import Path
-root=Path(sys.argv[1]);os.chdir(root);sys.path.insert(0,str(root))
+root=Path(sys.argv[1]).resolve()
+folder_argument=Path(sys.argv[2]).resolve() if len(sys.argv)>2 else None
+os.chdir(root);sys.path.insert(0,str(root))
 os.environ['HF_HUB_OFFLINE']='1'
 os.environ.setdefault('NUMBA_CACHE_DIR',str(Path.home()/'.cache/OTONova/numba'))
 os.environ.setdefault('MPLCONFIGDIR',str(Path.home()/'.cache/OTONova/matplotlib'))
@@ -13,7 +15,7 @@ with contextlib.redirect_stdout(sys.stderr):
     from infer import constrained_decode
     from utils import decode_bio_tags,forced_align_bio
     torch.set_num_threads(min(4,os.cpu_count() or 1))
-    folder=Path(sys.argv[2]) if len(sys.argv)>2 else root/'Archivoice/korean'
+    folder=folder_argument or root/'Archivoice/korean'
     def load_checkpoint(path,weights_only=False):
         import hashlib,io,struct,zlib
         path=Path(path)
