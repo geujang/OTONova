@@ -2,6 +2,8 @@
 
 # OTONova V1.0
 
+**한국어** · [English](README.en.md) · [日本語](README.ja.md) · [简体中文](README.zh-CN.md)
+
 **UTAU 음원을 위한 Windows 자동 원설기.** 파일명·녹음 리스트·기존 oto.ini에서 음소열을 만들고, WFL 모델로 경계를 강제 정렬한 뒤 지정 규칙으로 원설을 생성합니다.
 
 [설치 파일 다운로드](https://github.com/geujang/OTONova/releases/latest) · [지원 형식·참고 리스트](SUPPORTED_FORMATS.md) · [모델 용량 절감 방식](MODEL_COMPRESSION.md) · [원본 크레딧](CREDITS.md) · [V1.0 릴리스 노트](RELEASE_NOTES.md)
