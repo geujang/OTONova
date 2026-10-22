@@ -4,7 +4,7 @@
 
 ## 다운로드와 검증 상태
 
-[OTONova macOS Preview](https://github.com/geujang/OTONova/releases/tag/v1.0.1-macos-preview)에서 ZIP을 내려받아 압축을 푼 뒤 `OTONova.app`을 Applications 폴더로 옮겨 사용합니다. Python과 모델이 앱에 포함됩니다.
+[OTONova macOS Preview](https://github.com/geujang/OTONova/releases/tag/v1.0.1-macos-preview)에서 DMG를 내려받아 열고 `OTONova.app`을 옆의 Applications 폴더로 끌어 옮겨 사용합니다. ZIP 배포본도 제공합니다. Python과 모델이 앱에 포함됩니다.
 
 macOS 15 Apple Silicon CI에서 69개 회귀 검사(Windows 전용 2개 제외), 소스 및 frozen 앱의 영어·일본어·한국어 정렬, GUI 시작·화면 캡처 검사를 통과했습니다. [검증 실행](https://github.com/geujang/OTONova/actions/runs/39790851377), [검증 기록](validation/macos-preview.json).
 
@@ -31,7 +31,7 @@ source .venv/bin/activate
 python build_macos.py
 ```
 
-`dist/OTONova.app`과 CPU 종류가 표시된 ZIP을 만듭니다. Mac용 빌드는 Mac에서 수행해야 합니다. 서명 인증서가 준비되어 있다면 `OTONOVA_CODESIGN_IDENTITY` 환경 변수로 PyInstaller에 전달할 수 있습니다. 초기 실험 빌드는 Apple 배포 인증서 서명·공증을 완료한 정식 배포본과 구분합니다.
+`dist/OTONova.app`과 CPU 종류가 표시된 ZIP 및 DMG를 만듭니다. DMG는 읽기 전용으로 마운트하여 앱의 모든 파일 해시·심볼릭 링크와 코드 서명을 검증합니다. Mac용 빌드는 Mac에서 수행해야 합니다. 서명 인증서가 준비되어 있다면 `OTONOVA_CODESIGN_IDENTITY` 환경 변수로 PyInstaller에 전달할 수 있습니다. 초기 실험 빌드는 Apple 배포 인증서 서명·공증을 완료한 정식 배포본과 구분합니다.
 
 ## 검증
 

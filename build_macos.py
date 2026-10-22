@@ -21,4 +21,6 @@ def main():
     output=ROOT/('dist/OTONova-macOS-'+platform.machine()+'-experimental.zip')
     subprocess.run(['ditto','-c','-k','--sequesterRsrc','--keepParent',str(ROOT/'dist/OTONova.app'),str(output)],check=True)
     print(output)
+    from package_macos_dmg import package
+    package(ROOT/'dist/OTONova.app', output.with_suffix('.dmg'))
 if __name__=='__main__':main()

@@ -44,6 +44,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: OTONova-macOS-arm64-experimental
-          path: dist/OTONova-macOS-*-experimental.zip
+          path: |
+            dist/OTONova-macOS-*-experimental.zip
+            dist/OTONova-macOS-*-experimental.dmg
+            dist/OTONova-macOS-DMG-SHA256SUMS.txt
           if-no-files-found: error
           retention-days: 1
