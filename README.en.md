@@ -14,14 +14,14 @@ The linked technical documents are currently in Korean.
 
 ## Official macOS support
 
-A [macOS build for Apple Silicon](https://github.com/geujang/OTONova/releases/tag/v1.0.0) is available. Native app builds, alignment with the three language models, and GUI startup checks passed on Mac. Windows x64 and macOS Apple Silicon are officially supported. Windows and Mac downloads are provided together in the V1.0 release. Intel Macs are unsupported. See [MACOS.md](MACOS.md) for instructions and validation limits. Apple Developer ID distribution signing and notarization have not been applied.
+A [macOS build for Apple Silicon](https://github.com/geujang/OTONova/releases/tag/v1.0.0) is available. Native app builds, alignment with the three language models, and GUI startup checks passed on Mac. Windows x64 and macOS Apple Silicon are officially supported. The current Windows installer is V1.5; the macOS DMG remains V1.0. The V1.5 changes apply to the Windows installer. A macOS V1.5 DMG has not been released. Intel Macs are unsupported. See [MACOS.md](MACOS.md) for instructions and validation limits. Apple Developer ID distribution signing and notarization have not been applied.
 
 ## Supported voicebank languages and formats
 
 | Language | Formats |
 |---|---|
 | Japanese | CV, CVVC, VCV |
-| Korean | CV, CVVC, CVC, VCV |
+| Korean | CV, CVVC, CVC, VCV, COC, CBNN, CMPX |
 | English | ARPAsing, CVVC (DELTA / Salem), VCCV (PaintedCz CORE) |
 
 Recording conventions are detected from filenames, recording lists, and existing aliases. When an oto.ini exists, timing values are configured using its aliases.
@@ -29,6 +29,14 @@ Recording conventions are detected from filenames, recording lists, and existing
 **Chinese voicebank support is planned. Korean COC, CBNN and CMPX have been added to the development source using the CVVC timing rules; they are included in the Windows V1.5 installer. ~~Planned Korean VCCV~~ — reclist unverified (original list deleted).** Chinese is currently available only as a UI language. Android and iOS support is planned; current distributions target Windows x64 and macOS Apple Silicon.
 
 ## Features
+
+- Save and open `.otonova` projects to restore boundaries and oto timings without running alignment again.
+- Restore legacy label caches. Existing `oto.ini` aliases and timing values open in stage 2.
+- Prepare waveform, energy and spectrogram data in the background and reuse cached data. Confirm reloads when WAV or OTO files change externally.
+- Right-click a WAV in the file list → automatic oto generation to process only that file while preserving the others.
+- Korean post-consonant glides no longer receive separate labels: `k y a → k a`, `s w a → s a`; alias spellings are retained.
+- Bright pastel pink phoneme boundaries; Actions, Settings and Help menus at the top right.
+- Help includes update checking, credits and feedback. Feedback is posted to a Discord forum; messages and optional contact details are visible to server members with channel access.
 
 - WFL phoneme alignment and rule-based oto.ini generation.
 - Two editing stages: phoneme boundaries first, oto timings second. Boundary edits immediately recalculate oto timings.
@@ -40,11 +48,11 @@ Recording conventions are detected from filenames, recording lists, and existing
 
 ## Installation and use
 
-1. Download `OTONova-V1.0-Setup.exe` from [Releases](https://github.com/geujang/OTONova/releases/tag/v1.0.0).
-2. Install into a new, empty folder. Python and models are bundled; no separate installation is required. Choose whether to create a desktop shortcut.
-3. Launch `OTONova.exe`, select the voicebank folder, language, and recording format, then select phoneme alignment / oto generation.
-4. Review phoneme boundaries in **stage 1**, then adjust oto timings in **stage 2**.
-5. Boundary edits are stored in the boundary cache; stage 2 timing edits are written to oto.ini. The existing oto.ini is backed up on the first save of an editing session.
+1. Download `OTONova-V1.5-Setup.exe` from the [V1.5 release](https://github.com/geujang/OTONova/releases/tag/v1.5.0) and install into a new, empty folder. Python and models are bundled.
+2. Launch `OTONova.exe` and select the voicebank folder. Visual data, existing OTO entries and valid label caches load automatically. Existing OTO entries open in stage 2.
+3. For new alignment, select **Actions → automatic oto generation**, then choose **language → format** and confirm. Right-click a WAV in the file list to process just that file.
+4. Edit phoneme boundaries in **stage 1** and oto timings in **stage 2**. Projects retain both. To apply the new Korean glide rule to an old cache, run automatic oto generation again for that WAV.
+5. Open/save projects and save `oto.ini` from **Actions**; existing OTO files are backed up. Preferences are in **Settings**, and credits are in **Help**.
 
 English VCCV recognizes WAV files and oto.ini in CORE subfolders. Aliases are generated and deduplicated only when no existing oto is available. Listen to the recordings and review automatic boundaries. The first analysis can take longer while models and analysis code initialize.
 

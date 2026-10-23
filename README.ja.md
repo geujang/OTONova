@@ -8,20 +8,20 @@
 
 **UTAU音源向けのWindows・macOS用自動原音設定ツールです。** ファイル名・録音リスト・既存のoto.iniエイリアスから音素列を作成し、WFLモデルで強制アライメントを行い、所定のルールに従って原音設定値を生成します。
 
-[Windowsインストーラー](https://github.com/geujang/OTONova/releases/tag/v1.5.0) · [対応形式・参考リスト](SUPPORTED_FORMATS.md) · [モデル容量の削減方法](MODEL_COMPRESSION.md) · [原作者クレジット](CREDITS.md) · [V1.0リリースノート](RELEASE_NOTES.md)
+[Windowsインストーラー](https://github.com/geujang/OTONova/releases/tag/v1.5.0) · [対応形式・参考リスト](SUPPORTED_FORMATS.md) · [モデル容量の削減方法](MODEL_COMPRESSION.md) · [原作者クレジット](CREDITS.md) · [V1.5リリースノート](RELEASE_NOTES.md)
 
 リンク先の技術資料は現在、韓国語で記載されています。
 
 ## macOS正式対応
 
-Apple Silicon向けの[macOS版](https://github.com/geujang/OTONova/releases/tag/v1.0.0)を公開しています。Mac上でのアプリビルド、3言語モデルによるアライメント、GUI起動の検査を通過しています。Windows x64とmacOS Apple Siliconに正式対応しています。Windows版とMac版は同じV1.0リリースで配布しています。Intel Macには対応していません。実行方法と検証範囲は[MACOS.md](MACOS.md)をご覧ください。Apple Developer IDによる配布署名・公証は未実施です。
+Apple Silicon向けの[macOS版](https://github.com/geujang/OTONova/releases/tag/v1.0.0)を公開しています。Mac上でのアプリビルド、3言語モデルによるアライメント、GUI起動の検査を通過しています。Windows x64とmacOS Apple Siliconに正式対応しています。現在のWindows版はV1.5、macOS DMGはV1.0です。V1.5の変更はWindows版に適用され、macOS V1.5 DMGは未公開です。Intel Macには対応していません。実行方法と検証範囲は[MACOS.md](MACOS.md)をご覧ください。Apple Developer IDによる配布署名・公証は未実施です。
 
 ## 対応言語・音源形式
 
 | 音源言語 | 対応形式 |
 |---|---|
 | 日本語 | CV（単独音）、CVVC、VCV（連続音） |
-| 韓国語 | CV（単独音）、CVVC、CVC、VCV |
+| 韓国語 | CV（単独音）、CVVC、CVC、VCV、COC、CBNN、CMPX |
 | 英語 | ARPAsing、CVVC（DELTA / Salem）、VCCV（PaintedCz CORE） |
 
 ファイル名・録音リスト・既存エイリアスから録音方式を判別します。既存のoto.iniがある場合は、そのエイリアスを基準に設定値を生成します。
@@ -29,6 +29,14 @@ Apple Silicon向けの[macOS版](https://github.com/geujang/OTONova/releases/tag
 **中国語音源への対応は今後追加予定です。韓国語COC・CBNN・CMPXはCVVCの原音設定ルールを利用して開発ソースに追加しました。Windows V1.5インストーラーに収録しています。~~韓国語VCCV対応予定~~ — リスト未確認（元のリストが削除されたため）。** 現在、中国語はUI表示言語としてのみ提供しています。Android / iOSへの対応も今後追加予定で、現在の配布対象はWindows x64とmacOS Apple Siliconです。
 
 ## 主な機能
+
+- `.otonova`プロジェクトを保存・復元し、再アライメントせずに音素境界と原音設定値を開けます。
+- 旧バージョンのラベルキャッシュを復元。既存のoto.iniのエイリアスと時間値を第2段階に表示します。
+- 波形・エネルギー・スペクトログラムをバックグラウンドで準備し、キャッシュを再利用。WAV・OTOの外部変更時は再読込を確認します。
+- WAV一覧でファイルを右クリックして自動原音設定を実行すると、そのファイルだけを処理し、他のファイルの設定を保持します。
+- 韓国語の子音直後の半母音を独立ラベルにしません：`k y a → k a`、`s w a → s a`。エイリアス表記は保持します。
+- 音素境界は明るいパステルピンク。右上に操作・設定・ヘルプメニューを配置しました。
+- ヘルプから更新確認・クレジット・フィードバックを利用できます。フィードバックはDiscordフォーラムへ投稿され、本文と任意の連絡先はチャンネル閲覧権限を持つメンバーに公開されます。
 
 - WFLモデルによる音素境界推定と、ルールに基づくoto.ini生成。
 - 第1段階で音素境界、第2段階で原音設定を編集。境界の変更時に原音設定を即時再計算。
@@ -40,11 +48,11 @@ Apple Silicon向けの[macOS版](https://github.com/geujang/OTONova/releases/tag
 
 ## インストールと使い方
 
-1. [Releases](https://github.com/geujang/OTONova/releases/tag/v1.0.0)から`OTONova-V1.0-Setup.exe`をダウンロードします。
-2. 空の新規フォルダーにインストールします。Pythonとモデルが同梱されているため、別途インストールは不要です。デスクトップショートカットの作成も選択できます。
-3. `OTONova.exe`を起動し、音源フォルダー・言語・録音形式を選び、音素境界推定／原音設定生成を実行します。
-4. **第1段階**で音素境界を確認し、**第2段階**で原音設定値を調整します。
-5. 音素境界の編集は境界キャッシュに保存され、第2段階の編集はoto.iniに反映されます。編集セッションの初回保存時に既存のoto.iniをバックアップします。
+1. [V1.5リリース](https://github.com/geujang/OTONova/releases/tag/v1.5.0)から`OTONova-V1.5-Setup.exe`をダウンロードし、空の新規フォルダーにインストールします。Pythonとモデルを同梱しています。
+2. `OTONova.exe`で音源フォルダーを選択します。表示データ・既存OTO・有効な旧ラベルキャッシュを読み込みます。既存OTOは第2段階で表示します。
+3. 新しく推定する場合は右上の**操作 → 自動原音設定**から、**言語 → 形式**を選んで確認します。WAV一覧の右クリックでは単一ファイルだけを処理できます。
+4. **第1段階**で音素境界、**第2段階**で原音設定値を編集します。両方がプロジェクトに保存されます。旧キャッシュへ韓国語の新しい半母音ルールを適用する場合は、そのWAVの自動原音設定を再実行してください。
+5. **操作**でプロジェクトの保存・読込とoto.ini保存を行います。既存OTOはバックアップします。環境設定は**設定**、クレジットは**ヘルプ**にあります。
 
 英語VCCVでは、COREのサブフォルダー内にあるWAVとoto.iniを認識します。既存のotoがない場合のみエイリアスを自動生成し、重複を除去します。自動推定後は試聴と境界の確認をおすすめします。初回解析はモデルの読み込みと解析コードの初期化に時間がかかる場合があります。
 

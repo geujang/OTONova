@@ -8,20 +8,20 @@
 
 **面向 UTAU 音源的 Windows／macOS 自动原音设定工具。** 根据文件名、录音表和现有 oto.ini 别名生成音素序列，使用 WFL 模型进行强制对齐，再按照预设规则生成原音设定参数。
 
-[下载 Windows 安装程序](https://github.com/geujang/OTONova/releases/tag/v1.5.0) · [支持格式与参考录音表](SUPPORTED_FORMATS.md) · [模型体积优化方法](MODEL_COMPRESSION.md) · [原作者与鸣谢](CREDITS.md) · [V1.0 发行说明](RELEASE_NOTES.md)
+[下载 Windows 安装程序](https://github.com/geujang/OTONova/releases/tag/v1.5.0) · [支持格式与参考录音表](SUPPORTED_FORMATS.md) · [模型体积优化方法](MODEL_COMPRESSION.md) · [原作者与鸣谢](CREDITS.md) · [V1.5 发行说明](RELEASE_NOTES.md)
 
 链接中的技术文档目前使用韩语编写。
 
 ## 正式支持 macOS
 
-提供适用于 Apple Silicon 的 [macOS 版本](https://github.com/geujang/OTONova/releases/tag/v1.0.0)。已在 Mac 环境中通过原生应用构建、三种语言模型的音素对齐和 GUI 启动检查。正式支持 Windows x64 与 macOS Apple Silicon。Windows 与 Mac 版本在同一个 V1.0 发行页面提供。不支持 Intel Mac。使用方法与验证范围见 [MACOS.md](MACOS.md)。目前尚未进行 Apple Developer ID 分发签名及公证。
+提供适用于 Apple Silicon 的 [macOS 版本](https://github.com/geujang/OTONova/releases/tag/v1.0.0)。已在 Mac 环境中通过原生应用构建、三种语言模型的音素对齐和 GUI 启动检查。正式支持 Windows x64 与 macOS Apple Silicon。当前 Windows 安装程序为 V1.5，macOS DMG 仍为 V1.0。V1.5 更新适用于 Windows 安装程序，尚未发布 macOS V1.5 DMG。不支持 Intel Mac。使用方法与验证范围见 [MACOS.md](MACOS.md)。目前尚未进行 Apple Developer ID 分发签名及公证。
 
 ## 支持的音源语言与格式
 
 | 音源语言 | 支持格式 |
 |---|---|
 | 日语 | CV（单独音）、CVVC、VCV（连续音） |
-| 韩语 | CV（单独音）、CVVC、CVC、VCV |
+| 韩语 | CV（单独音）、CVVC、CVC、VCV、COC、CBNN、CMPX |
 | 英语 | ARPAsing、CVVC（DELTA / Salem）、VCCV（PaintedCz CORE） |
 
 通过文件名、录音表和现有别名识别具体录音方式。若已有 oto.ini，则按照原有别名生成时间参数。
@@ -29,6 +29,14 @@
 **中文音源支持计划在未来加入。韩语 COC、CBNN、CMPX 已使用 CVVC 时间规则加入开发源码，已包含在 Windows V1.5 安装程序中。~~计划支持韩语 VCCV~~ — 录音表未确认（原表已删除）。** 目前中文仅作为界面语言提供。计划在未来支持 Android / iOS，当前发行目标为 Windows x64 与 macOS Apple Silicon。
 
 ## 主要功能
+
+- 保存和打开 `.otonova` 项目，直接恢复音素边界与原音设定参数，无需重新对齐。
+- 恢复旧版标签缓存；在第二阶段显示现有 oto.ini 的别名与时间参数。
+- 后台准备波形、能量及声谱图并复用缓存；WAV 或 OTO 在外部变更时询问是否重新加载。
+- 在 WAV 列表中右键选择自动原音设定，只处理该文件，保留其他文件的边界与参数。
+- 韩语子音后的半母音不再独立标注：`k y a → k a`、`s w a → s a`，保留原别名。
+- 音素边界改为明亮的柔粉色，操作、设置和帮助菜单位于右上角。
+- 帮助中提供更新检查、鸣谢及反馈。反馈发布至 Discord 论坛，内容与可选联系方式对拥有频道访问权限的服务器成员可见。
 
 - 基于 WFL 模型估计音素边界，并按规则生成 oto.ini。
 - 分两阶段编辑：第一阶段调整音素边界，第二阶段调整原音设定。修改边界后立即重新计算原音设定参数。
@@ -40,11 +48,11 @@
 
 ## 安装与使用
 
-1. 从 [Releases](https://github.com/geujang/OTONova/releases/tag/v1.0.0) 下载 `OTONova-V1.0-Setup.exe`。
-2. 安装到一个新的空文件夹。已包含 Python 和模型，无需单独安装。可在安装界面选择是否创建桌面快捷方式。
-3. 运行 `OTONova.exe`，选择音源文件夹、语言与录音格式，再执行音素边界估计／原音设定生成。
-4. 在**第一阶段**检查音素边界，在**第二阶段**调整原音设定参数。
-5. 音素边界修改保存到边界缓存，第二阶段的修改写入 oto.ini。每次编辑会话首次保存时会备份原有 oto.ini。
+1. 从 [V1.5 发行页面](https://github.com/geujang/OTONova/releases/tag/v1.5.0) 下载 `OTONova-V1.5-Setup.exe`，安装至新的空文件夹。已包含 Python 和模型。
+2. 启动 `OTONova.exe` 并选择音源文件夹，自动加载可视化数据、现有 OTO 及有效的旧标签缓存。现有 OTO 在第二阶段显示。
+3. 需要重新估计时，点击右上角**操作 → 自动原音设定**，依次选择**语言 → 格式**并确认。在 WAV 列表右键可仅处理单个文件。
+4. 在**第一阶段**编辑音素边界，在**第二阶段**编辑原音设定参数，项目保存两者。若要对旧缓存应用新的韩语半母音规则，请重新处理该 WAV。
+5. 在**操作**菜单打开／保存项目和保存 oto.ini；原有 OTO 会备份。偏好设置位于**设置**，鸣谢位于**帮助**。
 
 英语 VCCV 可识别 CORE 子文件夹中的 WAV 和 oto.ini。仅在没有现有 oto 时自动生成别名并去重。建议试听并检查自动估计的边界。首次分析可能因模型加载和分析代码初始化而耗时较长。
 
