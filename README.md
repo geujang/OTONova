@@ -20,7 +20,7 @@ Apple Silicon용 [macOS 다운로드](https://github.com/geujang/OTONova/release
 | 한국어 | CV(단독음), CVVC, CVC, VCV |
 | 영어 | ARPAsing, CVVC(DELTA / Salem), VCCV(PaintedCz CORE) |
 
-세부 녹음 방식은 파일명·녹음 리스트·기존 에일리어스에서 인식합니다. 기존 oto.ini가 있으면 해당 에일리어스를 기준으로 시간 값을 설정합니다. **중국어 음원 지원은 향후 추가할 예정입니다. 한국어 COC·CBNN·CMPX·VCCV도 추가 예정이며, V1.0의 현재 지원 형식에는 포함되지 않습니다.** 현재 중국어는 UI 표시 언어로만 제공됩니다. Android / iOS 지원은 추가 예정이며 현재 배포 대상은 Windows x64와 macOS Apple Silicon입니다.
+세부 녹음 방식은 파일명·녹음 리스트·기존 에일리어스에서 인식합니다. 기존 oto.ini가 있으면 해당 에일리어스를 기준으로 시간 값을 설정합니다. **중국어 음원 지원은 향후 추가할 예정입니다. COC·CBNN·CMPX는 개발 소스에 추가되었으며 기존 CVVC 규칙으로 처리합니다. 공개 V1.0 설치 파일에는 아직 포함되지 않습니다. ~~한국어 VCCV 추가 예정~~ — 리스트 미확인(원본 리스트 삭제).** 현재 중국어는 UI 표시 언어로만 제공됩니다. Android / iOS 지원은 추가 예정이며 현재 배포 대상은 Windows x64와 macOS Apple Silicon입니다.
 
 ## 주요 기능
 

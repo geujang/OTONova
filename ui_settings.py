@@ -25,6 +25,9 @@ _ROWS = """
 연속음|連続音|VCV|连续音
 일본어|日本語|Japanese|日语
 한국어|韓国語|Korean|韩语
+한국어 COC|韓国語 COC|Korean COC|韩语 COC
+한국어 CBNN|韓国語 CBNN|Korean CBNN|韩语 CBNN
+한국어 CMPX|韓国語 CMPX|Korean CMPX|韩语 CMPX
 영어|英語|English|英语
 자동 원설기|自動原音設定ツール|Automatic oto editor|自动原音设定工具
 자동 원설|自動原音設定|Automatic oto configuration|自动原音设定

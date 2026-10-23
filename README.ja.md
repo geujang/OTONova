@@ -24,7 +24,7 @@ Apple Silicon向けの[macOS版](https://github.com/geujang/OTONova/releases/tag
 
 ファイル名・録音リスト・既存エイリアスから録音方式を判別します。既存のoto.iniがある場合は、そのエイリアスを基準に設定値を生成します。
 
-**中国語音源への対応は今後追加予定です。韓国語のCOC・CBNN・CMPX・VCCVも追加予定で、V1.0では未対応です。** 現在、中国語はUI表示言語としてのみ提供しています。Android / iOSへの対応も今後追加予定で、現在の配布対象はWindows x64とmacOS Apple Siliconです。
+**中国語音源への対応は今後追加予定です。韓国語COC・CBNN・CMPXはCVVCの原音設定ルールを利用して開発ソースに追加しました。公開済みV1.0インストーラーには未収録です。~~韓国語VCCV対応予定~~ — リスト未確認（元のリストが削除されたため）。** 現在、中国語はUI表示言語としてのみ提供しています。Android / iOSへの対応も今後追加予定で、現在の配布対象はWindows x64とmacOS Apple Siliconです。
 
 ## 主な機能
 

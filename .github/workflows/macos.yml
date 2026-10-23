@@ -30,7 +30,7 @@ jobs:
       - name: Extract verified platform-independent models
         run: python prepare_macos_models.py
       - name: Regression tests
-        run: python -B -m unittest test_platform_support test_audio_review test_audio_playback test_ui_settings test_stages test_detection test_english_vccv test_english_cvvc test_arpasing test_formats test_korean test_installer_shortcut
+        run: python -B -m unittest test_platform_support test_audio_review test_audio_playback test_ui_settings test_stages test_detection test_english_vccv test_english_cvvc test_arpasing test_formats test_korean test_korean_combined test_installer_shortcut
       - name: Source model smoke test
         run: python smoke_macos.py
       - name: Build native app

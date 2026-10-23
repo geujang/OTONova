@@ -24,6 +24,9 @@ def is_korean(mode):
 
 # Public choices describe the recording structure; named profiles remain internal.
 PUBLIC_FORMATS = {
+    'ko_coc': ('한국어 COC', 'ko', 'coc'),
+    'ko_cbnn': ('한국어 CBNN', 'ko', 'cbnn'),
+    'ko_cmpx': ('한국어 CMPX', 'ko', 'cmpx'),
     'ko_auto_cvvc': ('한국어 CVVC', 'ko', 'cvvc'),
     'ko_auto_cvc': ('한국어 CVC', 'ko', 'cvc'),
     'ko_auto_vcv': ('한국어 VCV', 'ko', 'vcv'),

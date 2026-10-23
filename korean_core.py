@@ -191,7 +191,7 @@ class KoreanEngine:
             position+=len(chunk)
         record['onset_indices']=onset_indices
         record.update(metadata)
-        record['label_warnings']=final.get('alignment_warnings',[])
+        record['label_warnings']=list(dict.fromkeys(metadata.get('label_warnings',[])+final.get('alignment_warnings',[])))
         record['alignment_sources']=final.get('alignment_sources',{})
         cache.parent.mkdir(parents=True,exist_ok=True)
         atomic_write(cache,json.dumps(record,ensure_ascii=False,indent=2).encode('utf-8'))

@@ -6,7 +6,7 @@ from format_detection import resolve_mode,fingerprint
 
 class DetectionTests(unittest.TestCase):
     def test_public_choices(self):
-        self.assertEqual(len(PUBLIC_FORMATS),10)
+        self.assertEqual(len(PUBLIC_FORMATS),13)
         self.assertFalse(any('식' in v[0].replace('리스트 인식','') for v in PUBLIC_FORMATS.values()))
         self.assertEqual(public_mode('ko_cvc_binbin'),'ko_auto_cvc')
 

@@ -311,6 +311,14 @@ def recalculate_file(report, record, indices=None):
     for index in indices:
         row=report['entries'][index]
         if row['wav'].replace('\\','/').casefold() == record['wav'].replace('\\','/').casefold():
+            if row.get('combined_alias'):
+                from korean_combined import make_alias
+                replacement=make_alias(row['combined_alias'],record)
+                if replacement is not None:
+                    replacement.update(source_index=row['source_index'])
+                    if row.get('preserve_alias'):replacement.update(alias=row['alias'],preserve_alias=True)
+                    report['entries'][index]=replacement
+                changed.append(index);continue
             if row.get('derived_profile') and row.get('entry_kind')=='start_consonant':
                 span=record['intervals'][row['phone_indices'][0]];cut=two_thirds(span)
                 replacement=make_entry(row['wav'],row['alias'],span[0]-.3,span[0],span[0],cut-.07,cut,record['duration'],[row['mapping_warning']],fixed_lead=.07,allow_negative_overlap=True)

@@ -42,7 +42,7 @@ def resolve_mode(folder,mode,template=None):
     aliases={fingerprint(r['alias']) for r in (template or [])}
     ranked=[]
     for profile,data in signatures.items():
-        if FORMATS[profile][2]!=kind:continue
+        if FORMATS[profile][2]!=kind and not (kind=='cvvc' and profile in {'ko_coc','ko_cbnn','ko_cmpx'}):continue
         known=set(data['stems']);matches=sum(bool(v&known) for v in observed)
         list_matches=len(list_hashes&known)
         alias_matches=len(aliases&set(data['aliases']))

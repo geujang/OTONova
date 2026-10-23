@@ -112,3 +112,11 @@ https://utau.felinewasteland.com/en/full_ga
 ## 가나 변환표
 
 `kana2phonemes.table`은 [ENUNU](https://github.com/oatsu-gh/ENUNU)의 가나 변환표를 바탕으로 사용합니다. [pyshiro](https://github.com/wavtechyukky/pyshiro)의 ENUNU 기반 표를 참고했으며, 현재 음향 추정에는 SHIRO 모델을 사용하지 않습니다. 원본 GPLv3 전문은 `KANA-TABLE-LICENSE.txt`에 보존합니다. 이 자료의 권리를 OTONova 자체 코드나 모델의 권리와 동일하게 취급하지 않습니다.
+
+## 한국어 COC · CBNN · CMPX
+
+- COC: 사용자가 제공한 `COC Reclist.zip`의 기본·특수음소 제외 리스트와 기본 oto의 파일명·에일리어스 관계를 참고했습니다. 압축파일에 제작자 표기가 없어 임의로 추정하지 않았습니다.
+- CBNN: [EX3exp / UTAU-Korean-CBNN](https://github.com/EX3exp/UTAU-Korean-CBNN). 원본 BSD-3-Clause 전문을 `assets/CBNN-LICENSE.txt`에 보존합니다. 전체 기본 oto의 숫자 접미사를 유지합니다.
+- CMPX: [2xxbin / UTAU-Korean-CMPX](https://github.com/2xxbin/UTAU-Korean-CMPX). main, option_consonant, option_sepcial, option_vowel의 파일명·에일리어스 관계를 참고했습니다.
+- CMPX 원본은 리스트 재배포를 금지하므로 원본 녹음 리스트와 원문 파일명은 배포하지 않습니다. 목록 인식용 SHA-256 지문과 원설 대응용 음소 별칭 관계만 압축 카탈로그로 포함하며, 원본 시간값·가이드 BGM·음원·포네마이저 코드는 포함하지 않습니다. 원설 계산은 기존 CVVC 규칙을 사용한 독립 구현입니다.
+- 모델이 구분하지 못하는 특수 발음은 기존 치환 또는 근사 음소를 사용하고 경고를 표시합니다. 실제 녹음에 대한 발음 정확도는 청음 검토가 필요합니다.

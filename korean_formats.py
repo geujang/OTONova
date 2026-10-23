@@ -8,6 +8,9 @@ TOKENS=sorted(set(['gg','dd','bb','kk','tt','pp','jj','ss','ch','th','dh','ts','
                   'eo','eu','ae','oe','ui','eui','er','@r','l']+list('aiueogndrm bsjktphfvzwy'.replace(' ',''))),key=len,reverse=True)
 
 def transcribe(stem,mode):
+    if mode in {'ko_coc','ko_cbnn','ko_cmpx'}:
+        from korean_combined import transcribe as combined
+        return combined(stem,mode)
     from korean_core import PHONE_SUBSTITUTIONS,legacy_filename_phones
     text=unicodedata.normalize('NFC',stem)
     if text in ['R','息']:
@@ -70,6 +73,9 @@ def transcribe(stem,mode):
     return model,source,roles
 
 def make_record_metadata(stem,mode):
+    if mode in {'ko_coc','ko_cbnn','ko_cmpx'}:
+        from korean_combined import metadata
+        return metadata(stem,mode)
     phones,source,roles=transcribe(stem,mode)
     return {'phones':phones,'source_phones':source,'phone_roles':roles,
             'onset_indices':[i for i,r in enumerate(roles) if r=='onset'],
@@ -77,6 +83,9 @@ def make_record_metadata(stem,mode):
 
 
 def create_oto(record,mode):
+    if mode in {'ko_coc','ko_cbnn','ko_cmpx'}:
+        from korean_combined import create_oto as combined
+        return combined(record,mode)
     from formats import FORMATS
     from vcv_core import make_entry,two_thirds
     kind=FORMATS[mode][2]
@@ -269,6 +278,14 @@ def match_template(template,generated,durations,records,mode):
         sound=original['alias'].strip()
         if row.get('alias_prefix') and sound.startswith(row['alias_prefix']):sound=sound[len(row['alias_prefix']):]
         if row.get('alias_suffix') and sound.endswith(row['alias_suffix']):sound=sound[:-len(row['alias_suffix'])]
+        if mode in {'ko_coc','ko_cbnn','ko_cmpx'}:
+            from korean_combined import make_alias
+            try:replacement=make_alias(sound,record)
+            except ValueError:replacement=None
+            if replacement is not None:
+                replacement.update(wav=original['wav'],alias=original['alias'],preserve_alias=True,source_index=-1)
+                row.clear();row.update(replacement)
+            continue
         parts=sound.split()
         replacement=None;note=None
         # Long vowels / self-VV aliases use the sustained vowel that is recorded.

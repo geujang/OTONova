@@ -24,7 +24,11 @@ Python과 영어·일본어·한국어 모델이 포함됩니다. / Python and t
 - WFL 음소 정렬, 기존 oto.ini 에일리어스 보존, 규칙 기반 자동 원설 / WFL alignment, existing alias preservation and rule-based oto generation.
 - 2단계 편집, 구간 재생, RMS 에너지, 15 kHz 스펙트로그램 / Two-stage editing, interval playback, RMS energy and spectrograms up to 15 kHz.
 
-**중국어 음원과 한국어 COC·CBNN·CMPX·VCCV는 추가 예정이며 현재 지원하지 않습니다.** / **Chinese voicebanks and Korean COC, CBNN, CMPX and VCCV are planned, not currently supported.**
+**중국어 음원 지원 예정 / Chinese voicebank support is planned.**
+
+COC·CBNN·CMPX는 개발 소스에 추가되었습니다. 이 V1.0 설치 파일에는 아직 포함되지 않습니다. / COC, CBNN and CMPX have been added to the development source, but are not yet included in these V1.0 installers.
+
+~~한국어 VCCV 추가 예정 / Planned Korean VCCV~~ — **리스트 미확인 / Reclist unverified** (원본 리스트 삭제 / original list deleted).
 
 **Android·iOS 지원은 추가 예정입니다. 현재 모바일 버전은 제공하지 않습니다.** / **Android and iOS support is planned; mobile versions are not available yet.**
 
