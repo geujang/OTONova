@@ -1,12 +1,12 @@
 """User-facing translations and persistent OtoNova appearance preferences."""
+
 import weakref
-from PySide6.QtCore import QSettings
 from PySide6.QtWidgets import QLabel, QPushButton
 
-LANGUAGES = {'ko': '한국어', 'ja': '日本語', 'en': 'English', 'zh': '简体中文'}
-language = 'ko'
-theme = 'dark'
-spectrum_palette = 'classic'
+LANGUAGES = {"ko": "한국어", "ja": "日本語", "en": "English", "zh": "简体中文"}
+language = "ko"
+theme = "dark"
+spectrum_palette = "classic"
 _sources = {}
 # Source Korean, Japanese, English, simplified Chinese. Never applied to audio data.
 _ROWS = """
@@ -164,57 +164,105 @@ Discord 피드백 포럼에 게시했습니다.|Discordのフィードバック�
 연락처는 100자 이하로 입력해주세요.|連絡先は100文字以内で入力してください。|Keep contact details within 100 characters.|联系方式请勿超过 100 个字符。
 """
 
-TRANSLATIONS = {r.split('|')[0]: r.split('|')[1:] for r in _ROWS.strip().splitlines() if r.strip()}
+TRANSLATIONS = {
+    r.split("|")[0]: r.split("|")[1:] for r in _ROWS.strip().splitlines() if r.strip()
+}
+
 
 def translate(text):
     text = str(text)
-    if language == 'ko': return text
-    column = {'ja':0, 'en':1, 'zh':2}[language]
-    if text in TRANSLATIONS: return TRANSLATIONS[text][column]
+    if language == "ko":
+        return text
+    column = {"ja": 0, "en": 1, "zh": 2}[language]
+    if text in TRANSLATIONS:
+        return TRANSLATIONS[text][column]
     # Only UI prose reaches this function; audio aliases and paths stay untouched.
     for source in sorted(TRANSLATIONS, key=len, reverse=True):
-        if len(source) >= 2: text = text.replace(source, TRANSLATIONS[source][column])
+        if len(source) >= 2:
+            text = text.replace(source, TRANSLATIONS[source][column])
     return text
 
+
 def _remember(widget, method, source):
-    key=id(widget)
-    _sources[key]=(weakref.ref(widget, lambda ref: _sources.pop(key,None)),method,source)
+    key = id(widget)
+    _sources[key] = (
+        weakref.ref(widget, lambda ref: _sources.pop(key, None)),
+        method,
+        source,
+    )
+
 
 def append_log(widget, source):
-    existing=getattr(widget,'_ui_log_source',[])
+    existing = getattr(widget, "_ui_log_source", [])
     existing.append(str(source))
-    widget._ui_log_source=existing
-    _remember(widget,'setPlainText','\n'.join(existing))
+    widget._ui_log_source = existing
+    _remember(widget, "setPlainText", "\n".join(existing))
     widget.appendPlainText(translate(source))
 
+
 def set_text(widget, source):
-    _remember(widget, 'setText', source)
+    _remember(widget, "setText", source)
     widget.setText(translate(source))
 
+
 def set_title(widget, source):
-    _remember(widget, 'setWindowTitle', source)
+    _remember(widget, "setWindowTitle", source)
     widget.setWindowTitle(translate(source))
 
-def label(source='', *args):
-    widget = QLabel(*args); set_text(widget, source); return widget
 
-def button(source='', *args):
-    widget = QPushButton(*args); set_text(widget, source); return widget
+def label(source="", *args):
+    widget = QLabel(*args)
+    set_text(widget, source)
+    return widget
+
+
+def button(source="", *args):
+    widget = QPushButton(*args)
+    set_text(widget, source)
+    return widget
+
 
 def refresh():
     for ref, method, source in list(_sources.values()):
-        widget=ref()
-        if widget is None:continue
-        try: getattr(widget, method)(translate(source))
-        except RuntimeError: pass  # Dialog already destroyed by Qt.
+        widget = ref()
+        if widget is None:
+            continue
+        try:
+            getattr(widget, method)(translate(source))
+        except RuntimeError:
+            pass  # Dialog already destroyed by Qt.
+
 
 def colors():
-    if theme == 'light':
-        return dict(bg='#faf6ff',panel='#ffffff',raised='#eee2fa',text='#32194c',muted='#715a85',border='#d7bde9',accent='#8030bd',hover='#e2c9fa',warning='#935200',wave='#8545bc')
-    return dict(bg='#191126',panel='#231832',raised='#342046',text='#f4eafa',muted='#bd9dce',border='#56316d',accent='#a05aeb',hover='#623584',warning='#ffd180',wave='#d29afd')
+    if theme == "light":
+        return dict(
+            bg="#faf6ff",
+            panel="#ffffff",
+            raised="#eee2fa",
+            text="#32194c",
+            muted="#715a85",
+            border="#d7bde9",
+            accent="#8030bd",
+            hover="#e2c9fa",
+            warning="#935200",
+            wave="#8545bc",
+        )
+    return dict(
+        bg="#191126",
+        panel="#231832",
+        raised="#342046",
+        text="#f4eafa",
+        muted="#bd9dce",
+        border="#56316d",
+        accent="#a05aeb",
+        hover="#623584",
+        warning="#ffd180",
+        wave="#d29afd",
+    )
+
 
 def stylesheet():
-    c=colors()
+    c = colors()
     return f"""QWidget {{background:{c['bg']}; color:{c['text']}; font-size:13px;}}
     QPushButton {{background:{c['raised']}; border:1px solid {c['border']}; padding:8px 12px; border-radius:6px;}}
     QPushButton:hover {{background:{c['hover']}; border-color:#c17df0;}}
@@ -228,26 +276,45 @@ def stylesheet():
     QToolTip {{background:{c['raised']};color:{c['text']};border:1px solid {c['border']};}}
     """
 
+
 _font_ids = {}
+
+
 def apply_font():
     from pathlib import Path
     from PySide6.QtGui import QFont, QFontDatabase
     from PySide6.QtWidgets import QApplication
     import sys
-    if sys.platform=='darwin':
-        families={'ko':['Apple SD Gothic Neo'], 'ja':['Hiragino Sans'], 'en':['Helvetica Neue'], 'zh':['PingFang SC']}
-        font=QFont();font.setFamilies(families[language]+['Arial Unicode MS','sans-serif']);font.setPointSize(10)
-        app=QApplication.instance()
-        if app:app.setFont(font)
+
+    if sys.platform == "darwin":
+        families = {
+            "ko": ["Apple SD Gothic Neo"],
+            "ja": ["Hiragino Sans"],
+            "en": ["Helvetica Neue"],
+            "zh": ["PingFang SC"],
+        }
+        font = QFont()
+        font.setFamilies(families[language] + ["Arial Unicode MS", "sans-serif"])
+        font.setPointSize(10)
+        app = QApplication.instance()
+        if app:
+            app.setFont(font)
         return
-    fonts={'ko':('malgun.ttf','Malgun Gothic'), 'ja':('meiryo.ttc','Meiryo'),
-           'en':('malgun.ttf','Malgun Gothic'), 'zh':('msyh.ttc','Microsoft YaHei UI')}
-    filename,family=fonts[language]
-    path=Path('C:/Windows/Fonts')/filename
-    if filename not in _font_ids and path.exists():_font_ids[filename]=QFontDatabase.addApplicationFont(str(path))
-    font=QFont(family,10)
+    fonts = {
+        "ko": ("malgun.ttf", "Malgun Gothic"),
+        "ja": ("meiryo.ttc", "Meiryo"),
+        "en": ("malgun.ttf", "Malgun Gothic"),
+        "zh": ("msyh.ttc", "Microsoft YaHei UI"),
+    }
+    filename, family = fonts[language]
+    path = Path("C:/Windows/Fonts") / filename
+    if filename not in _font_ids and path.exists():
+        _font_ids[filename] = QFontDatabase.addApplicationFont(str(path))
+    font = QFont(family, 10)
     if filename in _font_ids:
-        families=QFontDatabase.applicationFontFamilies(_font_ids[filename])
-        if families:font.setFamilies([family]+families+['Segoe UI'])
-    app=QApplication.instance()
-    if app:app.setFont(font)
+        families = QFontDatabase.applicationFontFamilies(_font_ids[filename])
+        if families:
+            font.setFamilies([family] + families + ["Segoe UI"])
+    app = QApplication.instance()
+    if app:
+        app.setFont(font)

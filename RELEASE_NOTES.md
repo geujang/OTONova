@@ -33,3 +33,11 @@ Windows x64 설치 파일과 업데이트된 소스코드를 배포합니다. ma
 `OTONova-V1.5-Setup.exe`를 실행해 새 폴더에 설치하세요. 실행 중인 이전 버전은 먼저 종료해주세요. `OTONova-V1.5-SHA256SUMS.txt`로 설치 파일의 SHA-256을 확인할 수 있습니다.
 
 모델·데이터셋 원본 크레딧: [CREDITS.md](https://github.com/geujang/OTONova/blob/v1.5.0/CREDITS.md). 모델 용량 절감 방식: [MODEL_COMPRESSION.md](https://github.com/geujang/OTONova/blob/v1.5.0/MODEL_COMPRESSION.md). 지원 리스트와 참고자료: [SUPPORTED_FORMATS.md](https://github.com/geujang/OTONova/blob/v1.5.0/SUPPORTED_FORMATS.md).
+
+## V1.5 코드 정리 업데이트
+
+GUI에서 백그라운드 로더와 형식 선택 창을 분리하고, 모델 선택 및 원설값 표시 중복을 통합했습니다. 사용하지 않는 import를 제거하고 Python 코드 서식을 통일했습니다. 원설 계산식·모델 가중치·프로젝트/캐시 형식은 유지합니다.
+
+프로그램 검사 98개와 Worker 검사 7개, 번들 GUI 실행·프로젝트 복원 검사를 통과했습니다. 설치 후 파일 합계는 약 805MB입니다. 코드 정리로 모델이나 대형 런타임을 제거하지 않았습니다. 자세한 내용은 [CODE_CLEANUP.md](https://github.com/geujang/OTONova/blob/main/CODE_CLEANUP.md)를 참고하세요.
+
+정리된 설치 파일은 기존 Windows 설치 파일을 대체합니다. 최초 V1.5 소스 태그 `v1.5.0`은 유지하며, 정리된 소스는 별도 태그 `v1.5-cleanup.1` 및 `OTONova-V1.5-cleanup-source.zip`으로 제공합니다.
