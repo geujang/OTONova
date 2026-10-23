@@ -1,12 +1,14 @@
 <p align="center"><img src="assets/otonova-logo.png" width="128" alt="OTONova logo"></p>
 
-# OTONova V1.0
+# OTONova V1.5
+
+**Windows V1.5를 배포합니다.** 프로젝트 저장·캐시 복원·기존 OTO 표시·파일별 자동원설·한국어 COC/CBNN/CMPX·Discord 포럼 피드백이 추가되었습니다. [V1.5 변경 내역](RELEASE_NOTES.md). macOS DMG는 기존 V1.0입니다.
 
 **한국어** · [English](README.en.md) · [日本語](README.ja.md) · [简体中文](README.zh-CN.md)
 
 **UTAU 음원을 위한 Windows·macOS 자동 원설기.** 파일명·녹음 리스트·기존 oto.ini에서 음소열을 만들고, WFL 모델로 경계를 강제 정렬한 뒤 지정 규칙으로 원설을 생성합니다.
 
-[설치 파일 다운로드](https://github.com/geujang/OTONova/releases/tag/v1.0.0) · [지원 형식·참고 리스트](SUPPORTED_FORMATS.md) · [모델 용량 절감 방식](MODEL_COMPRESSION.md) · [원본 크레딧](CREDITS.md) · [V1.0 릴리스 노트](RELEASE_NOTES.md)
+[설치 파일 다운로드](https://github.com/geujang/OTONova/releases/tag/v1.5.0) · [지원 형식·참고 리스트](SUPPORTED_FORMATS.md) · [모델 용량 절감 방식](MODEL_COMPRESSION.md) · [원본 크레딧](CREDITS.md) · [V1.5 릴리스 노트](RELEASE_NOTES.md)
 
 ## macOS 정식 지원
 
@@ -20,7 +22,7 @@ Apple Silicon용 [macOS 다운로드](https://github.com/geujang/OTONova/release
 | 한국어 | CV(단독음), CVVC, CVC, VCV |
 | 영어 | ARPAsing, CVVC(DELTA / Salem), VCCV(PaintedCz CORE) |
 
-세부 녹음 방식은 파일명·녹음 리스트·기존 에일리어스에서 인식합니다. 기존 oto.ini가 있으면 해당 에일리어스를 기준으로 시간 값을 설정합니다. **중국어 음원 지원은 향후 추가할 예정입니다. COC·CBNN·CMPX는 개발 소스에 추가되었으며 기존 CVVC 규칙으로 처리합니다. 공개 V1.0 설치 파일에는 아직 포함되지 않습니다. ~~한국어 VCCV 추가 예정~~ — 리스트 미확인(원본 리스트 삭제).** 현재 중국어는 UI 표시 언어로만 제공됩니다. Android / iOS 지원은 추가 예정이며 현재 배포 대상은 Windows x64와 macOS Apple Silicon입니다.
+세부 녹음 방식은 파일명·녹음 리스트·기존 에일리어스에서 인식합니다. 기존 oto.ini가 있으면 해당 에일리어스를 기준으로 시간 값을 설정합니다. **중국어 음원 지원은 향후 추가할 예정입니다. COC·CBNN·CMPX는 개발 소스에 추가되었으며 기존 CVVC 규칙으로 처리합니다. Windows V1.5 설치 파일에 포함됩니다. ~~한국어 VCCV 추가 예정~~ — 리스트 미확인(원본 리스트 삭제).** 현재 중국어는 UI 표시 언어로만 제공됩니다. Android / iOS 지원은 추가 예정이며 현재 배포 대상은 Windows x64와 macOS Apple Silicon입니다.
 
 ## 주요 기능
 

@@ -6,8 +6,8 @@ using System.Windows.Forms;
 using System.Reflection;
 [assembly: AssemblyTitle("OTONova")]
 [assembly: AssemblyProduct("OTONova")]
-[assembly: AssemblyDescription("OTONova V1.0 자동 원설기")]
-[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyDescription("OTONova V1.5 자동 원설기")]
+[assembly: AssemblyVersion("1.5.0.0")]
 
 static class Launcher {
     // Quote using Windows' CommandLineToArgvW backslash rules.

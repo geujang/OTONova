@@ -4,7 +4,7 @@ import ui_settings as ui
 import numpy as np
 import soundfile as sf
 from scipy.signal import stft
-from PySide6.QtCore import Qt, Signal, QRectF, QLineF
+from PySide6.QtCore import Qt, Signal, QRectF, QLineF, QThread
 from PySide6.QtGui import QColor, QPainter, QPen, QImage, QPixmap, QPainterPath
 from PySide6.QtWidgets import QWidget
 
@@ -54,6 +54,17 @@ def rms_energy(audio, sr):
     return (starts+ends)/(2*sr),20*np.log10(np.maximum(rms,1e-6))
 
 
+class FeatureLoader(QThread):
+    ready=Signal(str,object)
+    failed=Signal(str,str)
+    def __init__(self,path,cache_folder=None,expected_signature=None):
+        super().__init__();self.path=path;self.cache_folder=cache_folder;self.expected_signature=expected_signature
+    def run(self):
+        try:
+            from audio_cache import get
+            self.ready.emit(str(self.path),get(self.path,self.cache_folder,self.expected_signature))
+        except Exception as exc:self.failed.emit(str(self.path),str(exc))
+
 class AudioEditor(QWidget):
     segmentRequested = Signal(float,float)
     otoMoved = Signal(int,float)
@@ -93,8 +104,14 @@ class AudioEditor(QWidget):
         self._background=None
         self._background_key=None
         self.background_builds=0
+        self.async_loading=False
+        self.cache_folder=None
+        self._load_jobs=[]
+        self.approved_signatures={}
+        self._load_revision=0
 
     def clear(self):
+        self._load_revision+=1
         self.samples=None
         self.path=None
         self.image=None
@@ -110,25 +127,39 @@ class AudioEditor(QWidget):
 
     def load(self,path,spans,row):
         path=Path(path)
+        self.spans=spans;self.row=row
         if self.path != path:
-            audio,sr=sf.read(path,always_2d=True)
-            audio=audio.mean(axis=1)
-            self.duration=len(audio)/sr
-            self.samples=audio
-            self.wave_gain=1/max(float(np.max(np.abs(audio))),1e-6)
-            self.sample_rate=sr
-            self.spectrum_levels,self.high_hz,_=spectrum_levels(audio,sr)
-            self.energy_times,self.energy_db=rms_energy(audio,sr)
-            self.spectrum_palette=None
-            self.update_spectrum_palette()
+            self._load_revision+=1
+            from audio_cache import get,peek
+            expected=self.approved_signatures.get(str(path.resolve()))
             self.path=path
-            self.start=0.0
-            self.length=self.duration
-            self.selected_boundary=None
-        self.spans=spans
-        self.row=row
+            data=peek(path,expected)
+            if data is not None:self._apply_features(str(path),data)
+            elif self.async_loading:
+                self.samples=None;self.image=None;self._background_key=None
+                job=FeatureLoader(path,self.cache_folder,expected);self._load_jobs.append(job)
+                revision=self._load_revision
+                job.ready.connect(lambda p,d,r=revision:self._apply_features(p,d) if r==self._load_revision else None)
+                job.failed.connect(self._feature_failed)
+                job.finished.connect(lambda j=job:self._load_jobs.remove(j) if j in self._load_jobs else None)
+                job.start()
+            else:self._apply_features(str(path),get(path,self.cache_folder,expected))
         self.viewChanged.emit(self.start,self.length)
         self.update()
+
+    def _feature_failed(self,path,error):
+        if self.path==Path(path):self.empty_message=error;self.update()
+
+    def _apply_features(self,path,data):
+        if self.path!=Path(path):return
+        self.samples=data['samples'];self.sample_rate=int(data['sample_rate'])
+        self.duration=len(self.samples)/self.sample_rate
+        self.wave_gain=1/max(float(np.max(np.abs(self.samples))),1e-6)
+        self.spectrum_levels=data['levels'];self.high_hz=float(data['high_hz'])
+        self.energy_times=data['energy_times'];self.energy_db=data['energy_db']
+        self.spectrum_palette=None;self.update_spectrum_palette()
+        self.start=0.;self.length=self.duration;self.selected_boundary=None
+        self._background_key=None;self.viewChanged.emit(self.start,self.length);self.update()
 
     def update_spectrum_palette(self):
         palette=getattr(ui,'spectrum_palette','classic')
@@ -382,7 +413,7 @@ class AudioEditor(QWidget):
         for i,(begin,end,phone) in enumerate(self.spans):
             x=int(self.time_x(begin))
             selected=i in [self.selected_boundary,self.hover,self.dragging]
-            color=QColor('#d8a4ff' if selected else '#b66cff')
+            color=QColor('#ffe0ef' if selected else '#ffb8d9')
             if self.stage==2:color.setAlpha(65)
             p.setPen(QPen(color,2 if selected and self.stage==1 else 1,Qt.DashLine))
             p.drawLine(x,int(wave.top()),x,int(spec.bottom()))

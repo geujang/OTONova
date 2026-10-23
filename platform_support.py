@@ -36,3 +36,23 @@ def backend_command(workspace_path, resource_path, model_root, model_dir, *, pla
                 [base/'runtime/bin/python3',base/'.wfl-venv/bin/python3',base/'.venv/bin/python3'])
     python=next((p for p in candidates if p.is_file()),Path(executable))
     return [str(python),'-B','-I',str(Path(resource_path)/'tools/wfl_backend.py'),str(model_root),str(model_dir)]
+
+
+# Keep native icon handles alive for the lifetime of the GUI process.
+_taskbar_icons = []
+
+def set_windows_taskbar_icon(window, icon_path):
+    """Set both native window icon sizes used by Windows taskbar and Alt+Tab."""
+    if sys.platform != 'win32':return
+    import ctypes
+    from ctypes import wintypes
+    user32=ctypes.WinDLL('user32',use_last_error=True)
+    user32.LoadImageW.argtypes=[wintypes.HINSTANCE,wintypes.LPCWSTR,wintypes.UINT,ctypes.c_int,ctypes.c_int,wintypes.UINT]
+    user32.LoadImageW.restype=wintypes.HANDLE
+    user32.SendMessageW.argtypes=[wintypes.HWND,wintypes.UINT,wintypes.WPARAM,wintypes.LPARAM]
+    user32.SendMessageW.restype=ctypes.c_ssize_t
+    for kind,size in ((0,16),(1,32)):
+        icon=user32.LoadImageW(None,str(icon_path),1,size,size,0x10)
+        if not icon:raise ctypes.WinError(ctypes.get_last_error())
+        _taskbar_icons.append(icon)
+        user32.SendMessageW(int(window.winId()),0x80,kind,icon)

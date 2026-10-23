@@ -70,7 +70,9 @@ def transcribe(stem,mode):
         if phone in ['vf','cl']:role='fry'
         model.append(mapped);source.append(phone);roles.append(role)
     if model[-1]!='SP':model.append('SP');source.append('SP');roles.append('pause')
-    return model,source,roles
+    from korean_core import collapse_onset_glides
+    data=collapse_onset_glides(dict(phones=model,source_phones=source,phone_roles=roles))
+    return data['phones'],data['source_phones'],data['phone_roles']
 
 def make_record_metadata(stem,mode):
     if mode in {'ko_coc','ko_cbnn','ko_cmpx'}:

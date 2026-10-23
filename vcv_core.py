@@ -539,7 +539,7 @@ def apply_oto_template(template, generated, durations, records=None):
         result.append(row)
     return result
 
-def run_folder(folder, progress=lambda s:None, cancelled=lambda:False, mode='vcv',review=None):
+def run_folder(folder, progress=lambda s:None, cancelled=lambda:False, mode='vcv',review=None,only_files=None,base_report=None):
     folder = Path(folder)
     from format_detection import resolve_mode
     template,encoding=read_existing_oto(folder/'oto.ini')
@@ -574,6 +574,12 @@ def run_folder(folder, progress=lambda s:None, cancelled=lambda:False, mode='vcv
     if template is not None:
         names={r['wav'].replace('\\','/').casefold() for r in template}
         files=[p for p in files if (p.relative_to(folder).as_posix() if mode in ('en_arpasing','en_cvvc','en_vccv') else p.name).casefold() in names]
+    if only_files is not None:
+        requested={str(name).replace('\\','/').casefold() for name in only_files}
+        files=[folder/name for name in only_files]
+        if any(not path.resolve().is_relative_to(folder.resolve()) or not path.is_file() or path.suffix.lower()!='.wav' for path in files):
+            engine.close();raise ValueError('선택한 WAV 파일을 찾을 수 없습니다.')
+        if template is not None:template=[r for r in template if r['wav'].replace('\\','/').casefold() in requested]
     for i,path in enumerate(files):
         if cancelled():
             engine.close()
@@ -581,7 +587,14 @@ def run_folder(folder, progress=lambda s:None, cancelled=lambda:False, mode='vcv
         progress(f'{i+1}/{len(files)}  {path.name}')
         try:
             # Share phoneme boundaries across formats, including manual corrections.
-            rows,record = engine.analyze(path,folder/'auto-vcv/labels',mode)
+            cache_dir=folder/'auto-vcv/labels'
+            if only_files is not None and not mode.startswith('en_'):cache_dir=cache_dir/path.relative_to(folder).parent
+            rows,record = engine.analyze(path,cache_dir,mode)
+            if only_files is not None:
+                name=path.relative_to(folder).as_posix()
+                record['wav']=name
+                for row in rows:row['wav']=name
+                save_record(folder,record)
             durations[record['wav'].casefold()]=record['duration']
             records[record['wav'].casefold()]=record
             entries.extend(rows)
@@ -611,6 +624,16 @@ def run_folder(folder, progress=lambda s:None, cancelled=lambda:False, mode='vcv
               'entries':entries,'duplicates_removed':removed,
               'uses_existing_oto':template is not None,'oto_encoding':encoding,
               'failures':failures,'created':datetime.now().isoformat()}
+    if only_files is not None:
+        previous=deepcopy(base_report or {})
+        failed_names={r['wav'].replace('\\','/').casefold() for r in failures}
+        replaced=requested-failed_names
+        report['entries']=[r for r in previous.get('entries',[]) if r['wav'].replace('\\','/').casefold() not in replaced]+report['entries']
+        report['failures']=[r for r in previous.get('failures',[]) if r['wav'].replace('\\','/').casefold() not in requested]+failures
+        report['files']=max(previous.get('files',0),len(set(r['wav'] for r in report['entries'])|set(r['wav'] for r in report['failures'])))
+        report['successful_files']=max(0,report['files']-len(report['failures']))
+        report['inventory']=previous.get('inventory',[])
+        report['processed_files']=list(only_files)
     persist_report(folder,report)
     progress(f'완료: {len(files)-len(failures)}/{len(files)} WAV, {len(entries)}개 원설, 중복 {removed}개 제거')
     return report

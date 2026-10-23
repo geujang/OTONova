@@ -18,3 +18,7 @@ dist/
 auto-*/
 .env
 .env.*
+
+feedback-worker/.wrangler/
+feedback-worker/node_modules/
+feedback-worker/.dev.vars*

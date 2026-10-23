@@ -1,12 +1,14 @@
 <p align="center"><img src="assets/otonova-logo.png" width="128" alt="OTONova logo"></p>
 
-# OTONova V1.0
+# OTONova V1.5
+
+**Windows V1.5 is available.** Adds saved projects, legacy label-cache restoration, existing OTO display, per-WAV alignment, Korean COC/CBNN/CMPX, and Discord forum feedback. See [V1.5 release notes](RELEASE_NOTES.md) (Korean). The macOS DMG remains V1.0.
 
 [한국어](README.md) · **English** · [日本語](README.ja.md) · [简体中文](README.zh-CN.md)
 
 **An automatic oto.ini configuration tool for UTAU voicebanks on Windows and macOS.** OTONova derives phoneme sequences from filenames, recording lists, and existing oto.ini aliases, uses WFL models for forced alignment, and generates timing values with predefined rules.
 
-[Download Windows installer](https://github.com/geujang/OTONova/releases/tag/v1.0.0) · [Supported formats and reference lists](SUPPORTED_FORMATS.md) · [Model size reduction](MODEL_COMPRESSION.md) · [Original credits](CREDITS.md) · [V1.0 release notes](RELEASE_NOTES.md)
+[Download Windows installer](https://github.com/geujang/OTONova/releases/tag/v1.5.0) · [Supported formats and reference lists](SUPPORTED_FORMATS.md) · [Model size reduction](MODEL_COMPRESSION.md) · [Original credits](CREDITS.md) · [V1.5 release notes](RELEASE_NOTES.md)
 
 The linked technical documents are currently in Korean.
 
@@ -24,7 +26,7 @@ A [macOS build for Apple Silicon](https://github.com/geujang/OTONova/releases/ta
 
 Recording conventions are detected from filenames, recording lists, and existing aliases. When an oto.ini exists, timing values are configured using its aliases.
 
-**Chinese voicebank support is planned. Korean COC, CBNN and CMPX have been added to the development source using the CVVC timing rules; they are not yet included in the published V1.0 installers. ~~Planned Korean VCCV~~ — reclist unverified (original list deleted).** Chinese is currently available only as a UI language. Android and iOS support is planned; current distributions target Windows x64 and macOS Apple Silicon.
+**Chinese voicebank support is planned. Korean COC, CBNN and CMPX have been added to the development source using the CVVC timing rules; they are included in the Windows V1.5 installer. ~~Planned Korean VCCV~~ — reclist unverified (original list deleted).** Chinese is currently available only as a UI language. Android and iOS support is planned; current distributions target Windows x64 and macOS Apple Silicon.
 
 ## Features
 

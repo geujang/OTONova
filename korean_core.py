@@ -7,9 +7,27 @@ VOWELS={'a','e','eo','eu','i','o','u'}
 CODAS={'K','T','P','N','NG','M','L'}
 KNOWN={'AP','SP','a','axh','b','ch','cl','d','e','eo','eu','exh','g','h','i','j','jj','k','kk','m','mlem','n','o','p','pp','r','s','sh','ss','t','tt','u','vf','w','y'}|CODAS
 PHONE_SUBSTITUTIONS={'f':'h','v':'s','z':'s','rr':'L','H':'axh','th':'h','l':'L'}
-ALIGNMENT_VERSION=3
+ALIGNMENT_VERSION=4
 AUXILIARY={'dh':('en','dh','d'),'ts':('ja','ts','ch'),'er':('en','r','L'),'@r':('en','r','L')}
 ROMAN=sorted(KNOWN|{'f','v','z','th','rr','H','l'},key=len,reverse=True)
+
+def collapse_onset_glides(data):
+    """Fold post-consonant y/w into source spelling without a separate model label."""
+    phones=data['phones'];roles=data.get('phone_roles')
+    remove=[i for i,p in enumerate(phones) if p in {'y','w'} and i>0 and i+1<len(phones)
+            and phones[i-1] not in VOWELS|CODAS|{'SP','AP','pau','y','w','axh','exh','vf','cl'}
+            and phones[i+1] in VOWELS and (not roles or roles[i-1]=='onset')]
+    if not remove:return data
+    result=dict(data)
+    result['glide_source']={k:list(v) for k,v in data.items() if k in ['phones','source_phones','phone_roles','phone_tags','phone_groups']}
+    result['glide_to_label']=[i-sum(j<=i for j in remove) for i in range(len(phones))]
+    source=list(data.get('source_phones',phones))
+    for i in remove:source[i-1]+=source[i]
+    result['source_phones']=source
+    for key in ['phones','source_phones','phone_roles','phone_tags','phone_groups']:
+        if key in result:result[key]=[v for i,v in enumerate(result[key]) if i not in remove]
+    if 'phone_roles' in result:result['onset_indices']=[i for i,r in enumerate(result['phone_roles']) if r=='onset']
+    return result
 
 def legacy_filename_phones(stem):
     stem=unicodedata.normalize('NFC',stem)
@@ -32,7 +50,7 @@ def legacy_filename_phones(stem):
     return ['SP']+[PHONE_SUBSTITUTIONS.get(p,p) for p in result]+['SP']
 
 def filename_phones(stem,mode='ko_cvvc'):
-    if mode=='ko_cvvc':return legacy_filename_phones(stem)
+    if mode=='ko_cvvc':return collapse_onset_glides({'phones':legacy_filename_phones(stem)})['phones']
     from korean_formats import transcribe
     return transcribe(stem,mode)[0]
 
@@ -42,7 +60,7 @@ def create_oto(record,mode='ko_cvvc'):
         from korean_formats import create_oto as create_profile_oto
         return create_profile_oto(record,mode)
     from vcv_core import make_entry,two_thirds
-    spans=record['intervals'];duration=record['duration'];wav=record['wav'];rows=[]
+    spans=[[a,b,(record['source_phones'][i] if 'source_phones' in record else p)] for i,(a,b,p) in enumerate(record['intervals'])];duration=record['duration'];wav=record['wav'];rows=[]
     def add(alias,off,overlap,pre,end,lead,kind):
         rows.append(make_entry(wav,alias,off,overlap,pre,end-lead,end,duration,[],
                               fixed_lead=lead,allow_negative_overlap=True))
@@ -160,7 +178,8 @@ class KoreanEngine:
         if mode!='ko_cvvc':
             from korean_formats import make_record_metadata
             metadata=make_record_metadata(path.stem,mode)
-        expected=metadata.get('phones') or filename_phones(path.stem)
+        else:metadata=collapse_onset_glides({'phones':legacy_filename_phones(path.stem)})
+        expected=metadata['phones']
         fingerprint=hashlib.sha256(path.read_bytes()).hexdigest()
         cache=Path(cache_dir)/(path.stem+'.json')
         if cache.exists():
@@ -182,7 +201,7 @@ class KoreanEngine:
         record={'wav':path.name,'sha256':fingerprint,'phones':approved,'intervals':intervals,
                 'duration':duration,'language':'ko','model':'WFL-ASR-korean','alignment_version':ALIGNMENT_VERSION,'aux_signature':self.aux_signature}
         onset_indices=[];position=1
-        for part in ([] if metadata else re.split(r"[_' ]+",path.stem.strip('_'))):
+        for part in ([] if mode!='ko_cvvc' else re.split(r"[_' ]+",path.stem.strip('_'))):
             if not part:continue
             chunk=filename_phones(part)[1:-1]
             for offset,phone in enumerate(chunk):

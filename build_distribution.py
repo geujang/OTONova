@@ -6,10 +6,11 @@ import argparse
 ROOT=Path(__file__).resolve().parent
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--version',default='1.0');args=parser.parse_args()
-    schema_version=36 if args.version=='1.0' else int(args.version)
-    version='V1.0' if args.version=='1.0' else 'v'+str(args.version)
-    brand='OTONova' if args.version=='1.0' else ('OtoNova' if schema_version>=31 else 'WFL-Oto')
+    parser=argparse.ArgumentParser();parser.add_argument('--version',default='1.5');args=parser.parse_args()
+    stable=args.version in ('1.0','1.5')
+    schema_version=36 if stable else int(args.version)
+    version='V'+args.version if stable else 'v'+str(args.version)
+    brand='OTONova' if stable else ('OtoNova' if schema_version>=31 else 'WFL-Oto')
     source=ROOT/('release/'+brand+'-Windows-'+version)
     build=ROOT/('build/distribution-'+version);build.mkdir(parents=True,exist_ok=True)
     stub=build/'installer.exe'

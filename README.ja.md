@@ -1,12 +1,14 @@
 <p align="center"><img src="assets/otonova-logo.png" width="128" alt="OTONova ロゴ"></p>
 
-# OTONova V1.0
+# OTONova V1.5
+
+**Windows V1.5を公開しました。** プロジェクト保存・旧ラベルキャッシュの復元・既存OTO表示・WAV単位の自動原音設定・韓国語COC/CBNN/CMPX・Discordフォーラムへのフィードバックを追加しました。[V1.5変更履歴](RELEASE_NOTES.md)（韓国語）。macOS DMGはV1.0です。
 
 [한국어](README.md) · [English](README.en.md) · **日本語** · [简体中文](README.zh-CN.md)
 
 **UTAU音源向けのWindows・macOS用自動原音設定ツールです。** ファイル名・録音リスト・既存のoto.iniエイリアスから音素列を作成し、WFLモデルで強制アライメントを行い、所定のルールに従って原音設定値を生成します。
 
-[Windowsインストーラー](https://github.com/geujang/OTONova/releases/tag/v1.0.0) · [対応形式・参考リスト](SUPPORTED_FORMATS.md) · [モデル容量の削減方法](MODEL_COMPRESSION.md) · [原作者クレジット](CREDITS.md) · [V1.0リリースノート](RELEASE_NOTES.md)
+[Windowsインストーラー](https://github.com/geujang/OTONova/releases/tag/v1.5.0) · [対応形式・参考リスト](SUPPORTED_FORMATS.md) · [モデル容量の削減方法](MODEL_COMPRESSION.md) · [原作者クレジット](CREDITS.md) · [V1.0リリースノート](RELEASE_NOTES.md)
 
 リンク先の技術資料は現在、韓国語で記載されています。
 
@@ -24,7 +26,7 @@ Apple Silicon向けの[macOS版](https://github.com/geujang/OTONova/releases/tag
 
 ファイル名・録音リスト・既存エイリアスから録音方式を判別します。既存のoto.iniがある場合は、そのエイリアスを基準に設定値を生成します。
 
-**中国語音源への対応は今後追加予定です。韓国語COC・CBNN・CMPXはCVVCの原音設定ルールを利用して開発ソースに追加しました。公開済みV1.0インストーラーには未収録です。~~韓国語VCCV対応予定~~ — リスト未確認（元のリストが削除されたため）。** 現在、中国語はUI表示言語としてのみ提供しています。Android / iOSへの対応も今後追加予定で、現在の配布対象はWindows x64とmacOS Apple Siliconです。
+**中国語音源への対応は今後追加予定です。韓国語COC・CBNN・CMPXはCVVCの原音設定ルールを利用して開発ソースに追加しました。Windows V1.5インストーラーに収録しています。~~韓国語VCCV対応予定~~ — リスト未確認（元のリストが削除されたため）。** 現在、中国語はUI表示言語としてのみ提供しています。Android / iOSへの対応も今後追加予定で、現在の配布対象はWindows x64とmacOS Apple Siliconです。
 
 ## 主な機能
 

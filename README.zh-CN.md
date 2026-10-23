@@ -1,12 +1,14 @@
 <p align="center"><img src="assets/otonova-logo.png" width="128" alt="OTONova 标志"></p>
 
-# OTONova V1.0
+# OTONova V1.5
+
+**Windows V1.5 已发布。** 新增项目保存、旧标签缓存恢复、现有 OTO 显示、单 WAV 自动原音设定、韩语 COC/CBNN/CMPX 及 Discord 论坛反馈。[V1.5 更新记录](RELEASE_NOTES.md)（韩语）。macOS DMG 仍为 V1.0。
 
 [한국어](README.md) · [English](README.en.md) · [日本語](README.ja.md) · **简体中文**
 
 **面向 UTAU 音源的 Windows／macOS 自动原音设定工具。** 根据文件名、录音表和现有 oto.ini 别名生成音素序列，使用 WFL 模型进行强制对齐，再按照预设规则生成原音设定参数。
 
-[下载 Windows 安装程序](https://github.com/geujang/OTONova/releases/tag/v1.0.0) · [支持格式与参考录音表](SUPPORTED_FORMATS.md) · [模型体积优化方法](MODEL_COMPRESSION.md) · [原作者与鸣谢](CREDITS.md) · [V1.0 发行说明](RELEASE_NOTES.md)
+[下载 Windows 安装程序](https://github.com/geujang/OTONova/releases/tag/v1.5.0) · [支持格式与参考录音表](SUPPORTED_FORMATS.md) · [模型体积优化方法](MODEL_COMPRESSION.md) · [原作者与鸣谢](CREDITS.md) · [V1.0 发行说明](RELEASE_NOTES.md)
 
 链接中的技术文档目前使用韩语编写。
 
@@ -24,7 +26,7 @@
 
 通过文件名、录音表和现有别名识别具体录音方式。若已有 oto.ini，则按照原有别名生成时间参数。
 
-**中文音源支持计划在未来加入。韩语 COC、CBNN、CMPX 已使用 CVVC 时间规则加入开发源码，尚未包含在已发布的 V1.0 安装程序中。~~计划支持韩语 VCCV~~ — 录音表未确认（原表已删除）。** 目前中文仅作为界面语言提供。计划在未来支持 Android / iOS，当前发行目标为 Windows x64 与 macOS Apple Silicon。
+**中文音源支持计划在未来加入。韩语 COC、CBNN、CMPX 已使用 CVVC 时间规则加入开发源码，已包含在 Windows V1.5 安装程序中。~~计划支持韩语 VCCV~~ — 录音表未确认（原表已删除）。** 目前中文仅作为界面语言提供。计划在未来支持 Android / iOS，当前发行目标为 Windows x64 与 macOS Apple Silicon。
 
 ## 主要功能
 

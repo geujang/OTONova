@@ -1,55 +1,35 @@
-# OTONova V1.0 — Windows & macOS
+# OTONova V1.5
 
-Windows와 macOS 배포본을 하나로 통합한 **OTONova V1.0**입니다.
+Windows x64 설치 파일과 업데이트된 소스코드를 배포합니다. macOS 배포본은 기존 [V1.0 릴리스](https://github.com/geujang/OTONova/releases/tag/v1.0.0)의 Apple Silicon DMG를 이용해주세요. 이 릴리스에는 새 macOS 빌드가 포함되지 않습니다.
 
-[한국어](https://github.com/geujang/OTONova/blob/main/README.md) · [日本語](https://github.com/geujang/OTONova/blob/main/README.ja.md) · [English](https://github.com/geujang/OTONova/blob/main/README.en.md) · [简体中文](https://github.com/geujang/OTONova/blob/main/README.zh-CN.md)
+## V1.0 이후 변경 사항
 
-## 다운로드 / Downloads
+- 프로젝트 파일(`.otonova`) 생성·저장·복원: 추정한 경계를 보존하며 프로젝트를 다시 열 때 재추정하지 않습니다.
+- WAV 시각자료(파형·15 kHz 스펙트로그램·RMS 에너지)를 백그라운드에서 준비하고 디스크·메모리 캐시로 재사용합니다.
+- 프로젝트 파일이 없는 구버전의 `auto-*/labels` 라벨 캐시도 읽어 바로 경계를 표시합니다. WAV 해시가 맞지 않는 캐시는 제외합니다.
+- 기존 `oto.ini`의 에일리어스와 시간값을 읽고 2단계 원설 화면에 표시합니다. 현재 OTO를 과거 자동원설 보고서보다 우선합니다.
+- WAV 또는 OTO의 외부 변경을 감지해 다시 로드할지 확인합니다. 취소하면 현재 표시를 유지합니다.
+- WAV 목록 우클릭 → 자동원설: 해당 WAV만 처리하고 다른 파일의 경계·원설값을 유지합니다. 실패하면 해당 파일의 기존 원설값도 유지합니다.
+- 자동원설을 누르면 언어권(한국어·일본어·영어)을 먼저 고르고 해당 언어의 형식을 선택합니다. 언어권을 고르기 전에는 형식을 선택할 수 없습니다.
+- 상단 버튼을 오른쪽 상단의 작업·설정·도움말 메뉴로 정리했습니다. 크레딧은 도움말에서 볼 수 있습니다.
+- 도움말에 업데이트 확인·GitHub 링크·버전 정보·피드백을 추가했습니다.
+- 피드백은 Cloudflare Worker를 통해 Discord 피드백 포럼에 게시됩니다. 분류별 제목과 대응 태그를 적용합니다. 작성 내용·선택 연락처·분류·버전을 채널 접근 권한이 있는 서버 멤버가 볼 수 있으며 음원·OTO·로그는 전송하지 않습니다. 실패한 내용은 PC에 보관됩니다.
+- 한국어 COC·CBNN·CMPX 형식을 추가했습니다.
+- 한국어 자음 뒤 반모음의 독립 라벨을 제거했습니다: `캬: k y a → k a`, `솨: s w a → s a`. 원래 에일리어스 표기는 유지합니다. 기존 캐시에 적용하려면 해당 WAV의 자동원설을 다시 실행해주세요.
+- 음소 경계 점선을 밝은 파스텔 분홍색으로 변경했습니다. 2단계에서는 흐리게 표시하고 OTO 선보다 뒤에 그립니다.
+- Windows 작업 표시줄과 실행 파일의 OTONova 아이콘 표시를 보완했습니다.
 
-| 운영체제 / Platform | 파일 / File | 설치 / Installation |
-|---|---|---|
-| Windows x64 | `OTONova-V1.0-Setup.exe` | 실행 후 빈 폴더에 설치 / Run the installer |
-| macOS Apple Silicon (arm64) | `OTONova-macOS-V1.0-arm64.dmg` | 앱을 Applications로 이동 / Drag the app into Applications |
+## 지원 형식
 
-Python과 영어·일본어·한국어 모델이 포함됩니다. / Python and the English, Japanese, and Korean models are bundled.
+- 일본어: CV, CVVC, VCV.
+- 한국어: CV, CVVC, CVC, VCV, COC, CBNN, CMPX.
+- 영어: ARPAsing, CVVC(DELTA·Salem), VCCV(PaintedCz CORE).
+- UI: 한국어·일본어·영어·중국어, 다크·라이트 모드.
 
-`SHA256SUMS.txt`는 두 설치 파일의 SHA-256을 포함합니다. / Contains SHA-256 checksums for both downloads.
+중국어 음원 및 Android·iOS 지원은 예정입니다. ~~한국어 VCCV~~ — 리스트 미확인(원본 리스트 삭제).
 
-## 지원 / Supported formats
+## 다운로드
 
-- 일본어 / Japanese: CV, CVVC, VCV.
-- 한국어 / Korean: CV, CVVC, CVC, VCV.
-- 영어 / English: ARPAsing, CVVC (DELTA / Salem), VCCV (PaintedCz CORE).
-- 한국어·일본어·영어·중국어 UI, 다크·라이트 모드 / Korean, Japanese, English and Chinese UI; dark/light themes.
-- WFL 음소 정렬, 기존 oto.ini 에일리어스 보존, 규칙 기반 자동 원설 / WFL alignment, existing alias preservation and rule-based oto generation.
-- 2단계 편집, 구간 재생, RMS 에너지, 15 kHz 스펙트로그램 / Two-stage editing, interval playback, RMS energy and spectrograms up to 15 kHz.
+`OTONova-V1.5-Setup.exe`를 실행해 새 폴더에 설치하세요. 실행 중인 이전 버전은 먼저 종료해주세요. `OTONova-V1.5-SHA256SUMS.txt`로 설치 파일의 SHA-256을 확인할 수 있습니다.
 
-**중국어 음원 지원 예정 / Chinese voicebank support is planned.**
-
-COC·CBNN·CMPX는 개발 소스에 추가되었습니다. 이 V1.0 설치 파일에는 아직 포함되지 않습니다. / COC, CBNN and CMPX have been added to the development source, but are not yet included in these V1.0 installers.
-
-~~한국어 VCCV 추가 예정 / Planned Korean VCCV~~ — **리스트 미확인 / Reclist unverified** (원본 리스트 삭제 / original list deleted).
-
-**Android·iOS 지원은 추가 예정입니다. 현재 모바일 버전은 제공하지 않습니다.** / **Android and iOS support is planned; mobile versions are not available yet.**
-
-## Mac 검증과 제한 / Mac validation and limits
-
-macOS 15 Apple Silicon에서 앱 빌드, 회귀 검사 67개(Windows 전용 2개 제외), 세 언어 모델 로딩·지정 음소열 정렬, GUI 시작·화면 캡처를 통과했습니다. DMG 마운트·전체 앱 파일 해시·심볼릭 링크·코드 서명 구조 검사도 통과했습니다.
-
-The native Mac build passed 67 regression tests (2 Windows-only tests skipped), three-language model loading and constrained alignment, GUI startup and capture, plus DMG mounting, full app file hashes, symlinks and code-signature integrity checks.
-
-Intel Mac은 미지원이며 Apple Developer ID 배포 서명·공증은 아직 적용하지 않았습니다. 실제 스피커 청음, 외장 드라이브 권한 변형, 긴 음원 작업은 별도 확인이 필요합니다. 이번 통합은 기존 검증된 바이너리를 재배포하며, Mac 앱 내부 빌드 버전은 1.0.1입니다.
-
-Intel Macs are unsupported. Apple Developer ID distribution signing and notarization have not been applied. Physical speaker playback, external-drive permission variations and long recording sessions require separate validation. This unified release redistributes the previously validated binaries; the Mac app's internal build version remains 1.0.1.
-
-[Mac app validation](https://github.com/geujang/OTONova/actions/runs/39790851377) · [DMG validation](https://github.com/geujang/OTONova/actions/runs/39794929691)
-
-## 모델과 크레딧 / Models and credits
-
-학습 상태 제거·동일 인코더 공유·무손실 압축으로 모델 관련 파일을 약 1.35 GB에서 약 254 MB로 줄였습니다. FP32 추론 가중치를 보존하며 양자화·FP16 변환·음소 삭제는 적용하지 않았습니다.
-
-Model-related files were reduced from about 1.35 GB to 254 MB through training-state removal, identical encoder sharing and lossless compression. FP32 inference weights are preserved without quantization, FP16 conversion or phoneme removal.
-
-WFL: [MLo7Ghinsan / Ghin_MLo7](https://github.com/MLo7Ghinsan/WFL-ASR), MIT. English model: [Superbox2147](https://github.com/Superbox2147). Japanese/Korean models: [Archivoice](https://github.com/Archivoice). Shared encoder: OpenAI Whisper base.
-
-[지원 형식·리스트 / Formats and lists](https://github.com/geujang/OTONova/blob/main/SUPPORTED_FORMATS.md) · [용량 절감 / Compression](https://github.com/geujang/OTONova/blob/main/MODEL_COMPRESSION.md) · [전체 크레딧 / Full credits](https://github.com/geujang/OTONova/blob/main/CREDITS.md) · [소스 / Source](https://github.com/geujang/OTONova)
+모델·데이터셋 원본 크레딧: [CREDITS.md](https://github.com/geujang/OTONova/blob/v1.5.0/CREDITS.md). 모델 용량 절감 방식: [MODEL_COMPRESSION.md](https://github.com/geujang/OTONova/blob/v1.5.0/MODEL_COMPRESSION.md). 지원 리스트와 참고자료: [SUPPORTED_FORMATS.md](https://github.com/geujang/OTONova/blob/v1.5.0/SUPPORTED_FORMATS.md).

@@ -5,6 +5,17 @@ from korean_core import filename_phones,create_oto,KNOWN,match_existing_template
 from vcv_core import recalculate_file,move_boundary
 
 class KoreanTests(unittest.TestCase):
+    def test_post_consonant_glides_have_no_independent_label(self):
+        from korean_formats import make_record_metadata
+        self.assertEqual(filename_phones('캬솨'),['SP','k','a','s','a','SP'])
+        self.assertEqual(filename_phones('야와'),['SP','y','a','w','a','SP'])
+        for mode in ['ko_cv','ko_cvvc_malcha','ko_cvc_zetty','ko_vcv_diko','ko_coc','ko_cbnn','ko_cmpx']:
+            with self.subTest(mode=mode):
+                data=make_record_metadata('kya_swa',mode)
+                self.assertEqual([p for p in data['phones'] if p!='SP'],['k','a','s','a'])
+                self.assertIn('ky',data['source_phones']);self.assertIn('sw',data['source_phones'])
+                self.assertEqual(len(data['phones']),len(data['phone_roles']))
+
     def test_actual_filename_parser(self):
         for path in Path('Natural').glob('*.wav'):self.assertTrue(filename_phones(path.stem))
         self.assertEqual(filename_phones('_baNG\'baN\'baM\'baL\'ba'),

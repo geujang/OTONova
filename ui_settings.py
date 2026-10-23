@@ -10,6 +10,7 @@ spectrum_palette = 'classic'
 _sources = {}
 # Source Korean, Japanese, English, simplified Chinese. Never applied to audio data.
 _ROWS = """
+작업|操作|Actions|操作
 설정|設定|Settings|设置
 표시 언어|表示言語|Display language|显示语言
 화면 모드|表示モード|Appearance|外观
@@ -54,6 +55,11 @@ oto.ini 저장 (기존 파일 백업)|oto.ini を保存（既存ファイルを�
 고정|固定範囲|Fixed|固定区间
 컷오프|カットオフ|Cutoff|截止
 검토|要確認|Review|检查
+언어권|言語|Language|语言
+형식|形式|Format|格式
+언어권을 선택하세요|言語を選択してください|Select a language|请选择语言
+언어권을 먼저 선택하세요|先に言語を選択してください|Select a language first|请先选择语言
+형식을 선택하세요|形式を選択してください|Select a format|请选择格式
 음원 형식 선택|音源形式の選択|Select voicebank format|选择音源格式
 언어와 녹음 리스트 형식을 선택하세요.|言語と録音リスト形式を選択してください。|Choose the language and recording format.|请选择语言和录音列表格式。
 세부 녹음 방식은 파일명·녹음 리스트·기존 에일리어스로 자동 인식합니다.|ファイル名・録音リスト・既存エイリアスから詳細形式を自動認識します。|Recording variants are detected from filenames, reclists and existing aliases.|根据文件名、录音列表及现有别名自动识别具体格式。
@@ -122,6 +128,42 @@ _ROWS += """
 흑백|白黒|Grayscale|黑白
 우클릭: 라벨 사이 구간 재생|右クリック: ラベル間を再生|Right-click: play between labels|右键：播放标签之间的区间
 """
+
+_ROWS += """
+도움말|ヘルプ|Help|帮助
+업데이트 확인|更新を確認|Check for updates|检查更新
+GitHub 링크|GitHubを開く|GitHub link|GitHub 链接
+버전 정보|バージョン情報|About|版本信息
+피드백 (준비 중)|フィードバック（準備中）|Feedback (coming soon)|反馈（准备中）
+외부 파일 변경|外部ファイルの変更|External file changes|外部文件更改
+WAV 파일을 재로드 하고 시각음성자료를 다시 재 렌더링 할까요?|WAVを再読み込みして波形・エネルギー・スペクトログラムを再描画しますか？|Reload WAV files and render waveform, energy and spectrogram data again?|重新加载 WAV 并重新渲染波形、能量和声谱图吗？
+OTO 파일을 재 인식 할까요?|OTOファイルを再読み込みしますか？|Read the OTO files again?|重新识别 OTO 文件吗？
+다시 로드|再読み込み|Reload|重新加载
+재인식|再認識|Read again|重新识别
+새 버전이 있습니다. 다운로드 페이지를 열까요?|新しいバージョンがあります。ダウンロードページを開きますか？|A new version is available. Open the download page?|有新版本可用。打开下载页面吗？
+현재 버전은 V1.5입니다. 더 새로운 공개 릴리스가 없습니다.|現在のバージョンはV1.5です。より新しい公開リリースはありません。|Current version: V1.5. No newer public release is available.|当前版本为 V1.5，暂无更新的公开版本。
+업데이트 정보를 확인할 수 없습니다.|更新情報を確認できません。|Could not check for updates.|无法检查更新信息。
+"""
+
+
+_ROWS += """
+피드백|フィードバック|Feedback|反馈
+오류 제보|不具合報告|Report a bug|报告错误
+기능 제안|機能提案|Suggest a feature|功能建议
+기타|その他|Other|其他
+답변 받을 연락처 (선택)|返信先（任意）|Contact for replies (optional)|回复联系方式（可选）
+피드백 내용 (최대 1,500자)|内容（最大1,500文字）|Feedback (up to 1,500 characters)|反馈内容（最多 1,500 字符）
+전송|送信|Send|发送
+전송 중…|送信中…|Sending…|正在发送…
+작성 내용·선택한 연락처·분류·앱 버전을 Discord 피드백 포럼에 게시합니다. 채널을 볼 수 있는 서버 멤버에게 공개됩니다. 음원·OTO·로그는 전송하지 않습니다.|入力内容・任意の連絡先・分類・バージョンをDiscordのフィードバックフォーラムに投稿します。チャンネルを閲覧できるサーバーメンバーに公開されます。音源・OTO・ログは送信しません。|Your message, optional contact, category and app version are posted to the Discord feedback forum, visible to server members with channel access. Audio, OTO and logs are not sent.|内容、可选联系方式、分类及版本将发布至 Discord 反馈论坛，拥有频道访问权限的服务器成员可见。不发送音频、OTO 或日志。
+피드백 서버 연결 준비 중입니다. 작성한 내용은 이 PC에 보관됩니다.|フィードバックサーバーは準備中です。下書きはこのPCに保存します。|The feedback server is not connected yet. Your draft is saved on this PC.|反馈服务器尚未连接，草稿保存在本机。
+Discord 피드백 포럼에 게시했습니다.|Discordのフィードバックフォーラムに投稿しました。|Posted to the Discord feedback forum.|已发布至 Discord 反馈论坛。
+전송이 제한되었습니다. 잠시 후 다시 보내주세요.|送信制限に達しました。しばらくしてから再送信してください。|Sending is temporarily limited. Please try again later.|发送暂时受限，请稍后重试。
+전송하지 못했습니다. 내용은 보관되어 있으니 다시 시도해주세요.|送信できませんでした。下書きは保存されています。再試行してください。|Could not send. Your draft is saved; please try again.|发送失败，草稿已保存，请重试。
+내용은 1~1,500자까지 입력해주세요.|内容は1～1,500文字で入力してください。|Enter between 1 and 1,500 characters.|请输入 1 至 1,500 个字符。
+연락처는 100자 이하로 입력해주세요.|連絡先は100文字以内で入力してください。|Keep contact details within 100 characters.|联系方式请勿超过 100 个字符。
+"""
+
 TRANSLATIONS = {r.split('|')[0]: r.split('|')[1:] for r in _ROWS.strip().splitlines() if r.strip()}
 
 def translate(text):

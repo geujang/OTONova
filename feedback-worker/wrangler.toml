@@ -1,0 +1,21 @@
+name = "otonova-feedback"
+main = "worker.mjs"
+compatibility_date = "2026-10-23"
+workers_dev = true
+
+# Use the Workers Free subscription. No paid storage or queue services are required.
+[observability]
+enabled = false
+
+[[ratelimits]]
+name = "FEEDBACK_LIMITER"
+namespace_id = "15001"
+simple = { limit = 6, period = 60 }
+
+[[ratelimits]]
+name = "TOTAL_LIMITER"
+namespace_id = "15002"
+simple = { limit = 30, period = 60 }
+
+# Configure DISCORD_BOT_TOKEN and DISCORD_RECIPIENT_ID as Worker Secrets.
+# Neither value belongs in this file or the desktop application's assets.

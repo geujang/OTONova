@@ -5,25 +5,29 @@ import shutil
 import subprocess
 
 ROOT = Path(__file__).resolve().parent
-TARGET = ROOT / 'release/OTONova-Windows-V1.0'
+TARGET = ROOT / 'release/OTONova-Windows-V1.5'
 
 
 def main():
     if TARGET.exists():
         raise RuntimeError('Use a fresh distribution folder')
-    shutil.copytree(ROOT/'release/OtoNova-Windows-v36', TARGET,
+    shutil.copytree(ROOT/'release/OTONova-Windows-V1.0', TARGET,
                     ignore=shutil.ignore_patterns('*.log', 'gui-preview.png', '__pycache__', '*.pyc', 'WFL-Oto.exe', 'OtoNova.exe'))
-    for name in ('vcv_gui.py', 'platform_support.py', 'ui_settings.py', 'vcv_core.py', 'audio_view.py', 'audio_playback.py', 'formats.py', 'format_detection.py', 'english_cvvc.py', 'english_vccv.py', 'korean_core.py', 'korean_formats.py', 'korean_combined.py', 'arpasing_core.py', 'app_bootstrap.py', 'README.md'):
+    for name in ('vcv_gui.py', 'feedback_client.py', 'external_files.py', 'project_store.py', 'audio_cache.py', 'platform_support.py', 'ui_settings.py', 'vcv_core.py', 'audio_view.py', 'audio_playback.py', 'formats.py', 'format_detection.py', 'english_cvvc.py', 'english_vccv.py', 'korean_core.py', 'korean_formats.py', 'korean_combined.py', 'arpasing_core.py', 'app_bootstrap.py', 'README.md'):
         shutil.copy2(ROOT/name, TARGET/name)
     shutil.copytree(ROOT/'assets', TARGET/'assets', dirs_exist_ok=True)
     shutil.copy2(ROOT/'CREDITS.md', TARGET/'CREDITS.md')
     for name in ('MODEL_COMPRESSION.md','SUPPORTED_FORMATS.md','THIRD_PARTY_NOTICES.md','RELEASE_NOTES.md','DEVELOPMENT.md','USER_GUIDE.md'):
         shutil.copy2(ROOT/name,TARGET/name)
+    shutil.copy2(ROOT/'PROJECTS.md',TARGET/'PROJECTS.md')
+    (TARGET/'README.md').write_text('# OTONova V1.5\n\n로컬 Windows 배포본입니다. GitHub에는 업로드하지 않았습니다.\n\n프로젝트 생성·복원, 음소 경계 보존, 백그라운드 파형·스펙트로그램·에너지 캐시, 자동원설 형식 선택 창, 한국어 COC·CBNN·CMPX를 포함합니다.\n\n사용 방법: [PROJECTS.md](PROJECTS.md). 모델·리스트 출처: [CREDITS.md](CREDITS.md).\n',encoding='utf-8')
     compiler='C:/Windows/Microsoft.NET/Framework64/v4.0.30319/csc.exe'
     subprocess.run([compiler,'/nologo','/codepage:65001','/target:winexe','/platform:x64',
         '/reference:System.Windows.Forms.dll','/win32icon:'+str(ROOT/'assets/otonova.ico'),
         '/out:'+str(TARGET/'OTONova.exe'),str(ROOT/'tools/distribution_launcher.cs')],check=True)
-    (TARGET/'validation.json').write_text(json.dumps(dict(version='1.0',product='OTONova',
+    from tools.set_executable_icon import replace_icon
+    replace_icon(TARGET/'runtime/pythonw.exe',ROOT/'assets/otonova.ico')
+    (TARGET/'validation.json').write_text(json.dumps(dict(version='1.5',product='OTONova',
         inherited_validated_runtime=36,english_cvvc='DELTA + Salem alignment and oto',english_vccv='PaintedCz CORE 10 sections'),indent=2),encoding='utf-8')
     print(TARGET,flush=True)
 

@@ -80,7 +80,7 @@ class VccvTests(unittest.TestCase):
         app=QApplication.instance() or QApplication([])
         record=self.record('CV_CVC','-ba_bab_kab')
         w=Window();w.folder.setText(str(self.root));w.set_mode('en_vccv')
-        self.assertIn('영어 VCCV',w.mode_button.text());self.assertTrue(all(b.isEnabled() for b in w.stage_buttons))
+        self.assertEqual(w.selected_mode,'en_vccv');self.assertTrue(all(b.isEnabled() for b in w.stage_buttons))
         self.assertEqual(w.files.count(),1)
         w.report=dict(mode='en_vccv',entries=create_oto(record),files=1,successful_files=1,failures=[])
         w.current_record=record;w.set_stage(2);w.save_edits()

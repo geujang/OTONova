@@ -34,7 +34,7 @@ def units(text):
         output.append([token,'']);pos+=len(token)
     return output
 
-def metadata(stem,mode,lookup=True):
+def metadata(stem,mode,lookup=True,collapse=True):
     from korean_core import PHONE_SUBSTITUTIONS
     original=resolve_stem(stem,mode) if lookup else stem
     if original.casefold()=='breath':
@@ -84,21 +84,32 @@ def metadata(stem,mode,lookup=True):
             append(mapped,symbol,role,tag,group)
         group+=1
     if phones[-1]!='SP':append('SP','SP','pause','',group)
-    return dict(phones=phones,source_phones=source,phone_roles=roles,phone_tags=tags,phone_groups=groups,
+    from korean_core import collapse_onset_glides
+    return (collapse_onset_glides if collapse else lambda data:data)(dict(phones=phones,source_phones=source,phone_roles=roles,phone_tags=tags,phone_groups=groups,
                 onset_indices=[i for i,r in enumerate(roles) if r=='onset'],format=mode,
-                reclist_stem=original,label_warnings=list(dict.fromkeys(warnings)))
+                reclist_stem=original,label_warnings=list(dict.fromkeys(warnings))))
 
 def transcribe(stem,mode):
     data=metadata(stem,mode)
     return data['phones'],data['source_phones'],data['phone_roles']
 
 def alias_recipe(alias,record):
+    if record.get('glide_source'):
+        shadow=dict(record);shadow.update(record['glide_source']);shadow.pop('glide_source',None)
+        result=_alias_recipe(alias,shadow)
+        if result:
+            kind,indices,note=result
+            return kind,list(dict.fromkeys(record['glide_to_label'][i] for i in indices)),note
+        return None
+    return _alias_recipe(alias,record)
+
+def _alias_recipe(alias,record):
     """Find recorded phones for an alias, keeping suffix numbers out of alignment."""
     clean=alias.strip().lstrip('_');initial=clean.startswith('- ')
     if initial:clean=clean[2:]
     parts=clean.split();tail=len(parts)>1 and parts[-1] in ['-','R','H','~','*','GS','Rb','B']
     body=' '.join(parts[:-1]) if tail else clean
-    query=metadata(body.replace(' ','\''),record['format'],lookup=False)
+    query=metadata(body.replace(' ','\''),record['format'],lookup=False,collapse=False)
     wanted=query['phones'][1:-1];tagged=query['phone_tags'][1:-1]
     # Uppercase aliases describe a held semivowel; lowercase coda/onset share sound.
     def equal(a,b):
@@ -130,7 +141,7 @@ def alias_recipe(alias,record):
     if tail:kind='tail'
     elif initial:kind='start'
     elif len(parts)==2:
-        right_query=metadata(parts[1],record['format'],lookup=False)
+        right_query=metadata(parts[1],record['format'],lookup=False,collapse=False)
         vowel_right=all(r in ['vowel','vowel_continuation'] or p in ['y','w']
                         for p,r in zip(right_query['phones'][1:-1],right_query['phone_roles'][1:-1]))
         kind=('vv' if query['phone_roles'][1] in ['vowel','vowel_continuation'] else 'cv') if vowel_right else 'vc'
