@@ -4,7 +4,7 @@ on:
   push:
     branches: [codex/macos-support]
 concurrency:
-  group: macos-experimental-${{ github.ref }}
+  group: macos-release-${{ github.ref }}
   cancel-in-progress: true
 permissions:
   contents: read
@@ -30,7 +30,7 @@ jobs:
       - name: Extract verified platform-independent models
         run: python prepare_macos_models.py
       - name: Regression tests
-        run: python -B -m unittest test_platform_support test_audio_review test_audio_playback test_ui_settings test_stages test_detection test_english_vccv test_english_cvvc test_arpasing test_formats test_korean test_korean_combined test_installer_shortcut
+        run: python -B -m unittest test_japanese_romaji test_singer_settings test_fixed_rules test_feedback test_external_files test_project test_platform_support test_audio_review test_audio_playback test_ui_settings test_stages test_detection test_english_vccv test_english_cvvc test_arpasing test_formats test_korean test_korean_combined test_installer_shortcut
       - name: Source model smoke test
         run: python smoke_macos.py
       - name: Build native app
@@ -43,10 +43,10 @@ jobs:
         run: test -s "$HOME/Library/Logs/OTONova/gui-preview.png"
       - uses: actions/upload-artifact@v4
         with:
-          name: OTONova-macOS-arm64-experimental
+          name: OTONova-macOS-V2.0-arm64
           path: |
-            dist/OTONova-macOS-V1.0-*.zip
-            dist/OTONova-macOS-V1.0-*.dmg
+            dist/OTONova-macOS-V2.0-*.zip
+            dist/OTONova-macOS-V2.0-*.dmg
             dist/OTONova-macOS-DMG-SHA256SUMS.txt
           if-no-files-found: error
-          retention-days: 1
+          retention-days: 7

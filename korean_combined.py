@@ -409,8 +409,9 @@ def make_alias(alias, record):
             cut = two_thirds(spans[last])
             lead = 0.04
         else:
-            off = spans[first][0] + (spans[first][1] - spans[first][0]) * 0.8
-            overlap = off + (pre - off) * 2 / 3
+            ratio = 3 / 4 if roles[first] in ["vowel", "vowel_continuation"] else 3 / 5
+            off = spans[first][0] + (spans[first][1] - spans[first][0]) * ratio
+            overlap = off + (pre - off) / 4
             cut = pre + (spans[last][1] - pre) / 2
             lead = 0.015
     elif kind == "consonant":

@@ -526,7 +526,7 @@ def create_oto(record):
         off = max(0, min(off, duration))
         cut = max(off, min(cut, duration))
         pre = max(off, min(pre, cut))
-        fixed = max(pre, min(fixed, cut))
+        fixed = min(fixed, cut)
         over = (off + pre) / 2
         return off, over, pre, fixed, cut, notes
 

@@ -54,7 +54,7 @@ def payload(message, contact="", category="other", request_id=None):
         message=message,
         contact=contact,
         category=category,
-        version="1.5",
+        version="2.0",
         request_id=request_id,
     )
 
@@ -168,7 +168,7 @@ class FeedbackDialog(QDialog):
         self.save_draft()
         request = QNetworkRequest(QUrl(self.endpoint))
         request.setHeader(QNetworkRequest.ContentTypeHeader, "application/json")
-        request.setRawHeader(b"User-Agent", b"OTONova/1.5")
+        request.setRawHeader(b"User-Agent", b"OTONova/2.0")
         request.setTransferTimeout(20000)
         self.send.setEnabled(False)
         self.message.setReadOnly(True)

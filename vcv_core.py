@@ -7,6 +7,7 @@ import hashlib
 import math
 import sys
 from copy import deepcopy
+from functools import lru_cache
 from datetime import datetime
 from formats import FORMATS, is_korean
 
@@ -30,7 +31,7 @@ WORKSPACE = workspace()
 TABLE = RESOURCE_ROOT / "assets/kana2phonemes.table"
 VOWELS = {"a", "i", "u", "e", "o", "N"}
 FIXED_LEAD = 0.04
-RULES_VERSION = 20
+RULES_VERSION = 24
 JP_PHONES = {
     line[2:]
     for line in (WORKSPACE / "Japanese/phonemes.txt")
@@ -72,6 +73,8 @@ def load_kana_table():
         for small, vowel in zip("ぁぃぇぉ", "aieo"):
             table[kana + small] = [consonant, "w", vowel]
     table["ほぅ"] = ["h", "u"]
+    for small, vowel in zip("ぁぃぅぇぉ", "aiueo"):
+        table.setdefault(small, [vowel])
     return table
 
 
@@ -79,11 +82,138 @@ KANA = load_kana_table()
 KANA_KEYS = sorted(KANA, key=len, reverse=True)
 
 
+def load_romaji_table():
+    # Derive spellings from the same kana/phone table used by the aligner.
+    # Prefer common modern kana when several written forms share a sound.
+    preferred = list(
+        "あいうえおかきくけこがぎぐげござじずぜぞさしすせそたちつてとだぢづでどなにぬねのはひふへほばびぶべぼぱぴぷぺぽまみむめもやゆよらりるれろわをん"
+    )
+    preferred += [
+        "うぃ",
+        "うぇ",
+        "うぉ",
+        "じゃ",
+        "じゅ",
+        "じぇ",
+        "じょ",
+        "しゃ",
+        "しゅ",
+        "しぇ",
+        "しょ",
+        "ちゃ",
+        "ちゅ",
+        "ちぇ",
+        "ちょ",
+    ]
+    result = {}
+    for kana in preferred + sorted(KANA, key=lambda k: (len(k), k)):
+        phones = KANA.get(kana, [])
+        if not phones or any(
+            p != "N" and (not p.isascii() or not p.islower()) for p in phones
+        ):
+            continue
+        spelling = "".join(phones)
+        if (
+            spelling == "N"
+            or len(phones) == 1
+            and phones[0] not in {"a", "i", "u", "e", "o"}
+        ):
+            continue
+        result.setdefault(spelling, kana)
+    result.update(
+        {
+            "sya": "しゃ",
+            "syu": "しゅ",
+            "syo": "しょ",
+            "zya": "じゃ",
+            "zyu": "じゅ",
+            "zyo": "じょ",
+            "cya": "ちゃ",
+            "cyu": "ちゅ",
+            "cyo": "ちょ",
+            "xtsu": "っ",
+            "xtu": "っ",
+            "ltsu": "っ",
+            "ltu": "っ",
+        }
+    )
+    # Common Hepburn/Kunrei/IME variants. Extended ti/di sounds use thi/dhi.
+    variants = {
+        "si": "し",
+        "ti": "ち",
+        "tu": "つ",
+        "hu": "ふ",
+        "zi": "じ",
+        "di": "ぢ",
+        "du": "づ",
+        "tya": "ちゃ",
+        "tyu": "ちゅ",
+        "tyo": "ちょ",
+        "tye": "ちぇ",
+        "dya": "ぢゃ",
+        "dyu": "ぢゅ",
+        "dyo": "ぢょ",
+        "wo": "を",
+        "thi": "てぃ",
+        "dhi": "でぃ",
+    }
+    result.update({roman: kana for roman, kana in variants.items() if kana in KANA})
+    for letter, kana in zip("aiueo", "ぁぃぅぇぉ"):
+        result["x" + letter] = kana
+        result["l" + letter] = kana
+    return result
+
+
+ROMAJI_KANA = load_romaji_table()
+ROMAJI_KEYS = sorted(ROMAJI_KANA, key=len, reverse=True)
+
+
+def romaji_mora(text, pos):
+    tail = text[pos:].lower()
+    if text[pos] == "N":
+        return "ん", 1
+    # Separate moraic n from a following vowel with n' or use nn at the end.
+    if tail.startswith("n'"):
+        return "ん", 2
+    if tail.startswith("nn"):
+        return "ん", 1 if len(tail) > 2 and tail[2] in "aiueoy" else 2
+    if (
+        tail[0] == "n"
+        and pos > 0
+        and text[pos - 1].lower() in "aiueon"
+        and (len(tail) == 1 or tail[1] in "bcdfghjkmprstvwz_ -")
+    ):
+        return "ん", 1
+    if len(tail) > 1 and tail[0] == tail[1] and tail[0] in "bcdfghjkpstz":
+        return "っ", 1
+    if tail.startswith("tch"):
+        return "っ", 1
+    key = next((key for key in ROMAJI_KEYS if tail.startswith(key)), None)
+    return (ROMAJI_KANA[key], len(key)) if key else (None, 0)
+
+
 def parse_name(stem):
     text = hiragana(stem)
     tokens = []
     pos = 0
     keys = KANA_KEYS
+
+    def append_kana(kana):
+        original = KANA[kana]
+        phones = (
+            [original[0]] + original[2:]
+            if len(original) > 2 and original[1] == "w"
+            else original
+        )
+        phones = [
+            part
+            for p in phones
+            for part in ([p[0]] if p.endswith("y") and p not in JP_PHONES else [p])
+        ]
+        tokens.append(
+            {"kana": kana, "phones": phones, "alias_phones": original, "breath": False}
+        )
+
     while pos < len(text):
         if text[pos] in "_ -":
             pos += 1
@@ -92,6 +222,12 @@ def parse_name(stem):
             tokens.append({"kana": "R", "phones": ["pau"], "breath": True})
             pos += 1
             continue
+        if text[pos].isascii() and text[pos].isalpha():
+            kana, count = romaji_mora(text, pos)
+            if kana is not None:
+                append_kana(kana)
+                pos += count
+                continue
         if "a" <= text[pos] <= "z":
             expanded = sorted(
                 CONSONANTS | {p + "w" for p in CONSONANTS if p != "w"},
@@ -128,20 +264,7 @@ def parse_name(stem):
         key = next((k for k in keys if text.startswith(k, pos)), None)
         if key is None:
             raise ValueError(f"인식할 수 없는 파일명 문자: {text[pos:]}")
-        original = KANA[key]
-        phones = (
-            [original[0]] + original[2:]
-            if len(original) > 2 and original[1] == "w"
-            else original
-        )
-        phones = [
-            part
-            for p in phones
-            for part in ([p[0]] if p.endswith("y") and p not in JP_PHONES else [p])
-        ]
-        tokens.append(
-            {"kana": key, "phones": phones, "alias_phones": original, "breath": False}
-        )
+        append_kana(key)
         pos += len(key)
     if not tokens:
         raise ValueError("음소가 없는 파일명")
@@ -169,13 +292,16 @@ def make_entry(
     raw = [offset, overlap, pre, fixed, end]
     offset = max(0.0, min(offset, duration))
     end = max(offset, min(end, duration))
-    fixed = max(offset, end - fixed_lead)
+    fixed = end - fixed_lead
     overlap = max(0.0 if allow_negative_overlap else offset, min(overlap, end))
     pre = (
         max(0.0, min(pre, end))
         if allow_unordered_markers
         else max(0.0 if allow_negative_overlap else offset, overlap, min(pre, end))
     )
+    if fixed < pre:
+        fixed = (pre + end) / 2
+    fixed = max(offset, fixed)
     absolute = [offset, overlap, pre, fixed, end]
     warnings = list(notes)
     if any(abs(a - b) > 1e-8 for a, b in zip(raw, absolute)):
@@ -369,14 +495,14 @@ def create_cvvc_oto(wav, tokens, intervals, duration):
         main = spans[-1]
         if main[2] not in VOWELS:
             if previous is not None:
-                off = previous[0] + (previous[1] - previous[0]) * 4 / 5
+                off = previous[0] + (previous[1] - previous[0]) * 3 / 4
                 pre = spans[0][0]
                 append(
                     previous[2].lower()
                     + " "
                     + "".join(token.get("alias_phones", token["phones"])),
                     off,
-                    off + (pre - off) * 2 / 3,
+                    off + (pre - off) / 4,
                     pre,
                     pre + (main[1] - pre) / 2,
                     fixed_lead=0.015,
@@ -407,7 +533,7 @@ def create_cvvc_oto(wav, tokens, intervals, duration):
                 fixed_lead=0.07,
             )
             if previous is not None:
-                off = previous[0] + (previous[1] - previous[0]) * 4 / 5
+                off = previous[0] + (previous[1] - previous[0]) * 3 / 4
                 pre = consonant[0]
                 consonant_alias = "".join(
                     token.get("alias_phones", token["phones"])[:-1]
@@ -415,7 +541,7 @@ def create_cvvc_oto(wav, tokens, intervals, duration):
                 append(
                     previous[2].lower() + " " + consonant_alias,
                     off,
-                    off + (pre - off) * 2 / 3,
+                    off + (pre - off) / 4,
                     pre,
                     consonant[0] + (consonant[1] - consonant[0]) / 2,
                     fixed_lead=0.015,
@@ -572,6 +698,9 @@ def recalculate_file(report, record, indices=None):
                     for i, fraction in anchors
                 ]
                 off, overlap, pre, fixed, end = absolute
+                if fixed < pre:
+                    fixed = (pre + end) / 2
+                    absolute[3] = fixed
                 row["absolute"] = absolute
                 row["values"] = [
                     off * 1000,
@@ -764,14 +893,25 @@ def template_alias(alias):
     return text
 
 
+@lru_cache(maxsize=16384)
 def model_alias(alias):
     text = template_alias(alias)
     for consonant in sorted(CONSONANTS, key=len, reverse=True):
         if text.endswith(consonant + "w"):
-            return text[:-1]
+            text = text[:-1]
+            break
         if text.endswith(consonant + "w-"):
-            return text[:-2] + "-"
-    return text
+            text = text[:-2] + "-"
+            break
+    text = text.strip("_")
+    try:
+        return (
+            ("-" if text.startswith("-") else "")
+            + "".join(token["kana"] for token in parse_name(text))
+            + ("-" if text.endswith("-") else "")
+        )
+    except ValueError:
+        return text
 
 
 def detect_template_affixes(template, grouped, records):
@@ -1113,9 +1253,16 @@ if __name__ == "__main__":
 
 
 def edit_oto_marker(row, index, seconds, duration):
-    """Edit one absolute oto marker, preserving the other four absolute positions."""
+    """Translate all oto markers with preutterance; edit other markers independently."""
     markers = list(row["absolute"])
-    markers[index] = max(0.0, min(duration, float(seconds)))
+    if index == 2:
+        delta = float(seconds) - markers[2]
+        lower, upper = -min(markers), duration - max(markers)
+        # Preserve spacing even for imported invalid rows that cannot fit in the WAV.
+        delta = max(lower, min(upper, delta)) if lower <= upper else 0.0
+        markers = [marker + delta for marker in markers]
+    else:
+        markers[index] = max(0.0, min(duration, float(seconds)))
     offset, overlap, pre, fixed, end = markers
     row["absolute"] = markers
     row["values"] = [

@@ -144,7 +144,7 @@ class RulesTests(unittest.TestCase):
         rows=create_oto('カシ.wav',parse_name('カシ'),spans,7,'cvvc')
         self.assertEqual([r['alias'] for r in rows],['- か','か','し','a sh','i -'])
         expected=[[.7,1,2,2.93,3],[1+1/3,5/3,2,2.93,3],
-                  [3.7,3.9,4.1,5.03,5.1],[3.2,3.4,3.5,3.785,3.8],
+                  [3.7,3.9,4.1,5.03,5.1],[3.125,3.21875,3.5,3.785,3.8],
                   [5.1,5.475,5.6,6.1,6.3]]
         for row,absolute in zip(rows,expected):
             for actual,want in zip(row['absolute'],absolute):
@@ -242,7 +242,8 @@ class RulesTests(unittest.TestCase):
         move_boundary(record,2,2.1)
         recalculate_file(report,record)
         vc=next(r for r in report['entries'] if r['alias']=='a k')
-        self.assertAlmostEqual(vc['absolute'][0],1.88)
+        self.assertAlmostEqual(vc['absolute'][0],1.825)
+        self.assertAlmostEqual(vc['absolute'][1],1.89375)
         self.assertAlmostEqual(vc['absolute'][2],2.1)
         self.assertAlmostEqual(vc['absolute'][4],2.35)
         self.assertAlmostEqual(vc['absolute'][4]-vc['absolute'][3],.015)

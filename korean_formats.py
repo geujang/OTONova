@@ -240,11 +240,11 @@ def create_oto(record, mode):
     def vc(left, right, end, alias, entry_kind="vc"):
         a, b, _ = spans[left]
         pre = spans[right][0]
-        off = a + (b - a) * 0.8
+        off = a + (b - a) * (3 / 5 if entry_kind == "cc" else 3 / 4)
         add(
             alias,
             off,
-            off + (pre - off) * 2 / 3,
+            off + (pre - off) / 4,
             pre,
             pre + (end - pre) / 2,
             0.015,

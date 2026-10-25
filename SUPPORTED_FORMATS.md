@@ -39,4 +39,4 @@ DELTA / Salem 입력을 영어 모델의 ARPAsing 계열 음소로 대응시킵�
 
 **Android·iOS 지원은 추가 예정입니다.** 현재 배포 대상은 Windows x64와 macOS Apple Silicon이며, 모바일 버전의 출시 일정은 아직 정하지 않았습니다.
 
-COC·CBNN·CMPX는 개발 소스에 추가되었습니다. 현재 공개 V1.0 설치 파일에는 아직 포함되지 않습니다. 기존 CVVC 규칙을 재사용하며 CBNN 숫자 접미사, CMPX 분류 접두사 및 COC 대문자 받침을 따로 해석합니다.
+COC·CBNN·CMPX는 Windows와 macOS V2.0에 포함됩니다. 기존 CVVC 규칙을 재사용하며 CBNN 숫자 접미사, CMPX 분류 접두사 및 COC 대문자 받침을 따로 해석합니다.

@@ -1,4 +1,4 @@
-# OTONova V1.0 · 원본 기술·모델·자료 크레딧
+# OTONova V2.0 · 원본 기술·모델·자료 크레딧
 
 ## WFL 원본 기술
 
@@ -120,3 +120,12 @@ https://utau.felinewasteland.com/en/full_ga
 - CMPX: [2xxbin / UTAU-Korean-CMPX](https://github.com/2xxbin/UTAU-Korean-CMPX). main, option_consonant, option_sepcial, option_vowel의 파일명·에일리어스 관계를 참고했습니다.
 - CMPX 원본은 리스트 재배포를 금지하므로 원본 녹음 리스트와 원문 파일명은 배포하지 않습니다. 목록 인식용 SHA-256 지문과 원설 대응용 음소 별칭 관계만 압축 카탈로그로 포함하며, 원본 시간값·가이드 BGM·음원·포네마이저 코드는 포함하지 않습니다. 원설 계산은 기존 CVVC 규칙을 사용한 독립 구현입니다.
 - 모델이 구분하지 못하는 특수 발음은 기존 치환 또는 근사 음소를 사용하고 경고를 표시합니다. 실제 녹음에 대한 발음 정확도는 청음 검토가 필요합니다.
+
+
+## 가수 설정 형식 참고
+
+`character.txt` / `character.yaml` 필드와 가수 음원 ZIP 구조는 OpenUtau의 공개 사양·로더를 참고했습니다. OpenUtau 실행 파일이나 코드를 배포본에 포함하지 않습니다.
+
+- [VoicebankConfig.cs](https://github.com/openutau/OpenUtau/blob/master/OpenUtau.Core/Classic/VoicebankConfig.cs)
+- [VoicebankLoader.cs](https://github.com/openutau/OpenUtau/blob/master/OpenUtau.Core/Classic/VoicebankLoader.cs)
+- [character.yaml 기술 문서](https://openutau.com/tech-note-%E2%80%90-character.yaml/)

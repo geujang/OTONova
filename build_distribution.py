@@ -9,9 +9,9 @@ ROOT = Path(__file__).resolve().parent
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--version", default="1.5")
+    parser.add_argument("--version", default="2.0")
     args = parser.parse_args()
-    stable = args.version in ("1.0", "1.5")
+    stable = args.version in ("1.0", "1.5", "2.0")
     schema_version = 36 if stable else int(args.version)
     version = "V" + args.version if stable else "v" + str(args.version)
     brand = "OTONova" if stable else ("OtoNova" if schema_version >= 31 else "WFL-Oto")
@@ -65,6 +65,12 @@ def main():
                 '"english_cvvc.py","english_vccv.py","assets/vccv-core-catalog.json.gz","assets/vccv-core-terms.rtf",',
                 1,
             )
+    if (source / "singer_setup.py").exists():
+        code = code.replace(
+            '"vcv_gui.py",',
+            '"vcv_gui.py","singer_setup.py","singer_settings.py","gui_workers.py","gui_dialogs.py","project_store.py","audio_cache.py",',
+            1,
+        )
     installer_source.write_text(code, encoding="utf-8-sig")
     compiler = Path("C:/Windows/Microsoft.NET/Framework64/v4.0.30319/csc.exe")
     subprocess.run(
@@ -73,6 +79,7 @@ def main():
             "/nologo",
             "/target:winexe",
             "/platform:x64",
+            "/win32manifest:" + str(ROOT / "tools/installer.manifest"),
             "/reference:System.Windows.Forms.dll",
             "/reference:System.Drawing.dll",
             "/reference:System.IO.Compression.dll",
@@ -113,7 +120,25 @@ def main():
         output.write(digest.digest())
         output.write(struct.pack("<q", start))
         output.write(b"WFLOTO26")
-    subprocess.run([str(target), "/verify"], check=True, timeout=180)
+    # Verify the exact final payload without elevating the build process.
+    # The shipped installer always has requireAdministrator in its manifest.
+    verifier = build / "verify-installer.exe"
+    subprocess.run(
+        [
+            str(compiler),
+            "/nologo",
+            "/target:exe",
+            "/platform:x64",
+            "/define:VERIFY_BUILD",
+            "/reference:System.Windows.Forms.dll",
+            "/reference:System.Drawing.dll",
+            "/reference:System.IO.Compression.dll",
+            "/out:" + str(verifier),
+            str(installer_source),
+        ],
+        check=True,
+    )
+    subprocess.run([str(verifier), "/verify", str(target)], check=True, timeout=180)
     print("Installer verified:", target, target.stat().st_size, flush=True)
 
 

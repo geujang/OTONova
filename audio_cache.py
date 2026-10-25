@@ -11,7 +11,7 @@ _guard = threading.RLock()
 _locks = {}
 _bytes = 0
 MAX_BYTES = 192 * 1024 * 1024
-CACHE_VERSION = 1
+CACHE_VERSION = 2
 
 
 def key(path, expected_signature=None):

@@ -288,12 +288,12 @@ def create_oto(record, mode="ko_cvvc"):
                     end_c = spans[k][1]
                     k += 1
             name = "".join(s[2] for s in spans[i + 1 : k]) if is_onset else following[2]
-            off = start + (end - start) * 0.8
+            off = start + (end - start) * 3 / 4
             pre = following[0]
             add(
                 phone + " " + name,
                 off,
-                off + (pre - off) * 2 / 3,
+                off + (pre - off) / 4,
                 pre,
                 pre + (end_c - pre) / 2,
                 0.015,

@@ -6,14 +6,14 @@ import shutil
 import subprocess
 
 ROOT = Path(__file__).resolve().parent
-TARGET = ROOT / "release/OTONova-Windows-V1.5"
+TARGET = ROOT / "release/OTONova-Windows-V2.0"
 
 
 def main():
     if TARGET.exists():
         raise RuntimeError("Use a fresh distribution folder")
     shutil.copytree(
-        ROOT / "release/OTONova-Windows-V1.0",
+        ROOT / "release/OTONova-Windows-V1.5",
         TARGET,
         ignore=shutil.ignore_patterns(
             "*.log",
@@ -28,6 +28,8 @@ def main():
         "vcv_gui.py",
         "gui_workers.py",
         "gui_dialogs.py",
+        "singer_settings.py",
+        "singer_setup.py",
         "feedback_client.py",
         "external_files.py",
         "project_store.py",
@@ -83,7 +85,7 @@ def main():
     (TARGET / "validation.json").write_text(
         json.dumps(
             dict(
-                version="1.5",
+                version="2.0",
                 product="OTONova",
                 inherited_validated_runtime=36,
                 english_cvvc="DELTA + Salem alignment and oto",

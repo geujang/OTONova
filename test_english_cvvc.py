@@ -64,7 +64,7 @@ class RecognitionTests(unittest.TestCase):
             Path(folder, LITE+'.wav').touch()
             window = Window();window.folder.setText(folder)
             window.set_mode('en_cvvc')
-            self.assertIn('OTONova V1.5', window.windowTitle())
+            self.assertIn('OTONova V2.0', window.windowTitle())
             self.assertFalse(window.windowIcon().isNull())
             self.assertEqual(window.files.count(), 1)
             self.assertIsNone(window.report)

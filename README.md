@@ -1,18 +1,18 @@
 <p align="center"><img src="assets/otonova-logo.png" width="128" alt="OTONova logo"></p>
 
-# OTONova V1.5
+# OTONova V2.0
 
-**Windows V1.5를 배포합니다.** 프로젝트 저장·캐시 복원·기존 OTO 표시·파일별 자동원설·한국어 COC/CBNN/CMPX·Discord 포럼 피드백이 추가되었습니다. [V1.5 변경 내역](RELEASE_NOTES.md). macOS DMG는 기존 V1.0입니다.
+**OTONova V2.0을 Windows x64와 macOS Apple Silicon용으로 배포합니다.** 3단계 가수 설정·ZIP 내보내기, 일본어 로마자 인식, 원설 규칙 및 편집 개선, 스펙토그램 설정을 추가했습니다. [V2.0 변경 내역](RELEASE_NOTES.md).
 
 **한국어** · [English](README.en.md) · [日本語](README.ja.md) · [简体中文](README.zh-CN.md)
 
 **UTAU 음원을 위한 Windows·macOS 자동 원설기.** 파일명·녹음 리스트·기존 oto.ini에서 음소열을 만들고, WFL 모델로 경계를 강제 정렬한 뒤 지정 규칙으로 원설을 생성합니다.
 
-[설치 파일 다운로드](https://github.com/geujang/OTONova/releases/tag/v1.5.0) · [지원 형식·참고 리스트](SUPPORTED_FORMATS.md) · [모델 용량 절감 방식](MODEL_COMPRESSION.md) · [원본 크레딧](CREDITS.md) · [V1.5 릴리스 노트](RELEASE_NOTES.md)
+[설치 파일 다운로드](https://github.com/geujang/OTONova/releases/tag/v2.0.0) · [지원 형식·참고 리스트](SUPPORTED_FORMATS.md) · [모델 용량 절감 방식](MODEL_COMPRESSION.md) · [원본 크레딧](CREDITS.md) · [V2.0 릴리스 노트](RELEASE_NOTES.md)
 
 ## macOS 정식 지원
 
-Apple Silicon용 [macOS 다운로드](https://github.com/geujang/OTONova/releases/tag/v1.0.0)를 제공합니다. Mac 환경에서 앱 빌드·세 언어 모델 정렬·GUI 시작 검사를 통과했습니다. Windows x64와 macOS Apple Silicon을 정식 지원합니다. 현재 Windows 배포본은 V1.5, macOS 배포본은 V1.0입니다. V1.5 변경 사항은 Windows 설치 파일에 적용되며, macOS V1.5 DMG는 아직 배포하지 않았습니다. Intel Mac은 지원하지 않습니다. 실행법과 검증 범위는 [MACOS.md](MACOS.md)를 참고하세요.
+Apple Silicon용 [macOS V2.0 DMG](https://github.com/geujang/OTONova/releases/tag/v2.0.0)를 제공합니다. Windows와 동일한 원설·가수 설정 기능을 포함합니다. Intel Mac은 지원하지 않습니다. Apple Developer ID 서명·공증은 적용하지 않았습니다. 설치법과 검증 범위는 [MACOS.md](MACOS.md)를 참고하세요.
 
 ## 지원 언어와 형식
 
@@ -22,9 +22,17 @@ Apple Silicon용 [macOS 다운로드](https://github.com/geujang/OTONova/release
 | 한국어 | CV(단독음), CVVC, CVC, VCV, COC, CBNN, CMPX |
 | 영어 | ARPAsing, CVVC(DELTA / Salem), VCCV(PaintedCz CORE) |
 
-세부 녹음 방식은 파일명·녹음 리스트·기존 에일리어스에서 인식합니다. 기존 oto.ini가 있으면 해당 에일리어스를 기준으로 시간 값을 설정합니다. **중국어 음원 지원은 향후 추가할 예정입니다. COC·CBNN·CMPX는 개발 소스에 추가되었으며 기존 CVVC 규칙으로 처리합니다. Windows V1.5 설치 파일에 포함됩니다. ~~한국어 VCCV 추가 예정~~ — 리스트 미확인(원본 리스트 삭제).** 현재 중국어는 UI 표시 언어로만 제공됩니다. Android / iOS 지원은 추가 예정이며 현재 배포 대상은 Windows x64와 macOS Apple Silicon입니다.
+세부 녹음 방식은 파일명·녹음 리스트·기존 에일리어스에서 인식합니다. 기존 oto.ini가 있으면 해당 에일리어스를 기준으로 시간 값을 설정합니다. **중국어 음원 지원은 향후 추가할 예정입니다. COC·CBNN·CMPX는 개발 소스에 추가되었으며 기존 CVVC 규칙으로 처리합니다. Windows·macOS V2.0에 포함됩니다. ~~한국어 VCCV 추가 예정~~ — 리스트 미확인(원본 리스트 삭제).** 현재 중국어는 UI 표시 언어로만 제공됩니다. Android / iOS 지원은 추가 예정이며 현재 배포 대상은 Windows x64와 macOS Apple Silicon입니다.
 
 ## 주요 기능
+
+- 3단계에서 기존 `character.txt`·`character.yaml`·`readme.txt`를 읽고 편집하며, 가수 정보와 서브뱅크를 설정합니다.
+- 선택적 README와 최신 OTO를 포함해 음원을 ZIP으로 내보냅니다. 자동원설 캐시·프로젝트·임시 파일은 ZIP에서 제외하며 원본은 보존합니다.
+- 일본어 로마자 파일명·에일리어스를 인식합니다.
+- VC 오프셋은 앞 모음의 3/4, 오버랩은 오프셋→선행의 1/4입니다. 고정이 선행보다 앞이면 선행·컷오프의 중앙으로 보정합니다.
+- 선행을 움직이면 모든 원설 마커가 함께 이동합니다. 오프셋~고정 구간은 파란색 30%로 표시합니다.
+- 스펙토그램 최대 주파수 설정(기본 10,000Hz), 불꽃 기본 색상, 파형 위아래 드래그로 진폭 표시 확대·축소.
+- Windows 언어 자동 선택과 단계별 Setup 마법사. 기본 설치 위치는 `C:\Program Files (x86)\OTONova`이며 관리자 권한과 기존 설치 교체 확인을 사용합니다.
 
 - `.otonova` 프로젝트 저장·열기: 경계와 원설값을 보존하며, 다시 열 때 경계를 재추정하지 않습니다.
 - 구버전 라벨 캐시를 찾아 즉시 경계를 표시합니다. 기존 `oto.ini`가 있으면 해당 에일리어스와 시간값을 2단계 화면에 표시합니다.
@@ -35,8 +43,8 @@ Apple Silicon용 [macOS 다운로드](https://github.com/geujang/OTONova/release
 - 도움말에서 업데이트 확인·크레딧·피드백을 제공합니다. 피드백은 Discord 포럼에 게시되며, 작성 내용과 선택 연락처는 채널을 볼 수 있는 서버 멤버에게 공개됩니다.
 
 - WFL 모델 기반 음소 경계 추정과 규칙 기반 oto.ini 생성.
-- 1단계 음소 경계 편집 / 2단계 원설 조정. 음소 경계 수정 시 원설 즉시 재계산.
-- 파형·RMS 에너지·최대 15kHz 스펙트로그램. 색상표 6종.
+- 1단계 음소 경계 편집 / 2단계 원설 조정 / 3단계 가수 설정·ZIP 내보내기. 경계 수정 시 원설을 즉시 재계산합니다.
+- 파형·RMS 에너지·스펙토그램(표시 최대 주파수 설정 가능), 여섯 가지 색상.
 - 라벨 사이 우클릭으로 해당 구간만 재생. 1단계는 음소 라벨, 2단계는 원설 라벨 기준.
 - 원설 라벨 드래그, 왼쪽부터 1~5 키 조정, Ctrl+Z 되돌리기.
 - 한국어·일본어·영어·중국어 UI, 다크 / 라이트 모드, 사용자별 설정 저장.
@@ -44,7 +52,7 @@ Apple Silicon용 [macOS 다운로드](https://github.com/geujang/OTONova/release
 
 ## 설치 및 사용
 
-1. [V1.5 릴리스](https://github.com/geujang/OTONova/releases/tag/v1.5.0)에서 `OTONova-V1.5-Setup.exe`를 내려받아 새 빈 폴더에 설치합니다. Python과 모델이 포함되어 있습니다.
+1. [V2.0 릴리스](https://github.com/geujang/OTONova/releases/tag/v2.0.0)에서 `OTONova-V2.0-Setup.exe`를 실행합니다. 기본 위치와 바로가기 옵션을 확인하고 설치합니다. 기존 설치 교체는 확인 후 진행됩니다. Python과 모델이 포함되어 있습니다.
 2. `OTONova.exe` 실행 → **음원 폴더**를 선택합니다. WAV 시각자료를 준비하고, 기존 OTO와 유효한 라벨 캐시를 불러옵니다. 기존 OTO가 있으면 2단계로 표시합니다.
 3. 새로 추정하려면 오른쪽 상단 **작업 → 자동원설**을 누릅니다. **언어권 → 형식** 순서로 선택하고 확인합니다. 파일 하나만 처리하려면 WAV 목록에서 해당 파일을 우클릭합니다.
 4. **1단계**에서 음소 경계를, **2단계**에서 원설값을 조정합니다. 프로젝트에 경계와 원설이 보존됩니다. 기존 캐시에 새 한국어 반모음 규칙을 적용하려면 해당 WAV를 다시 자동원설합니다.
@@ -68,4 +76,4 @@ Apple Silicon용 [macOS 다운로드](https://github.com/geujang/OTONova/release
 - 공통 인코더: [OpenAI Whisper base](https://huggingface.co/openai/whisper-base).
 - 학습 데이터셋, 녹음 리스트 제작자, 음소 대응표와 원문 이용 조건: [CREDITS.md](CREDITS.md), [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-제작: **KURO / geujang**. 오류 제보 시 사용한 언어·형식, 재현 방법과 오류 내용을 [Issues](https://github.com/geujang/OTONova/issues)에 남겨주세요.
+제작: **KURO**. 오류 제보 시 사용한 언어·형식, 재현 방법과 오류 내용을 [Issues](https://github.com/geujang/OTONova/issues)에 남겨주세요.

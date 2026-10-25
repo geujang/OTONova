@@ -8,7 +8,9 @@ from PySide6.QtCore import Qt, Signal, QRectF, QLineF, QThread
 from PySide6.QtGui import QColor, QPainter, QPen, QImage, QPixmap, QPainterPath
 from PySide6.QtWidgets import QWidget
 
-MAX_HZ = 15000.0
+MAX_HZ = 10000.0
+OTO_COLORS = ("#ffd700", "#22c55e", "#ef4444", "#3b82f6", "#ffffff")
+OTO_LABELS = ("오프셋", "오버랩", "선행", "고정", "컷오프")
 
 SPECTRUM_PALETTES = {
     "classic": (
@@ -83,7 +85,7 @@ def spectrum_levels(audio, sr):
         boundary="zeros",
         padded=True,
     )
-    mask = freq <= MAX_HZ
+    mask = np.ones(freq.shape, dtype=bool)
     db = 20 * np.log10(np.maximum(np.abs(spectrum[mask]), 1e-10))
     peak = max(float(db.max()), -100)
     level = np.clip((db - (peak - 80)) / 80, 0, 1)
@@ -94,7 +96,7 @@ def spectrum_levels(audio, sr):
     )
 
 
-def colorize_spectrum(levels, palette="classic"):
+def colorize_spectrum(levels, palette="fire"):
     colors = np.array(SPECTRUM_PALETTES[palette][1], dtype=float)
     points = np.linspace(0, 1, len(colors))
     lookup = np.stack(
@@ -104,7 +106,7 @@ def colorize_spectrum(levels, palette="classic"):
     return np.ascontiguousarray(lookup[levels])
 
 
-def make_spectrogram(audio, sr, palette="classic"):
+def make_spectrogram(audio, sr, palette="fire"):
     levels, high_hz, times = spectrum_levels(audio, sr)
     return colorize_spectrum(levels, palette), high_hz, times
 
@@ -172,6 +174,8 @@ class AudioEditor(QWidget):
         self.energy_times = np.array([])
         self.energy_db = np.array([])
         self.high_hz = MAX_HZ
+        self.wave_scale = 1.0
+        self.amplitude_dragging = None
         self.start = 0.0
         self.length = 1.0
         self.dragging = None
@@ -192,6 +196,7 @@ class AudioEditor(QWidget):
         self._load_revision = 0
 
     def clear(self):
+        self.amplitude_dragging = None
         self._load_revision += 1
         self.samples = None
         self.path = None
@@ -269,7 +274,7 @@ class AudioEditor(QWidget):
         self.update()
 
     def update_spectrum_palette(self):
-        palette = getattr(ui, "spectrum_palette", "classic")
+        palette = getattr(ui, "spectrum_palette", "fire")
         if self.spectrum_levels is None or palette == self.spectrum_palette:
             return
         rgb = colorize_spectrum(self.spectrum_levels, palette)
@@ -441,6 +446,9 @@ class AudioEditor(QWidget):
                 self.oto_dragging = index
                 self.editStarted.emit()
                 self.setCursor(Qt.SizeHorCursor)
+            elif wave.contains(pos):
+                self.amplitude_dragging = (pos.y(), self.wave_scale)
+                self.setCursor(Qt.SizeVerCursor)
             return
         index = self.nearest_boundary(pos.x())
         if index is not None:
@@ -450,11 +458,20 @@ class AudioEditor(QWidget):
             self.boundarySelected.emit(index, self.spans[index][0])
             self.setCursor(Qt.SizeHorCursor)
             self.update()
+        elif wave.contains(pos):
+            self.amplitude_dragging = (pos.y(), self.wave_scale)
+            self.setCursor(Qt.SizeVerCursor)
 
     def mouseMoveEvent(self, event):
         if self.samples is None:
             return
         self.pointer_x = event.position().x()
+        if self.amplitude_dragging is not None:
+            y, scale = self.amplitude_dragging
+            factor = float(np.exp(np.clip((y - event.position().y()) / 100, -8, 8)))
+            self.wave_scale = max(0.05, min(20.0, scale * factor))
+            self.update()
+            return
         if self.stage == 2:
             marker = (
                 self.keyboard_marker
@@ -484,6 +501,11 @@ class AudioEditor(QWidget):
                 self.update()
 
     def mouseReleaseEvent(self, event):
+        if event.button() == Qt.LeftButton and self.amplitude_dragging is not None:
+            self.amplitude_dragging = None
+            self.setCursor(Qt.ArrowCursor)
+            self.update()
+            return
         if self.oto_dragging is not None:
             self.oto_dragging = None
             self.editFinished.emit()
@@ -509,17 +531,18 @@ class AudioEditor(QWidget):
         p.fillRect(spec, QColor(ui.colors()["panel"]))
         p.setPen(QColor(ui.colors()["muted"]))
         p.drawText(5, int(wave.top() + 15), ui.translate("파형"))
+        p.drawText(5, int(wave.top() + 32), f"×{self.wave_scale:.2f}")
         p.drawText(
             int(spec.left()),
             int(spec.top() - 9),
-            ui.translate("스펙토그램") + " · 0–15,000 Hz",
+            ui.translate("스펙토그램") + f" · 0–{ui.spectrum_max_hz:,} Hz",
         )
         n = len(self.samples)
         p.save()
         p.setClipRect(wave)
         p.setPen(QPen(QColor(ui.colors()["wave"]), 1))
         center = wave.center().y()
-        amplitude = wave.height() * 0.44 * self.wave_gain
+        amplitude = wave.height() * 0.44 * self.wave_gain * self.wave_scale
         # Aggregate the visible audio once per view/resize, including HiDPI pixels.
         columns = max(1, int(wave.width() * self.devicePixelRatioF()))
         edges = np.floor(
@@ -573,19 +596,21 @@ class AudioEditor(QWidget):
             p.setPen(QPen(QColor("#ed8bdc" if ui.theme == "dark" else "#ac238c"), 1.5))
             p.drawPath(curve)
         if self.image:
-            height = spec.height() * min(MAX_HZ, self.high_hz) / MAX_HZ
+            visible_hz = min(ui.spectrum_max_hz, self.high_hz)
+            visible_ratio = visible_hz / max(self.high_hz, 1)
+            height = spec.height() * visible_hz / ui.spectrum_max_hz
             target = QRectF(spec.left(), spec.bottom() - height, spec.width(), height)
             source = QRectF(
                 self.start / self.duration * self.image.width(),
-                0,
+                self.image.height() * (1 - visible_ratio),
                 self.length / self.duration * self.image.width(),
-                self.image.height(),
+                self.image.height() * visible_ratio,
             )
             p.drawImage(target, self.image, source)
-        for hz in [15000, 10000, 5000, 0]:
-            y = spec.bottom() - hz / MAX_HZ * spec.height()
+        for hz in np.linspace(0, ui.spectrum_max_hz, 5):
+            y = spec.bottom() - hz / ui.spectrum_max_hz * spec.height()
             p.setPen(QColor(ui.colors()["muted"]))
-            p.drawText(5, int(y + 5), f"{hz:,}")
+            p.drawText(5, int(y + 5), f"{hz:,.0f}")
             p.setPen(QColor(110, 130, 150, 65))
             p.drawLine(int(spec.left()), int(y), int(spec.right()), int(y))
 
@@ -600,6 +625,8 @@ class AudioEditor(QWidget):
             self.length,
             ui.theme,
             ui.language,
+            ui.spectrum_max_hz,
+            self.wave_scale,
         )
         if key != self._background_key:
             image = QPixmap(
@@ -635,7 +662,7 @@ class AudioEditor(QWidget):
         self._ensure_background()
         p.drawPixmap(0, 0, self._background)
         wave, spec = self.plot_rects()
-        # Discarded audio shading, then phoneme boundaries behind oto markers.
+        # Shading and phoneme boundaries stay behind the solid oto markers.
         p.save()
         p.setClipRect(
             QRectF(wave.left(), wave.top(), wave.width(), spec.bottom() - wave.top())
@@ -647,6 +674,14 @@ class AudioEditor(QWidget):
         offset_x = max(wave.left(), min(wave.right(), self.time_x(offset)))
         cutoff_x = max(wave.left(), min(wave.right(), self.time_x(cutoff)))
         if self.stage == 2 and self.row:
+            fixed_x = max(wave.left(), min(wave.right(), self.time_x(fixed)))
+            if fixed_x > offset_x:
+                fixed_color = QColor(OTO_COLORS[3])
+                fixed_color.setAlphaF(0.3)
+                p.fillRect(
+                    QRectF(offset_x, wave.top(), fixed_x - offset_x, plot_height),
+                    fixed_color,
+                )
             p.fillRect(
                 QRectF(wave.left(), wave.top(), offset_x - wave.left(), plot_height),
                 QColor(255, 215, 0, 48),
@@ -665,7 +700,7 @@ class AudioEditor(QWidget):
             p.drawLine(x, int(wave.top()), x, int(spec.bottom()))
         for t, color in zip(
             self.row["absolute"] if self.stage == 2 and self.row else [],
-            ["#ffd700", "#22c55e", "#ef4444", "#3b82f6", "#ffffff"],
+            OTO_COLORS,
         ):
             if ui.theme == "light":
                 p.setPen(QPen(QColor("#32194c"), 4, Qt.SolidLine))
@@ -683,6 +718,8 @@ class AudioEditor(QWidget):
                 int(spec.bottom()),
             )
         p.restore()
+        if self.stage == 2 and self.row:
+            self._draw_marker_names(p, wave, spec)
         for i, (begin, end, phone) in enumerate(self.spans):
             x = max(wave.left(), self.time_x(begin))
             right = min(wave.right(), self.time_x(end))
@@ -701,7 +738,7 @@ class AudioEditor(QWidget):
             zip(
                 self.row["absolute"] if self.stage == 2 and self.row else [],
                 ["오프셋", "오버랩", "선행", "고정 끝", "컷오프"],
-                ["#ffd700", "#22c55e", "#ef4444", "#3b82f6", "#ffffff"],
+                OTO_COLORS,
             )
         ):
             p.fillRect(
@@ -714,3 +751,38 @@ class AudioEditor(QWidget):
                 self.height() - 12,
                 f"{self.ordered_markers().index(i)+1} {ui.translate(label)} {t:.3f}s",
             )
+
+    def _draw_marker_names(self, painter, wave, spec):
+        """Label each solid marker on its right; stagger nearby names vertically."""
+        metrics = painter.fontMetrics()
+        line_height = metrics.height() + 6
+        lane_ends = []
+        painter.save()
+        painter.setClipRect(
+            QRectF(wave.left(), wave.top(), wave.width(), spec.bottom() - wave.top())
+        )
+        for index in self.ordered_markers():
+            x = self.time_x(self.row["absolute"][index])
+            if not wave.left() <= x <= wave.right():
+                continue
+            text = ui.translate(OTO_LABELS[index])
+            left = x + 5
+            width = metrics.horizontalAdvance(text) + 8
+            lane = next(
+                (i for i, end in enumerate(lane_ends) if left > end + 5), len(lane_ends)
+            )
+            if lane == len(lane_ends):
+                lane_ends.append(left + width)
+            else:
+                lane_ends[lane] = left + width
+            top = wave.top() + 4 + lane * line_height
+            background = QColor("#191126")
+            background.setAlpha(220)
+            painter.fillRect(QRectF(left, top, width, line_height), background)
+            painter.setPen(QColor(OTO_COLORS[index]))
+            painter.drawText(
+                QRectF(left + 4, top, width - 4, line_height),
+                Qt.AlignLeft | Qt.AlignVCenter,
+                text,
+            )
+        painter.restore()

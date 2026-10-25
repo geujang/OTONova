@@ -479,8 +479,8 @@ def create_oto(record):
                 lead = 0.07
                 kind = "cv"
             else:
-                off = s + (e - s) * 0.8
-                over = off + (pre - off) * 2 / 3
+                off = s + (e - s) * (3 / 4 if p in VOWELS else 4 / 5)
+                over = off + (pre - off) * (1 / 4 if p in VOWELS else 2 / 3)
                 cut = right[0] + (right[1] - right[0]) / 2
                 lead = 0.015
                 kind = "vc" if p in VOWELS else "cc"

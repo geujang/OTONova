@@ -1,4 +1,4 @@
-# OTONova V1.0 · 원본 기술·모델·자료 크레딧
+# OTONova V2.0 · 원본 기술·모델·자료 크레딧
 
 ## WFL 원본 기술
 
@@ -112,3 +112,12 @@ https://utau.felinewasteland.com/en/full_ga
 ## 가나 변환표
 
 `kana2phonemes.table`은 [ENUNU](https://github.com/oatsu-gh/ENUNU)의 가나 변환표를 바탕으로 사용합니다. [pyshiro](https://github.com/wavtechyukky/pyshiro)의 ENUNU 기반 표를 참고했으며, 현재 음향 추정에는 SHIRO 모델을 사용하지 않습니다. 원본 GPLv3 전문은 `KANA-TABLE-LICENSE.txt`에 보존합니다. 이 자료의 권리를 OTONova 자체 코드나 모델의 권리와 동일하게 취급하지 않습니다.
+
+
+## 가수 설정 형식 참고
+
+`character.txt` / `character.yaml` 필드와 가수 음원 ZIP 구조는 OpenUtau의 공개 사양·로더를 참고했습니다. OpenUtau 실행 파일이나 코드를 배포본에 포함하지 않습니다.
+
+- [VoicebankConfig.cs](https://github.com/openutau/OpenUtau/blob/master/OpenUtau.Core/Classic/VoicebankConfig.cs)
+- [VoicebankLoader.cs](https://github.com/openutau/OpenUtau/blob/master/OpenUtau.Core/Classic/VoicebankLoader.cs)
+- [character.yaml 기술 문서](https://openutau.com/tech-note-%E2%80%90-character.yaml/)

@@ -168,7 +168,15 @@ def scan_folder(folder, prefer_report=True, include_records=True):
 
 
 def save_project(
-    path, folder, report, records, inventory, stage=1, selected=None, file_snapshot=None
+    path,
+    folder,
+    report,
+    records,
+    inventory,
+    stage=1,
+    selected=None,
+    file_snapshot=None,
+    singer_settings=None,
 ):
     from vcv_core import atomic_write
 
@@ -177,7 +185,7 @@ def save_project(
     data = dict(
         type="OTONova project",
         version=VERSION,
-        app_version="1.5",
+        app_version="2.0",
         folder=os.path.relpath(Path(folder).resolve(), path.parent.resolve()),
         report=report,
         records=records,
@@ -185,6 +193,7 @@ def save_project(
         stage=stage,
         selected=selected,
         file_snapshot=file_snapshot,
+        singer_settings=singer_settings,
     )
     atomic_write(path, json.dumps(data, ensure_ascii=False).encode("utf-8"))
 

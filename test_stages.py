@@ -101,6 +101,35 @@ class StageTests(unittest.TestCase):
         self.assertGreater(w.report['entries'][0]['absolute'][marker],before[marker]+.1)
         self.assertEqual(w.current_record['intervals'],spans)
 
+    def test_preutterance_moves_all_markers_with_fixed_spacing(self):
+        row={'alias':'a k','absolute':[.2,.3,.5,.7,.9],'values':[]}
+        original=list(row['absolute'])
+        self.assertAlmostEqual(edit_oto_marker(row,2,.7,2),.7)
+        for old,new in zip(original,row['absolute']):self.assertAlmostEqual(new-old,.2)
+        self.assertEqual(row['alias'],'a k')
+        self.assertTrue(row['manual_oto'])
+        self.assertAlmostEqual(row['values'][1],500)
+        self.assertAlmostEqual(row['values'][3],300)
+
+    def test_preutterance_translation_stops_at_wav_edges(self):
+        row={'alias':'a','absolute':[.2,.3,.5,.7,.9],'values':[]}
+        edit_oto_marker(row,2,5,1)
+        for actual,wanted in zip(row['absolute'],[.3,.4,.6,.8,1.]):self.assertAlmostEqual(actual,wanted)
+        edit_oto_marker(row,2,-5,1)
+        for actual,wanted in zip(row['absolute'],[0.,.1,.3,.5,.7]):self.assertAlmostEqual(actual,wanted)
+
+    def test_preutterance_group_edit_is_saved_and_undoable(self):
+        w=self.window;w.set_stage(2)
+        old=list(w.report['entries'][0]['absolute'])
+        intervals=deepcopy(w.current_record['intervals'])
+        w.begin_edit();w.edit_oto(2,old[2]+.05);w.finish_edit()
+        after=list(w.report['entries'][0]['absolute'])
+        for a,b in zip(old,after):self.assertAlmostEqual(b-a,.05)
+        saved=json.loads((self.folder/'auto-vcv/report.json').read_text(encoding='utf-8'))
+        self.assertEqual(saved['entries'][0]['absolute'],after)
+        self.assertEqual(w.current_record['intervals'],intervals)
+        w.undo_edit();self.assertEqual(w.report['entries'][0]['absolute'],old)
+
     def test_manual_values_preserve_absolute_positions_and_alias(self):
         row=deepcopy(self.report['entries'][0]);before=deepcopy(row)
         edit_oto_marker(row,0,.2,5)

@@ -11,6 +11,40 @@ from vcv_gui import Window
 APP=QApplication.instance() or QApplication([])
 APP.setFont(QFont('Malgun Gothic',10))
 class PreferencesTests(unittest.TestCase):
+ def test_display_language_default_and_user_override(self):
+  from unittest.mock import patch
+  with tempfile.TemporaryDirectory() as folder:
+   for detected in ['ko','ja','en','zh']:
+    settings=QSettings(str(Path(folder)/(detected+'.ini')),QSettings.IniFormat)
+    with patch('ui_settings.system_language',return_value=detected):
+     window=Window(settings)
+     try:self.assertEqual(ui.language,detected)
+     finally:window.close()
+     settings.setValue('language','ja')
+     with patch('ui_settings.system_language',return_value='ko'):
+      window=Window(settings)
+      try:self.assertEqual(ui.language,'ja')
+      finally:window.close()
+   settings.setValue('language','fr')
+   window=Window(settings)
+   try:self.assertEqual(ui.language,'en')
+   finally:window.close();ui.language='ko'
+ def test_regional_tags_and_unsupported_language(self):
+  for tag,wanted in [('ko-KR','ko'),('ja-JP','ja'),('en-GB','en'),('zh-TW','zh'),('zh-Hans-CN','zh'),('fr-FR','en'),('de_DE','en'),('','en')]:
+   self.assertEqual(ui.language_from_tag(tag),wanted)
+ def test_frequency_setting_default_and_persistence(self):
+  previous=ui.spectrum_max_hz
+  with tempfile.TemporaryDirectory() as folder:
+   settings=QSettings(str(Path(folder)/'frequency.ini'),QSettings.IniFormat)
+   window=Window(settings)
+   try:
+    self.assertEqual(ui.spectrum_max_hz,10000)
+    window.set_preferences('en','dark','fire',22000)
+    self.assertEqual(settings.value('spectrum_max_hz'),22000)
+   finally:window.close()
+   restored=Window(settings)
+   try:self.assertEqual(ui.spectrum_max_hz,22000)
+   finally:restored.close();ui.spectrum_max_hz=previous
  def test_languages_themes_and_persistence(self):
   with tempfile.TemporaryDirectory() as folder:
    settings=QSettings(str(Path(folder)/'settings.ini'),QSettings.IniFormat)

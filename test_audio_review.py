@@ -30,6 +30,41 @@ class AudioReviewTests(unittest.TestCase):
   self.editor.row={'absolute':[.1,.3,.5,.8,.9]};self.editor.set_stage(2)
   QTest.mouseClick(self.editor,Qt.RightButton,pos=QPoint(round(self.editor.time_x(.4)),round(spec.center().y())))
   self.assertEqual(spy.at(1),[.3,.5]);self.assertEqual(edit.count(),0)
+ def test_vertical_drag_scales_only_waveform_amplitude(self):
+  editor=self.editor;wave,_=editor.plot_rects()
+  before_samples=editor.samples.copy();before_spans=[list(v) for v in editor.spans]
+  started=QSignalSpy(editor.editStarted);moved=QSignalSpy(editor.otoMoved)
+  for stage in [1,2]:
+   editor.row={'absolute':[.1,.3,.5,.8,.9]};editor.set_stage(stage)
+   before=list(editor.row['absolute']);scale=editor.wave_scale
+   x=round(editor.time_x(.4));y=round(wave.center().y())
+   with patch('audio_view.spectrum_levels',side_effect=AssertionError('Unexpected STFT')):
+    QTest.mousePress(editor,Qt.LeftButton,pos=QPoint(x,y))
+    QTest.mouseMove(editor,QPoint(x,y-35));APP.processEvents()
+    self.assertGreater(editor.wave_scale,scale)
+    QTest.mouseMove(editor,QPoint(x,y+35));APP.processEvents()
+    self.assertLess(editor.wave_scale,scale)
+    QTest.mouseRelease(editor,Qt.LeftButton,pos=QPoint(x,y+35))
+   self.assertEqual(editor.row['absolute'],before)
+  np.testing.assert_array_equal(editor.samples,before_samples)
+  self.assertEqual(editor.spans,before_spans)
+  self.assertEqual(started.count(),0);self.assertEqual(moved.count(),0)
+
+ def test_frequency_display_change_reuses_full_bandwidth_cache(self):
+  sr=48000;t=np.arange(sr)/sr
+  path=Path(self.temp.name)/'high-frequency.wav';sf.write(path,np.sin(2*np.pi*20000*t)*.1,sr)
+  self.editor.load(path,[],None)
+  self.assertEqual(self.editor.high_hz,24000)
+  levels=self.editor.spectrum_levels;image=self.editor.image.cacheKey()
+  previous=ui.spectrum_max_hz
+  try:
+   with patch('audio_view.spectrum_levels',side_effect=AssertionError('Unexpected STFT')):
+    for limit in [5000,10000,22000]:
+     ui.spectrum_max_hz=limit;self.editor.update();APP.processEvents()
+     self.assertIs(self.editor.spectrum_levels,levels)
+     self.assertEqual(self.editor.image.cacheKey(),image)
+  finally:ui.spectrum_max_hz=previous
+
  def test_clip_is_frame_exact_stereo_and_original_is_unchanged(self):
   class Player:
    def setSourceDevice(self,device,url):self.device=device

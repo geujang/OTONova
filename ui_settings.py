@@ -4,12 +4,86 @@ import weakref
 from PySide6.QtWidgets import QLabel, QPushButton
 
 LANGUAGES = {"ko": "한국어", "ja": "日本語", "en": "English", "zh": "简体中文"}
-language = "ko"
+
+
+def language_from_tag(tag):
+    """Map regional language tags to the four supported interface languages."""
+    language = str(tag).replace("_", "-").split("-", 1)[0].lower()
+    return language if language in LANGUAGES else "en"
+
+
+def normalize_spectrum_hz(value):
+    try:
+        return max(100, min(96000, int(value)))
+    except (TypeError, ValueError, OverflowError):
+        return 10000
+
+
+def system_language():
+    """Use the Windows display language, not the keyboard or regional format."""
+    import sys
+
+    if sys.platform == "win32":
+        try:
+            import ctypes
+
+            get_language = ctypes.WinDLL(
+                "kernel32", use_last_error=True
+            ).GetUserDefaultUILanguage
+            get_language.argtypes = []
+            get_language.restype = ctypes.c_ushort
+            primary = get_language() & 0x3FF
+            return {0x12: "ko", 0x11: "ja", 0x09: "en", 0x04: "zh"}.get(primary, "en")
+        except (OSError, AttributeError):
+            return "en"
+    from PySide6.QtCore import QLocale
+
+    languages = QLocale.system().uiLanguages()
+    return language_from_tag(languages[0]) if languages else "en"
+
+
+language = system_language()
 theme = "dark"
-spectrum_palette = "classic"
+spectrum_palette = "fire"
+spectrum_max_hz = 10000
 _sources = {}
 # Source Korean, Japanese, English, simplified Chinese. Never applied to audio data.
 _ROWS = """
+기존 파일 다시 읽기|既存ファイルを再読み込み|Reload existing files|重新读取现有文件
+입력 중인 내용을 버리고 기존 파일을 다시 읽을까요?|入力中の内容を破棄して既存ファイルを再読み込みしますか？|Discard unsaved input and reload existing files?|放弃未保存的输入并重新读取现有文件？
+
+3단계 · 가수 설정|第3段階 · 歌手設定|Stage 3 · Singer setup|第三阶段 · 歌手设置
+가수 설정|歌手設定|Singer setup|歌手设置
+가수 이름|歌手名|Singer name|歌手名称
+제작자|制作者|Author|制作者
+음성 제공자|音声提供者|Voice provider|音源提供者
+음원 버전|音源バージョン|Voicebank version|音源版本
+웹사이트|ウェブサイト|Website|网站
+아이콘 이미지|アイコン画像|Icon image|图标图片
+샘플 WAV|サンプルWAV|Sample WAV|试听 WAV
+초상화 이미지|ポートレート画像|Portrait image|立绘图片
+기본 포너마이저|既定のフォネマイザー|Default phonemizer|默认音素器
+텍스트 인코딩|テキストの文字コード|Text encoding|文本编码
+초상화 불투명도|ポートレートの不透明度|Portrait opacity|立绘不透明度
+초상화 높이 (0: 자동)|ポートレートの高さ（0：自動）|Portrait height (0: auto)|立绘高度（0：自动）
+음원 폴더를 먼저 선택해주세요.|先に音源フォルダーを選択してください。|Select a voicebank folder first.|请先选择音源文件夹。
+파일 선택|ファイル選択|Choose file|选择文件
+서브뱅크 · 색상 / 접두사 / 접미사 / 음역|サブバンク · 声色 / 接頭辞 / 接尾辞 / 音域|Subbanks · Color / Prefix / Suffix / Range|子音源 · 音色 / 前缀 / 后缀 / 音域
+색상|声色|Color|音色
+접두사|接頭辞|Prefix|前缀
+접미사|接尾辞|Suffix|后缀
+음역|音域|Pitch range|音域
+서브뱅크 추가|サブバンク追加|Add subbank|添加子音源
+선택 행 삭제|選択行を削除|Remove selected row|删除所选行
+readme.txt 추가|readme.txtを追加|Add readme.txt|添加 readme.txt
+README 삭제|READMEを削除|Remove README|删除 README
+가수 설정 파일 저장|歌手設定ファイルを保存|Save singer files|保存歌手文件
+ZIP으로 내보내기|ZIPで書き出す|Export ZIP|导出 ZIP
+가수 설정 저장 완료|歌手設定を保存しました|Singer settings saved|歌手设置已保存
+ZIP 내보내기 완료|ZIP書き出し完了|ZIP export completed|ZIP 导出完成
+기존 ZIP을 덮어쓰시겠습니까?|既存のZIPを上書きしますか？|Overwrite the existing ZIP?|是否覆盖现有 ZIP？
+ZIP 내보내기 중…|ZIP書き出し中…|Exporting ZIP…|正在导出 ZIP…
+
 작업|操作|Actions|操作
 설정|設定|Settings|设置
 표시 언어|表示言語|Display language|显示语言
@@ -119,6 +193,8 @@ WAV 범위 또는 짧은 구간 때문에 규칙값을 보정함|WAV の範囲�
 """
 _ROWS += """
 에너지|エネルギー|Energy|能量
+스펙트로그램 최대 주파수|スペクトログラムの上限周波数|Spectrogram maximum frequency|声谱图最高频率
+파형 빈 곳을 위아래로 드래그: 진폭 표시 확대·축소|波形の空白を上下にドラッグ：振幅表示の拡大・縮小|Drag vertically in an empty waveform area to scale its amplitude display|在波形空白处上下拖动可缩放振幅显示
 스펙트로그램 색상|スペクトログラムの配色|Spectrogram colors|频谱图配色
 기본|標準|Classic|默认
 보라 · 분홍|紫 · ピンク|Purple · Pink|紫色 · 粉色
@@ -141,7 +217,7 @@ OTO 파일을 재 인식 할까요?|OTOファイルを再読み込みします�
 다시 로드|再読み込み|Reload|重新加载
 재인식|再認識|Read again|重新识别
 새 버전이 있습니다. 다운로드 페이지를 열까요?|新しいバージョンがあります。ダウンロードページを開きますか？|A new version is available. Open the download page?|有新版本可用。打开下载页面吗？
-현재 버전은 V1.5입니다. 더 새로운 공개 릴리스가 없습니다.|現在のバージョンはV1.5です。より新しい公開リリースはありません。|Current version: V1.5. No newer public release is available.|当前版本为 V1.5，暂无更新的公开版本。
+현재 버전은 V2.0입니다. 더 새로운 공개 릴리스가 없습니다.|現在のバージョンはV2.0です。より新しい公開リリースはありません。|Current version: V2.0. No newer public release is available.|当前版本为 V2.0，暂无更新的公开版本。
 업데이트 정보를 확인할 수 없습니다.|更新情報を確認できません。|Could not check for updates.|无法检查更新信息。
 """
 

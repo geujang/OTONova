@@ -510,7 +510,7 @@ def create_oto(record):
             j = i + 1
             while j < len(units) and units[j]["kind"] == "consonant":
                 c = units[j]
-                off = fraction(u, 0.8)
+                off = fraction(u, 3 / 4)
                 pre = units[i + 1]["start"]
                 end = fraction(c, 0.5)
                 alias = (
@@ -518,12 +518,12 @@ def create_oto(record):
                     + " "
                     + "".join(x["symbol"] for x in units[i + 1 : j + 1])
                 )
-                add(alias, off, off + (pre - off) * 2 / 3, pre, end, 0.015, "vc")
+                add(alias, off, off + (pre - off) / 4, pre, end, 0.015, "vc")
                 if j + 1 == len(units) or units[j + 1]["kind"] in ("pause", "breath"):
                     add(
                         alias + "-",
                         off,
-                        off + (pre - off) * 2 / 3,
+                        off + (pre - off) / 4,
                         pre,
                         end,
                         0.015,

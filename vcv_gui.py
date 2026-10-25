@@ -43,6 +43,8 @@ from PySide6.QtWidgets import (
     QListWidgetItem,
     QSplitter,
     QComboBox,
+    QSpinBox,
+    QStackedWidget,
 )
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
 from vcv_core import (
@@ -65,6 +67,7 @@ from formats import FORMATS, PUBLIC_FORMATS, public_mode, is_korean
 from format_detection import resolve_mode
 from project_store import PROJECT_NAME, save_project, open_project
 from feedback_client import FeedbackDialog, endpoint_from_config
+from singer_setup import SingerSettingsPanel
 
 from gui_workers import FileScanner, ExternalReload, FolderLoader
 from gui_dialogs import select_voicebank_format
@@ -104,18 +107,21 @@ class Window(QMainWindow):
         self.preferences = (
             settings if settings is not None else QSettings("OtoNova", "OtoNova")
         )
-        ui.language = str(self.preferences.value("language", "ko"))
+        ui.language = str(self.preferences.value("language", ui.system_language()))
         if ui.language not in ui.LANGUAGES:
-            ui.language = "ko"
+            ui.language = "en"
         ui.theme = str(self.preferences.value("theme", "dark"))
         if ui.theme not in ("dark", "light"):
             ui.theme = "dark"
-        ui.set_title(self, "OTONova V1.5 · 일본어 / 한국어 / 영어 자동 원설기")
+        ui.set_title(self, "OTONova V2.0 · 일본어 / 한국어 / 영어 자동 원설기")
         self.setWindowIcon(QIcon(str(RESOURCE_ROOT / "assets/otonova.ico")))
         self.resize(1320, 1000)
-        ui.spectrum_palette = str(self.preferences.value("spectrum_palette", "classic"))
+        ui.spectrum_palette = str(self.preferences.value("spectrum_palette", "fire"))
         if ui.spectrum_palette not in SPECTRUM_PALETTES:
-            ui.spectrum_palette = "classic"
+            ui.spectrum_palette = "fire"
+        ui.spectrum_max_hz = ui.normalize_spectrum_hz(
+            self.preferences.value("spectrum_max_hz", 10000)
+        )
         self.worker = None
         self.report = None
         self.current_record = None
@@ -176,7 +182,7 @@ class Window(QMainWindow):
         central = QWidget()
         self.setCentralWidget(central)
         layout = QVBoxLayout(central)
-        title = ui.label("OTONova V1.5")
+        title = ui.label("OTONova V2.0")
         title.setStyleSheet("font-size:24px;font-weight:700;padding:10px")
         title_bar = QHBoxLayout()
         logo = ui.label()
@@ -224,7 +230,11 @@ class Window(QMainWindow):
         layout.addWidget(self.progress)
         stages = QHBoxLayout()
         self.stage_buttons = []
-        for number, text in [(1, "1단계 · 음소 경계"), (2, "2단계 · 원설 조정")]:
+        for number, text in [
+            (1, "1단계 · 음소 경계"),
+            (2, "2단계 · 원설 조정"),
+            (3, "3단계 · 가수 설정"),
+        ]:
             button = ui.button(text)
             button.setCheckable(True)
             button.clicked.connect(lambda checked=False, n=number: self.set_stage(n))
@@ -243,7 +253,16 @@ class Window(QMainWindow):
         self.splitter.setStretchFactor(0, 3)
         self.splitter.setStretchFactor(1, 2)
         self.splitter.setSizes([850, 470])
-        layout.addWidget(self.splitter, 1)
+        self.workspace_stack = QStackedWidget()
+        self.workspace_stack.addWidget(self.splitter)
+        self.singer_setup = SingerSettingsPanel(self)
+        self.workspace_stack.addWidget(self.singer_setup)
+        self.singer_save_timer = QTimer(self)
+        self.singer_save_timer.setSingleShot(True)
+        self.singer_save_timer.setInterval(500)
+        self.singer_save_timer.timeout.connect(self.save_singer_draft)
+        self.singer_setup.changed.connect(lambda: self.singer_save_timer.start())
+        layout.addWidget(self.workspace_stack, 1)
         self.wave = Waveform()
         self.wave.segmentRequested.connect(self.play_segment)
         self.wave.editStarted.connect(self.begin_edit)
@@ -340,6 +359,7 @@ class Window(QMainWindow):
         self.settings_button.setText(ui.translate("설정"))
         self.credits_action.setText(ui.translate("크레딧"))
         self.help_menu.setTitle(ui.translate("도움말"))
+        self.singer_setup.refresh_language()
         for action, text in [
             (self.update_action, "업데이트 확인"),
             (self.github_action, "GitHub 링크"),
@@ -383,6 +403,8 @@ class Window(QMainWindow):
                 )
                 + "\n"
                 + ui.translate("우클릭: 라벨 사이 구간 재생")
+                + "\n"
+                + ui.translate("파형 빈 곳을 위아래로 드래그: 진폭 표시 확대·축소")
             )
             self.wave.update()
         self.refresh_files()
@@ -409,6 +431,14 @@ class Window(QMainWindow):
             palettes.addItem(ui.translate(name), key)
         palettes.setCurrentIndex(palettes.findData(ui.spectrum_palette))
         layout.addWidget(palettes)
+        layout.addWidget(ui.label("스펙트로그램 최대 주파수"))
+        maximum_hz = QSpinBox()
+        maximum_hz.setObjectName("spectrum_max_hz")
+        maximum_hz.setRange(100, 96000)
+        maximum_hz.setSingleStep(1000)
+        maximum_hz.setSuffix(" Hz")
+        maximum_hz.setValue(ui.spectrum_max_hz)
+        layout.addWidget(maximum_hz)
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         buttons.button(QDialogButtonBox.Ok).setText(ui.translate("확인"))
         buttons.button(QDialogButtonBox.Cancel).setText(ui.translate("취소"))
@@ -420,10 +450,15 @@ class Window(QMainWindow):
         if dialog.exec() != QDialog.Accepted:
             return
         self.set_preferences(
-            languages.currentData(), themes.currentData(), palettes.currentData()
+            languages.currentData(),
+            themes.currentData(),
+            palettes.currentData(),
+            maximum_hz.value(),
         )
 
-    def set_preferences(self, language, theme, spectrum_palette=None):
+    def set_preferences(
+        self, language, theme, spectrum_palette=None, spectrum_max_hz=None
+    ):
         if language not in ui.LANGUAGES or theme not in ("dark", "light"):
             raise ValueError("Invalid preferences")
         if spectrum_palette is not None:
@@ -431,6 +466,9 @@ class Window(QMainWindow):
                 raise ValueError("Invalid spectrogram palette")
             ui.spectrum_palette = spectrum_palette
             self.preferences.setValue("spectrum_palette", spectrum_palette)
+        if spectrum_max_hz is not None:
+            ui.spectrum_max_hz = ui.normalize_spectrum_hz(spectrum_max_hz)
+            self.preferences.setValue("spectrum_max_hz", ui.spectrum_max_hz)
         ui.language = language
         ui.theme = theme
         self.preferences.setValue("language", language)
@@ -472,7 +510,7 @@ class Window(QMainWindow):
         QMessageBox.about(
             self,
             ui.translate("버전 정보"),
-            "OTONova V1.5\nKURO / geujang\nWFL 기반 UTAU 자동 원설기\nhttps://github.com/geujang/OTONova",
+            "OTONova V2.0\nKURO\nWFL 기반 UTAU 자동 원설기\nhttps://github.com/geujang/OTONova",
         )
 
     def show_feedback(self):
@@ -483,7 +521,7 @@ class Window(QMainWindow):
         request = QNetworkRequest(
             QUrl("https://api.github.com/repos/geujang/OTONova/releases/latest")
         )
-        request.setRawHeader(b"User-Agent", b"OTONova/1.5")
+        request.setRawHeader(b"User-Agent", b"OTONova/2.0")
         request.setTransferTimeout(10000)
         reply = self.network.get(request)
         reply.finished.connect(lambda: self.update_reply(reply))
@@ -498,7 +536,7 @@ class Window(QMainWindow):
 
             version = tuple(int(n) for n in re.findall(r"\d+", data["tag_name"])[:3])
             version = version + (0,) * (3 - len(version))
-            if version > (1, 5, 0):
+            if version > (2, 0, 0):
                 answer = QMessageBox.question(
                     self,
                     ui.translate("업데이트 확인"),
@@ -515,7 +553,7 @@ class Window(QMainWindow):
                     self,
                     ui.translate("업데이트 확인"),
                     ui.translate(
-                        "현재 버전은 V1.5입니다. 더 새로운 공개 릴리스가 없습니다."
+                        "현재 버전은 V2.0입니다. 더 새로운 공개 릴리스가 없습니다."
                     ),
                 )
         except Exception as exc:
@@ -549,6 +587,11 @@ class Window(QMainWindow):
         }
 
     def check_external_files(self):
+        if (
+            self.singer_setup.export_worker
+            and self.singer_setup.export_worker.isRunning()
+        ):
+            return
         if not self._watch_folder or self._external_dialog:
             return
         if QApplication.activeModalWidget() is not None:
@@ -567,6 +610,11 @@ class Window(QMainWindow):
         self.file_scanner.start()
 
     def external_snapshot(self, folder, revision, state):
+        if (
+            self.singer_setup.export_worker
+            and self.singer_setup.export_worker.isRunning()
+        ):
+            return
         if folder != self._watch_folder or revision != self._file_revision:
             return
         if self.worker and self.worker.isRunning():
@@ -712,6 +760,7 @@ class Window(QMainWindow):
             self.restore_project(self.project_path)
             return
         self.folder.setText(str(folder))
+        self.bind_singer_folder(folder, force=True)
         self.mode_chosen = False
         self.project_records = {}
         self.inventory = {}
@@ -771,6 +820,7 @@ class Window(QMainWindow):
         data = open_project(path)
         self.project_path = Path(path)
         self.folder.setText(data["folder"])
+        self.bind_singer_folder(data["folder"], data.get("singer_settings"), force=True)
         self.project_records = data["records"]
         self.inventory = data["inventory"]
         self.start_file_watch()
@@ -788,8 +838,10 @@ class Window(QMainWindow):
         self.wave.async_loading = True
         self.wave.cache_folder = Path(data["folder"]) / ".otonova-cache"
         self.wave.clear()
+        restored_stage = data.get("stage", 1)
+        self.stage = restored_stage if restored_stage in (1, 2, 3) else 1
         self.done(data["report"])
-        self.set_stage(data.get("stage", 1))
+        self.set_stage(self.stage)
         for i in range(self.files.count()):
             if self.files.item(i).data(Qt.UserRole) == data.get("selected"):
                 self.files.setCurrentRow(i)
@@ -838,6 +890,7 @@ class Window(QMainWindow):
             self.stage,
             (self.current_record or {}).get("wav"),
             accepted,
+            singer_settings=self.singer_setup.snapshot(),
         )
         self.project_path = target
 
@@ -1125,7 +1178,23 @@ class Window(QMainWindow):
             + [" / ".join(row["warnings"])]
         )
 
+    def save_singer_draft(self):
+        try:
+            self.save_project_snapshot()
+        except Exception as exc:
+            self.update_progress("프로젝트 저장 실패: " + str(exc))
+
+    def bind_singer_folder(self, folder, draft=None, force=False):
+        try:
+            self.singer_setup.bind_folder(folder, draft, force)
+        except Exception as exc:
+            self.singer_setup.folder = None
+            self.singer_setup.setEnabled(False)
+            self.singer_setup.folder_label.setText(str(exc))
+            self.update_progress(str(exc))
+
     def done(self, report):
+        self.bind_singer_folder(self.folder.text())
         self.idle()
         self.mode = report["mode"]
         self.report = report
@@ -1176,8 +1245,17 @@ class Window(QMainWindow):
     def set_stage(self, stage):
         if self.worker and self.worker.isRunning():
             return
+        if stage not in (1, 2, 3):
+            return
+        if stage == 3:
+            try:
+                self.singer_setup.refresh_from_disk()
+            except Exception as exc:
+                self.update_progress(str(exc))
         self.stage = stage
-        self.wave.set_stage(stage)
+        self.workspace_stack.setCurrentIndex(1 if stage == 3 else 0)
+        self.undo_shortcut.setEnabled(stage != 3)
+        self.wave.set_stage(1 if stage == 1 else 2)
         for n, b in enumerate(self.stage_buttons, 1):
             b.setChecked(n == stage)
         self.table.setVisible(stage == 2)
@@ -1599,6 +1677,14 @@ class Window(QMainWindow):
             self.failed(str(exc))
 
     def closeEvent(self, event):
+        if (
+            self.singer_setup.export_worker
+            and self.singer_setup.export_worker.isRunning()
+        ):
+            self.update_progress(ui.translate("ZIP 내보내기 중…"))
+            event.ignore()
+            return
+        self.singer_save_timer.stop()
         if self.reload_worker and self.reload_worker.isRunning():
             self.update_progress(
                 "자료를 다시 로드하는 중입니다. 완료 후 창을 닫아주세요."
@@ -1653,7 +1739,7 @@ if __name__ == "__main__":
         sys.exit(0)
     app = QApplication(sys.argv)
     app.setApplicationName("OTONova")
-    app.setApplicationDisplayName("OTONova V1.5")
+    app.setApplicationDisplayName("OTONova V2.0")
     app.setWindowIcon(QIcon(str(RESOURCE_ROOT / "assets/otonova.ico")))
     ui.apply_font()
     window = Window()

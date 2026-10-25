@@ -46,6 +46,8 @@ class KoreanTests(unittest.TestCase):
         record={'wav':'test.wav','language':'ko','intervals':deepcopy(spans),'duration':8}
         rows=create_oto(record)
         by={r['alias']:r for r in rows}
+        self.assertAlmostEqual(by['a N']['absolute'][0],2.625)
+        self.assertAlmostEqual(by['a N']['absolute'][1],2.71875)
         self.assertIn('a N',by);self.assertIn('na',by);self.assertIn('a i',by)
         self.assertAlmostEqual(by['- ba']['absolute'][0],.7)
         self.assertAlmostEqual(by['a N']['absolute'][4],3.3)

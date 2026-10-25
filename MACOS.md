@@ -1,14 +1,14 @@
 # macOS 정식 지원
 
-**macOS Apple Silicon(arm64)을 정식 지원합니다.** Windows V1.0 설치 파일을 Mac에서 실행하는 방식이 아니라, 동일한 모델과 소스를 Mac용 Python / PyTorch / Qt로 묶습니다. Intel Mac은 지원하지 않습니다.
+**macOS Apple Silicon(arm64)을 정식 지원합니다.** Windows 설치 파일을 Mac에서 실행하는 방식이 아니라, 동일한 모델과 소스를 Mac용 Python / PyTorch / Qt로 묶습니다. Intel Mac은 지원하지 않습니다.
 
 ## 다운로드와 검증 상태
 
-[OTONova V1.0 — Windows & macOS](https://github.com/geujang/OTONova/releases/tag/v1.0.0)에서 DMG를 내려받아 열고 `OTONova.app`을 옆의 Applications 폴더로 끌어 옮겨 사용합니다. Mac 다운로드 파일은 `OTONova-macOS-V1.0-arm64.dmg`입니다. Python과 모델이 앱에 포함됩니다.
+[OTONova V2.0 — Windows & macOS](https://github.com/geujang/OTONova/releases/tag/v2.0.0)에서 DMG를 내려받아 열고 `OTONova.app`을 옆의 Applications 폴더로 끌어 옮겨 사용합니다. Mac 다운로드 파일은 `OTONova-macOS-V2.0-arm64.dmg`입니다. Python과 모델이 앱에 포함됩니다.
 
-macOS 15 Apple Silicon CI에서 69개 회귀 검사(Windows 전용 2개 제외), 소스 및 frozen 앱의 영어·일본어·한국어 정렬, GUI 시작·화면 캡처 검사를 통과했습니다. [검증 실행](https://github.com/geujang/OTONova/actions/runs/39790851377), [검증 기록](validation/macos-preview.json).
+macOS 15 Apple Silicon CI에서 회귀 검사, 소스 및 frozen 앱의 영어·일본어·한국어 정렬, GUI 시작·화면 캡처와 DMG 검증을 수행합니다. 현재 릴리스의 검증 실행은 [GitHub Actions](https://github.com/geujang/OTONova/actions/workflows/macos.yml)에서 확인할 수 있습니다.
 
-Apple Developer ID 배포 서명·공증은 아직 적용하지 않았습니다. 정식 지원 전환으로 추가 검증이나 공증이 수행된 것은 아닙니다. 실제 Mac의 스피커 청음, 다양한 외장 드라이브 권한, 긴 음원 작업은 별도 사용자 검증이 필요합니다. Intel Mac은 미지원입니다.
+Apple Developer ID 배포 서명·공증은 적용하지 않았습니다. 실제 Mac의 스피커 청음, 다양한 외장 드라이브 권한, 긴 음원 작업은 별도 사용자 검증이 필요합니다. Intel Mac은 미지원입니다.
 
 ## 소스 실행
 
@@ -54,6 +54,4 @@ QT_QPA_PLATFORM=offscreen dist/OTONova.app/Contents/MacOS/OTONova --ui-check
 
 ## 배포 식별자
 
-Windows와 macOS를 `v1.0.0`의 OTONova V1.0 릴리스로 통합했습니다. 이전 Mac 별도 릴리스는 삭제했습니다. 배포 파일명은 V1.0으로 통일했으며 Mac 앱 내부 빌드 버전은 1.0.1입니다. 바이너리와 검증 결과는 기존과 동일합니다.
-
-DMG 생성·마운트·전체 앱 파일 해시·심볼릭 링크·코드 서명 구조 검증: [Mac DMG 검증 실행](https://github.com/geujang/OTONova/actions/runs/39794929691).
+Windows와 macOS를 `v2.0.0`의 OTONova V2.0 릴리스로 함께 제공합니다. Mac 앱 내부 버전은 2.0.0입니다. 과거 V1.0 모델 추출 경로는 검증된 동일 가중치를 가져오기 위한 빌드 입력이며 V2.0 앱의 버전과는 별개입니다.
