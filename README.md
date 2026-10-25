@@ -18,7 +18,7 @@ Apple Silicon용 [macOS V2.0 DMG](https://github.com/geujang/OTONova/releases/ta
 
 | 음원 언어 | 지원 형식 |
 |---|---|
-| 일본어 | CV(단독음), CVVC, VCV |
+| 일본어 | CV(단독음), CVVC, VCV, VCV & CVVC |
 | 한국어 | CV(단독음), CVVC, CVC, VCV, COC, CBNN, CMPX |
 | 영어 | ARPAsing, CVVC(DELTA / Salem), VCCV(PaintedCz CORE) |
 

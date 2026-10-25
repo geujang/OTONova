@@ -22,7 +22,7 @@ def finish(window):
 
 class ExternalTests(unittest.TestCase):
     def setUp(self):
-        self.tmp=tempfile.TemporaryDirectory();self.root=Path(self.tmp.name);self.wav=self.root/'a.wav'
+        self.tmp=tempfile.TemporaryDirectory();self.root=Path(self.tmp.name).resolve();self.wav=self.root/'a.wav'
         sf.write(self.wav,np.zeros(16000,dtype='float32'),16000)
         self.oto=self.root/'oto.ini';self.oto.write_text('a.wav=a,0,100,-800,50,20\n')
         self.window=Window();self.window.open_folder(self.root);finish(self.window);self.window.file_timer.stop()

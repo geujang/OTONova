@@ -20,7 +20,7 @@ Download the [macOS V2.0 Apple Silicon DMG](https://github.com/geujang/OTONova/r
 
 | Language | Formats |
 |---|---|
-| Japanese | CV, CVVC, VCV |
+| Japanese | CV, CVVC, VCV, VCV & CVVC |
 | Korean | CV, CVVC, CVC, VCV, COC, CBNN, CMPX |
 | English | ARPAsing, CVVC (DELTA / Salem), VCCV (PaintedCz CORE) |
 
