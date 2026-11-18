@@ -69,4 +69,3 @@ ZIP에는 `auto-*`, 라벨·logits·표시 캐시 폴더, 낱개 `.lab`·`.npz`�
 작업 메뉴의 **원본 OTO 다시 읽기 (인코딩 선택)**에서 파일의 인코딩을 선택합니다. 선택하면 현재 화면의 원설값을 원본 OTO에서 다시 불러오며, 폴더별로 선택을 기억합니다. 자동 감지는 BOM과 `#Charset:` 선언, `character.yaml`의 `text_file_encoding`을 우선 확인합니다. 선언 없는 레거시 인코딩은 글자가 깨져 보이면 직접 지정하세요. 3단계의 **텍스트 인코딩**은 가수 파일 저장 및 ZIP 내보내기에 적용됩니다.
 
 vLabeler의 10개 선택 항목인 UTF-8, Shift-JIS, GBK, ISO-8859-1, Windows-1251, Windows-1252, GB2312, ISO-8859-9, EUC-JP, EUC-KR을 지원합니다. Shift-JIS는 기존 CP932 호환 동작을 사용합니다. CP949 및 UTF BOM 옵션도 선택할 수 있습니다.
-

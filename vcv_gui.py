@@ -714,12 +714,12 @@ class Window(QMainWindow):
             self.report["oto_encoding"] = text_codec(encoding, utf8_bom=True)
 
     def choose_oto_encoding(self):
-        if not self._watch_folder or any(
+        if not Path(self.folder.text()).is_dir() or any(
             worker and worker.isRunning()
             for worker in (self.worker, self.reload_worker, self.asset_worker)
         ):
             return
-        folder = self._watch_folder
+        folder = self.folder.text()
         options = [(ui.translate("자동 감지"), "")] + list(TEXT_ENCODINGS)
         keys = [key for _, key in options]
         current = self.oto_input_encoding(folder) or ""
@@ -734,10 +734,24 @@ class Window(QMainWindow):
         if not accepted:
             return
         encoding = dict(options)[label]
+        if self.report is None:
+            self.asset_worker = FolderLoader(folder, input_encoding=encoding or None)
+            self.asset_worker.indexed.connect(self.encoding_folder_indexed)
+            self.asset_worker.failed.connect(self.failed)
+            self.asset_worker.start()
+            return
         self.reload_worker = ExternalReload(folder, [], True, encoding or None)
 
         self.reload_worker.completed.connect(self.apply_oto_encoding_reload)
         self.reload_worker.start()
+
+    def encoding_folder_indexed(self, inventory, report, records):
+        worker = self.asset_worker
+        if worker and worker.folder.resolve() == Path(self.folder.text()).resolve():
+            self.preferences.setValue(
+                self.oto_encoding_key(worker.folder), worker.input_encoding or ""
+            )
+            self.folder_indexed(inventory, report, records)
 
     def apply_oto_encoding_reload(self, result):
         worker = self.reload_worker
@@ -827,6 +841,8 @@ class Window(QMainWindow):
         ):
             return
         self._stop_assets()
+        self._watch_folder = None
+        self._file_revision += 1
         self.project_path = Path(folder) / PROJECT_NAME
         if self.project_path.exists():
             self.restore_project(self.project_path)
