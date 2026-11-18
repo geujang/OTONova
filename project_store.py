@@ -20,7 +20,7 @@ def safe_audio(root, name):
     return path
 
 
-def scan_folder(folder, prefer_report=True, include_records=True):
+def scan_folder(folder, prefer_report=True, include_records=True, input_encoding=None):
     from vcv_core import read_existing_oto, RULES_VERSION
     import soundfile as sf
 
@@ -40,9 +40,14 @@ def scan_folder(folder, prefer_report=True, include_records=True):
                 }
             except Exception as exc:
                 failures.append({"wav": name, "error": str(exc)})
+    from singer_settings import configured_encoding
+
+    preferred_encoding = configured_encoding(root)
+    encodings = set()
     actual_names = {name.casefold(): name for name in inventory}
     for path in sorted(root.rglob("oto.ini")):
-        rows, _ = read_existing_oto(path)
+        rows, encoding = read_existing_oto(path, preferred_encoding, input_encoding)
+        encodings.add(encoding)
         for original in rows or []:
             row = deepcopy(original)
             try:
@@ -140,7 +145,8 @@ def scan_folder(folder, prefer_report=True, include_records=True):
         duplicates_removed=0,
         inventory=list(inventory),
         uses_existing_oto=bool(entries),
-        oto_encoding="utf-8",
+        oto_encoding=input_encoding
+        or (next(iter(encodings)) if len(encodings) == 1 else "utf-8"),
     )
     for path in (
         sorted(
@@ -185,7 +191,7 @@ def save_project(
     data = dict(
         type="OTONova project",
         version=VERSION,
-        app_version="2.0",
+        app_version="2.2",
         folder=os.path.relpath(Path(folder).resolve(), path.parent.resolve()),
         report=report,
         records=records,

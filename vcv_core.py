@@ -31,7 +31,7 @@ WORKSPACE = workspace()
 TABLE = RESOURCE_ROOT / "assets/kana2phonemes.table"
 VOWELS = {"a", "i", "u", "e", "o", "N"}
 FIXED_LEAD = 0.04
-RULES_VERSION = 24
+RULES_VERSION = 25
 JP_PHONES = {
     line[2:]
     for line in (WORKSPACE / "Japanese/phonemes.txt")
@@ -502,7 +502,7 @@ def create_cvvc_oto(wav, tokens, intervals, duration):
                     + " "
                     + "".join(token.get("alias_phones", token["phones"])),
                     off,
-                    off + (pre - off) / 4,
+                    off + (pre - off) * 3 / 4,
                     pre,
                     pre + (main[1] - pre) / 2,
                     fixed_lead=0.015,
@@ -541,7 +541,7 @@ def create_cvvc_oto(wav, tokens, intervals, duration):
                 append(
                     previous[2].lower() + " " + consonant_alias,
                     off,
-                    off + (pre - off) / 4,
+                    off + (pre - off) * 3 / 4,
                     pre,
                     consonant[0] + (consonant[1] - consonant[0]) / 2,
                     fixed_lead=0.015,
@@ -734,14 +734,32 @@ def atomic_write(path, data):
     temp.replace(path)
 
 
+def encode_oto_rows(rows, encoding, charset_header=False):
+    from singer_settings import text_codec
+
+    lines = [
+        row["wav"]
+        + "="
+        + row["alias"]
+        + ","
+        + ",".join(f"{v:.3f}" for v in row["values"])
+        for row in rows
+    ]
+    if charset_header:
+        lines.insert(0, "#Charset: " + encoding)
+    return ("\n".join(lines) + "\n").encode(text_codec(encoding))
+
+
 def persist_report(folder, report):
+    from singer_settings import has_charset_header
+
     output = output_dir(folder, report.get("mode", "vcv"))
     output.mkdir(exist_ok=True)
-    lines = [
-        r["wav"] + "=" + r["alias"] + "," + ",".join(f"{v:.3f}" for v in r["values"])
-        for r in report["entries"]
-    ]
-    text = ("\n".join(lines) + "\n").encode(report.get("oto_encoding", "cp932"))
+    text = encode_oto_rows(
+        report["entries"],
+        report.get("oto_encoding", "cp932"),
+        charset_header=has_charset_header(Path(folder) / "oto.ini"),
+    )
     report["updated"] = datetime.now().isoformat()
     atomic_write(output / "oto.preview.ini", text)
     atomic_write(
@@ -838,22 +856,18 @@ class Engine:
         self.backend.close()
 
 
-def read_existing_oto(path):
+def read_existing_oto(path, preferred=None, override=None):
+    from singer_settings import CHARSET_LINE, configured_encoding, read_text
+
     path = Path(path)
+    preferred = configured_encoding(path.parent) or preferred
     if not path.exists():
-        return None, "cp932"
-    data = path.read_bytes()
-    encodings = (
-        ["utf-8-sig"] if data.startswith(b"\xef\xbb\xbf") else ["utf-8", "cp932"]
-    )
-    for encoding in encodings:
-        try:
-            text = data.decode(encoding)
-            break
-        except UnicodeDecodeError:
-            continue
-    else:
-        raise ValueError("기존 oto.ini 인코딩을 읽을 수 없습니다.")
+        return None, override or preferred or "cp932"
+    text, encoding = read_text(path, preferred, override=override)
+    return parse_oto_text(CHARSET_LINE.sub("", text)), encoding
+
+
+def parse_oto_text(text):
     rows = []
     for number, line in enumerate(text.splitlines(), 1):
         if not line.strip():
@@ -869,7 +883,7 @@ def read_existing_oto(path):
                 f"기존 oto.ini {number}행 형식 오류. 기존 파일은 유지됩니다."
             )
         rows.append({"wav": wav, "alias": alias, "values": values})
-    return rows, encoding
+    return rows
 
 
 def anchor_markers(markers, intervals):
@@ -1063,15 +1077,16 @@ def run_folder(
     review=None,
     only_files=None,
     base_report=None,
+    input_encoding=None,
 ):
     folder = Path(folder)
     from format_detection import resolve_mode
 
-    template, encoding = read_existing_oto(folder / "oto.ini")
+    template, encoding = read_existing_oto(folder / "oto.ini", override=input_encoding)
     if mode == "en_vccv":
         from english_vccv import read_templates
 
-        template, encoding = read_templates(folder)
+        template, encoding = read_templates(folder, override=input_encoding)
     mode, detection = resolve_mode(folder, mode, template)
     if detection:
         progress(detection["warning"] or "녹음 리스트 자동 인식 완료")
@@ -1220,12 +1235,12 @@ def run_folder(
     return report
 
 
-def install_oto(folder, mode="vcv"):
+def install_oto(folder, mode="vcv", input_encoding=None):
     folder = Path(folder)
     if mode == "en_vccv" and not (folder / "oto.ini").exists():
         from english_vccv import install_nested_oto
 
-        return install_nested_oto(folder)
+        return install_nested_oto(folder, override=input_encoding)
     source = output_dir(folder, mode) / "oto.preview.ini"
     target = folder / "oto.ini"
     if target.exists():

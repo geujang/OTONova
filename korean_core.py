@@ -293,7 +293,7 @@ def create_oto(record, mode="ko_cvvc"):
             add(
                 phone + " " + name,
                 off,
-                off + (pre - off) / 4,
+                off + (pre - off) * 3 / 4,
                 pre,
                 pre + (end_c - pre) / 2,
                 0.015,

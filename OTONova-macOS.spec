@@ -22,5 +22,5 @@ exe=EXE(pyz,a.scripts,[],exclude_binaries=True,name='OTONova',console=False,
     argv_emulation=False,target_arch=None,codesign_identity=os.environ.get('OTONOVA_CODESIGN_IDENTITY'))
 coll=COLLECT(exe,a.binaries,a.datas,name='OTONova')
 app=BUNDLE(coll,name='OTONova.app',icon=str(root/'build/otonova.icns'),bundle_identifier='io.github.geujang.otonova',
-    info_plist={'CFBundleShortVersionString':'2.0.0','CFBundleVersion':'2.0.0','NSHighResolutionCapable':True,
+    info_plist={'CFBundleShortVersionString':'2.2.0','CFBundleVersion':'2.2.0','NSHighResolutionCapable':True,
                'NSHumanReadableCopyright':'OTONova — KURO; third-party credits included.'})

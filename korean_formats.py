@@ -244,7 +244,7 @@ def create_oto(record, mode):
         add(
             alias,
             off,
-            off + (pre - off) / 4,
+            off + (pre - off) * (1 / 4 if entry_kind == "cc" else 3 / 4),
             pre,
             pre + (end - pre) / 2,
             0.015,

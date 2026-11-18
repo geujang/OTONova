@@ -135,11 +135,9 @@ class SingerSettingsPanel(QWidget):
         self.phonemizer.currentTextChanged.connect(self.notify)
         form.addRow(ui.label("기본 포너마이저"), self.phonemizer)
         self.encoding = QComboBox()
-        for label, key in [
-            ("UTF-8", "utf-8"),
-            ("Shift-JIS / CP932", "shift_jis"),
-            ("Korean / CP949", "cp949"),
-        ]:
+        from singer_settings import TEXT_ENCODINGS
+
+        for label, key in TEXT_ENCODINGS:
             self.encoding.addItem(label, key)
         self.encoding.currentIndexChanged.connect(self.notify)
         form.addRow(ui.label("텍스트 인코딩"), self.encoding)
@@ -235,6 +233,9 @@ class SingerSettingsPanel(QWidget):
                     or any(draft.get(key) for key in FIELDS if key != "name")
                 )
         data = deepcopy(draft) if dirty else load_settings(folder)
+        if self.folder == folder and hasattr(self, "base"):
+            data["_oto_input_encoding"] = self.base.get("_oto_input_encoding")
+
         self.folder = folder
         self.loading = True
         self.base = deepcopy(data)
@@ -375,6 +376,7 @@ class SingerSettingsPanel(QWidget):
             save_settings(self.folder, self.snapshot())
             data = load_settings(self.folder)
             self.bind_folder(self.folder, data, force=True)
+            self.owner.singer_encoding_saved(data["text_file_encoding"])
             self.owner.acknowledge_oto_writes()
             self.owner.save_project_snapshot()
             self.owner.update_progress(ui.translate("가수 설정 저장 완료"))

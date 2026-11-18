@@ -411,7 +411,8 @@ def make_alias(alias, record):
         else:
             ratio = 3 / 4 if roles[first] in ["vowel", "vowel_continuation"] else 3 / 5
             off = spans[first][0] + (spans[first][1] - spans[first][0]) * ratio
-            overlap = off + (pre - off) / 4
+            overlap_ratio = 3 / 4 if roles[first] in ["vowel", "vowel_continuation"] else 1 / 4
+            overlap = off + (pre - off) * overlap_ratio
             cut = pre + (spans[last][1] - pre) / 2
             lead = 0.015
     elif kind == "consonant":

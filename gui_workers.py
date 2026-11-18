@@ -27,11 +27,12 @@ class FileScanner(QThread):
 class ExternalReload(QThread):
     completed = Signal(object)
 
-    def __init__(self, folder, wavs, oto):
+    def __init__(self, folder, wavs, oto, input_encoding=None):
         super().__init__()
         self.folder = Path(folder)
         self.wavs = wavs
         self.oto = oto
+        self.input_encoding = input_encoding
 
     def run(self):
         from audio_cache import get
@@ -59,7 +60,10 @@ class ExternalReload(QThread):
         if self.oto:
             try:
                 _, result["report"], _ = scan_folder(
-                    self.folder, prefer_report=False, include_records=False
+                    self.folder,
+                    prefer_report=False,
+                    include_records=False,
+                    input_encoding=self.input_encoding,
                 )
             except Exception as exc:
                 result["errors"].append(str(exc))
@@ -71,15 +75,18 @@ class FolderLoader(QThread):
     progress = Signal(str)
     failed = Signal(str)
 
-    def __init__(self, folder, scan=True):
+    def __init__(self, folder, scan=True, input_encoding=None):
         super().__init__()
         self.folder = Path(folder)
         self.scan = scan
+        self.input_encoding = input_encoding
 
     def run(self):
         try:
             if self.scan:
-                inventory, report, records = scan_folder(self.folder)
+                inventory, report, records = scan_folder(
+                    self.folder, input_encoding=self.input_encoding
+                )
                 self.indexed.emit(inventory, report, records)
                 names = list(inventory)
             else:

@@ -1,20 +1,20 @@
 <p align="center"><img src="assets/otonova-logo.png" width="128" alt="OTONova ロゴ"></p>
 
-# OTONova V2.0
+# OTONova V2.2
 
-**OTONova V2.0をWindows x64・macOS Apple Silicon向けに公開しました。** 第3段階の音源設定・ZIP出力、日本語ローマ字認識、原音設定ルールと編集操作の改善、スペクトログラム設定を追加しました。[V2.0変更履歴](RELEASE_NOTES.md)（韓国語）。
+**OTONova V2.2をWindows x64・macOS Apple Silicon向けに公開しました。** VCオーバーラップをオフセットから先行発声までの3/4に変更し、vLabelerの10種類を含む14種類の文字コードと元OTOの文字コード選択に対応しました。[V2.2変更履歴](RELEASE_NOTES.md)。
 
 [한국어](README.md) · [English](README.en.md) · **日本語** · [简体中文](README.zh-CN.md)
 
 **UTAU音源向けのWindows・macOS用自動原音設定ツールです。** ファイル名・録音リスト・既存のoto.iniエイリアスから音素列を作成し、WFLモデルで強制アライメントを行い、所定のルールに従って原音設定値を生成します。
 
-[Windowsインストーラー](https://github.com/geujang/OTONova/releases/tag/v2.0.0) · [対応形式・参考リスト](SUPPORTED_FORMATS.md) · [モデル容量の削減方法](MODEL_COMPRESSION.md) · [原作者クレジット](CREDITS.md) · [V2.0リリースノート](RELEASE_NOTES.md)
+[Windowsインストーラー](https://github.com/geujang/OTONova/releases/tag/v2.2.0) · [対応形式・参考リスト](SUPPORTED_FORMATS.md) · [モデル容量の削減方法](MODEL_COMPRESSION.md) · [原作者クレジット](CREDITS.md) · [V2.2リリースノート](RELEASE_NOTES.md)
 
 リンク先の技術資料は現在、韓国語で記載されています。
 
 ## macOS正式対応
 
-[macOS V2.0 Apple Silicon用DMG](https://github.com/geujang/OTONova/releases/tag/v2.0.0)を提供します。Windowsと同じ原音設定・音源設定機能を含みます。Intel Macは非対応です。Apple Developer IDによる配布署名・公証は未実施です。インストール方法と検証範囲は[MACOS.md](MACOS.md)をご覧ください。
+[macOS V2.2 Apple Silicon用DMG](https://github.com/geujang/OTONova/releases/tag/v2.2.0)を提供します。Windowsと同じ原音設定・音源設定機能を含みます。Intel Macは非対応です。Apple Developer IDによる配布署名・公証は未実施です。インストール方法と検証範囲は[MACOS.md](MACOS.md)をご覧ください。
 
 ## 対応言語・音源形式
 
@@ -26,14 +26,14 @@
 
 ファイル名・録音リスト・既存エイリアスから録音方式を判別します。既存のoto.iniがある場合は、そのエイリアスを基準に設定値を生成します。
 
-**中国語音源への対応は今後追加予定です。韓国語COC・CBNN・CMPXはCVVCの原音設定ルールを利用して開発ソースに追加しました。Windows・macOS V2.0に収録しています。~~韓国語VCCV対応予定~~ — リスト未確認（元のリストが削除されたため）。** 現在、中国語はUI表示言語としてのみ提供しています。Android / iOSへの対応も今後追加予定で、現在の配布対象はWindows x64とmacOS Apple Siliconです。
+**中国語音源への対応は今後追加予定です。韓国語COC・CBNN・CMPXはCVVCの原音設定ルールを利用して開発ソースに追加しました。Windows・macOS V2.2に収録しています。~~韓国語VCCV対応予定~~ — リスト未確認（元のリストが削除されたため）。** 現在、中国語はUI表示言語としてのみ提供しています。現在の配布対象はWindows x64とmacOS Apple Siliconです。
 
 ## 主な機能
 
 - 第3段階で既存の`character.txt`・`character.yaml`・任意の`readme.txt`を読み込み、音源情報やサブバンクを編集できます。
 - 最新のOTOと任意のREADMEを含む音源ZIPを出力します。キャッシュ・プロジェクト・一時ファイルは除外し、元データは保持します。
 - 日本語のローマ字ファイル名・エイリアスを認識します。
-- VCオフセットは前母音の3/4、オーバーラップはオフセットから先行発声までの1/4です。固定範囲が先行発声より前になる場合、先行発声とカットオフの中央に補正します。
+- VCオフセットは前母音の3/4、オーバーラップはオフセットから先行発声までの3/4です。固定範囲が先行発声より前になる場合、先行発声とカットオフの中央に補正します。
 - 先行発声を動かすと5本の原音設定マーカーが一緒に移動します。オフセット～固定範囲を青色・不透明度30%で表示します。
 - スペクトログラムの上限周波数を設定できます（初期値10,000Hz）。初期配色は炎で、波形の上下ドラッグで振幅表示を拡大・縮小できます。
 - Windows表示言語の自動選択と段階式Setupウィザード。管理者権限および既存インストールの置換確認に対応します。
@@ -56,7 +56,7 @@
 
 ## インストールと使い方
 
-1. [V2.0リリース](https://github.com/geujang/OTONova/releases/tag/v2.0.0)から`OTONova-V2.0-Setup.exe`を実行し、ウィザードで場所とショートカットを選択します。既存インストールの置換には確認が必要です。Pythonとモデルを同梱しています。
+1. [V2.2リリース](https://github.com/geujang/OTONova/releases/tag/v2.2.0)から`OTONova-V2.2-Setup.exe`を実行し、ウィザードで場所とショートカットを選択します。既存インストールの置換には確認が必要です。Pythonとモデルを同梱しています。
 2. `OTONova.exe`で音源フォルダーを選択します。表示データ・既存OTO・有効な旧ラベルキャッシュを読み込みます。既存OTOは第2段階で表示します。
 3. 新しく推定する場合は右上の**操作 → 自動原音設定**から、**言語 → 形式**を選んで確認します。WAV一覧の右クリックでは単一ファイルだけを処理できます。
 4. **第1段階**で音素境界、**第2段階**で原音設定値を編集します。両方がプロジェクトに保存されます。旧キャッシュへ韓国語の新しい半母音ルールを適用する場合は、そのWAVの自動原音設定を再実行してください。

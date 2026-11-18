@@ -4,7 +4,7 @@
 
 ## 다운로드와 검증 상태
 
-[OTONova V2.0 — Windows & macOS](https://github.com/geujang/OTONova/releases/tag/v2.0.0)에서 DMG를 내려받아 열고 `OTONova.app`을 옆의 Applications 폴더로 끌어 옮겨 사용합니다. Mac 다운로드 파일은 `OTONova-macOS-V2.0-arm64.dmg`입니다. Python과 모델이 앱에 포함됩니다.
+[OTONova V2.2 — Windows & macOS](https://github.com/geujang/OTONova/releases/tag/v2.2.0)에서 DMG를 내려받아 열고 `OTONova.app`을 옆의 Applications 폴더로 끌어 옮겨 사용합니다. Mac 다운로드 파일은 `OTONova-macOS-V2.2-arm64.dmg`입니다. Python과 모델이 앱에 포함됩니다.
 
 macOS 15 Apple Silicon CI에서 회귀 검사, 소스 및 frozen 앱의 영어·일본어·한국어 정렬, GUI 시작·화면 캡처와 DMG 검증을 수행합니다. 현재 릴리스의 검증 실행은 [GitHub Actions](https://github.com/geujang/OTONova/actions/workflows/macos.yml)에서 확인할 수 있습니다.
 
@@ -54,4 +54,4 @@ QT_QPA_PLATFORM=offscreen dist/OTONova.app/Contents/MacOS/OTONova --ui-check
 
 ## 배포 식별자
 
-Windows와 macOS를 `v2.0.0`의 OTONova V2.0 릴리스로 함께 제공합니다. Mac 앱 내부 버전은 2.0.0입니다. 과거 V1.0 모델 추출 경로는 검증된 동일 가중치를 가져오기 위한 빌드 입력이며 V2.0 앱의 버전과는 별개입니다.
+Windows와 macOS를 `v2.2.0`의 OTONova V2.2 릴리스로 함께 제공합니다. Mac 앱 내부 버전은 2.2.0입니다. 과거 V1.0 모델 추출 경로는 검증된 동일 가중치를 가져오기 위한 빌드 입력이며 V2.2 앱의 버전과는 별개입니다.

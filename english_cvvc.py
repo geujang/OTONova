@@ -518,12 +518,12 @@ def create_oto(record):
                     + " "
                     + "".join(x["symbol"] for x in units[i + 1 : j + 1])
                 )
-                add(alias, off, off + (pre - off) / 4, pre, end, 0.015, "vc")
+                add(alias, off, off + (pre - off) * 3 / 4, pre, end, 0.015, "vc")
                 if j + 1 == len(units) or units[j + 1]["kind"] in ("pause", "breath"):
                     add(
                         alias + "-",
                         off,
-                        off + (pre - off) / 4,
+                        off + (pre - off) * 3 / 4,
                         pre,
                         end,
                         0.015,

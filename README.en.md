@@ -1,20 +1,20 @@
 <p align="center"><img src="assets/otonova-logo.png" width="128" alt="OTONova logo"></p>
 
-# OTONova V2.0
+# OTONova V2.2
 
-**OTONova V2.0 is available for Windows x64 and macOS Apple Silicon.** Adds stage-three singer settings and ZIP export, Japanese romaji recognition, timing and editing improvements, and configurable spectrograms. See [V2.0 release notes](RELEASE_NOTES.md) (Korean).
+**OTONova V2.2 is available for Windows x64 and macOS Apple Silicon.** VC overlap is now 3/4 from offset to preutterance. Supports all 10 encodings listed in vLabeler, 14 encoding choices in total, and explicit original OTO encoding selection. [V2.2 release notes](RELEASE_NOTES.md).
 
 [한국어](README.md) · **English** · [日本語](README.ja.md) · [简体中文](README.zh-CN.md)
 
 **An automatic oto.ini configuration tool for UTAU voicebanks on Windows and macOS.** OTONova derives phoneme sequences from filenames, recording lists, and existing oto.ini aliases, uses WFL models for forced alignment, and generates timing values with predefined rules.
 
-[Download Windows installer](https://github.com/geujang/OTONova/releases/tag/v2.0.0) · [Supported formats and reference lists](SUPPORTED_FORMATS.md) · [Model size reduction](MODEL_COMPRESSION.md) · [Original credits](CREDITS.md) · [V2.0 release notes](RELEASE_NOTES.md)
+[Download Windows installer](https://github.com/geujang/OTONova/releases/tag/v2.2.0) · [Supported formats and reference lists](SUPPORTED_FORMATS.md) · [Model size reduction](MODEL_COMPRESSION.md) · [Original credits](CREDITS.md) · [V2.2 release notes](RELEASE_NOTES.md)
 
 The linked technical documents are currently in Korean.
 
 ## Official macOS support
 
-Download the [macOS V2.0 Apple Silicon DMG](https://github.com/geujang/OTONova/releases/tag/v2.0.0). It includes the same timing and singer-settings features as Windows. Intel Macs are unsupported. Apple Developer ID distribution signing and notarization have not been applied. See [MACOS.md](MACOS.md) for installation and validation limits.
+Download the [macOS V2.2 Apple Silicon DMG](https://github.com/geujang/OTONova/releases/tag/v2.2.0). It includes the same timing and singer-settings features as Windows. Intel Macs are unsupported. Apple Developer ID distribution signing and notarization have not been applied. See [MACOS.md](MACOS.md) for installation and validation limits.
 
 ## Supported voicebank languages and formats
 
@@ -26,14 +26,14 @@ Download the [macOS V2.0 Apple Silicon DMG](https://github.com/geujang/OTONova/r
 
 Recording conventions are detected from filenames, recording lists, and existing aliases. When an oto.ini exists, timing values are configured using its aliases.
 
-**Chinese voicebank support is planned. Korean COC, CBNN and CMPX have been added to the development source using the CVVC timing rules; they are included in Windows and macOS V2.0. ~~Planned Korean VCCV~~ — reclist unverified (original list deleted).** Chinese is currently available only as a UI language. Android and iOS support is planned; current distributions target Windows x64 and macOS Apple Silicon.
+**Chinese voicebank support is planned. Korean COC, CBNN and CMPX have been added to the development source using the CVVC timing rules; they are included in Windows and macOS V2.2. ~~Planned Korean VCCV~~ — reclist unverified (original list deleted).** Chinese is currently available only as a UI language. current distributions target Windows x64 and macOS Apple Silicon.
 
 ## Features
 
 - Stage 3 loads and edits existing `character.txt`, `character.yaml`, and optional `readme.txt`, including singer details and subbanks.
 - Export a voicebank ZIP with current OTO and optional README. Alignment caches, projects, and temporary files are omitted; source files are preserved.
 - Japanese romaji filenames and aliases are recognized.
-- VC offset is 3/4 through the preceding vowel; overlap is 1/4 from offset to preutterance. Fixed timing before preutterance is moved to the midpoint between preutterance and cutoff.
+- VC offset is 3/4 through the preceding vowel; overlap is 3/4 from offset to preutterance. Fixed timing before preutterance is moved to the midpoint between preutterance and cutoff.
 - Moving preutterance moves all five oto markers together. Offset-to-fixed shading uses blue at 30% opacity.
 - Configurable spectrogram ceiling (10,000 Hz default), fire palette default, and vertical waveform dragging to adjust displayed amplitude.
 - Automatic Windows UI language selection and a step-by-step Setup wizard with administrator elevation and confirmed replacement of an existing installation.
@@ -56,7 +56,7 @@ Recording conventions are detected from filenames, recording lists, and existing
 
 ## Installation and use
 
-1. Download `OTONova-V2.0-Setup.exe` from the [V2.0 release](https://github.com/geujang/OTONova/releases/tag/v2.0.0). Follow the wizard to choose the location and shortcut option. Replacement of an existing installation requires confirmation. Python and models are bundled.
+1. Download `OTONova-V2.2-Setup.exe` from the [V2.2 release](https://github.com/geujang/OTONova/releases/tag/v2.2.0). Follow the wizard to choose the location and shortcut option. Replacement of an existing installation requires confirmation. Python and models are bundled.
 2. Launch `OTONova.exe` and select the voicebank folder. Visual data, existing OTO entries and valid label caches load automatically. Existing OTO entries open in stage 2.
 3. For new alignment, select **Actions → automatic oto generation**, then choose **language → format** and confirm. Right-click a WAV in the file list to process just that file.
 4. Edit phoneme boundaries in **stage 1** and oto timings in **stage 2**. Projects retain both. To apply the new Korean glide rule to an old cache, run automatic oto generation again for that WAV.

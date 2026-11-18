@@ -9,9 +9,9 @@ ROOT = Path(__file__).resolve().parent
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--version", default="2.0")
+    parser.add_argument("--version", default="2.2")
     args = parser.parse_args()
-    stable = args.version in ("1.0", "1.5", "2.0")
+    stable = args.version in ("1.0", "1.5", "2.0", "2.2")
     schema_version = 36 if stable else int(args.version)
     version = "V" + args.version if stable else "v" + str(args.version)
     brand = "OTONova" if stable else ("OtoNova" if schema_version >= 31 else "WFL-Oto")

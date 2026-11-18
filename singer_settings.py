@@ -75,36 +75,105 @@ def metadata_snapshot(folder):
     return result
 
 
-def read_text(path, preferred=None, utf8_first=False):
-    raw = Path(path).read_bytes()
-    candidates = []
-    if raw.startswith((b"\xff\xfe\x00\x00", b"\x00\x00\xfe\xff")):
-        candidates.append("utf-32")
-    elif raw.startswith((b"\xff\xfe", b"\xfe\xff")):
-        candidates.append("utf-16")
-    elif raw.startswith(b"\xef\xbb\xbf"):
-        candidates.append("utf-8-sig")
-    declared = re.search(rb"(?im)^#Charset:\s*([a-zA-Z0-9_-]+)", raw[:4096])
-    candidates += [
-        declared[1].decode("ascii") if declared else None,
-        "utf-8" if utf8_first else None,
-        preferred,
-        "utf-8-sig",
-        "cp932",
-        "cp949",
-    ]
+TEXT_ENCODINGS = (
+    ("UTF-8", "utf-8"),
+    ("Shift-JIS / CP932", "shift_jis"),
+    ("GBK", "gbk"),
+    ("ISO-8859-1", "iso-8859-1"),
+    ("Windows-1251", "windows-1251"),
+    ("Windows-1252", "windows-1252"),
+    ("GB2312", "gb2312"),
+    ("ISO-8859-9", "iso-8859-9"),
+    ("EUC-JP", "euc-jp"),
+    ("EUC-KR", "euc-kr"),
+    ("Korean / CP949", "cp949"),
+    ("UTF-8 BOM", "utf-8-sig"),
+    ("UTF-16 BOM", "utf-16"),
+    ("UTF-32 BOM", "utf-32"),
+)
+
+CHARSET_LINE = re.compile(r"^[ \t]*#Charset:[^\r\n]*(?:\r?\n|$)", re.I | re.M)
+
+
+def text_codec(encoding, utf8_bom=False):
+    codec = codecs.lookup(encoding).name
+    if codec == "shift_jis":
+        return "cp932"
+    if codec == "utf-8" and utf8_bom:
+        return "utf-8-sig"
+    return codec
+
+
+def declared_charset(raw):
+    match = re.search(rb"(?im)^[ \t]*#Charset:[ \t]*([a-zA-Z0-9_-]+)", raw[:4096])
+    return match[1].decode("ascii") if match else None
+
+
+def has_charset_header(path):
+    try:
+        with Path(path).open("rb") as stream:
+            return declared_charset(stream.read(4096)) is not None
+    except FileNotFoundError:
+        return False
+
+
+def decode_text(raw, preferred=None, utf8_first=False, override=None):
+    if raw.startswith((codecs.BOM_UTF32_LE, codecs.BOM_UTF32_BE)):
+        bom = "utf-32"
+    elif raw.startswith((codecs.BOM_UTF16_LE, codecs.BOM_UTF16_BE)):
+        bom = "utf-16"
+    elif raw.startswith(codecs.BOM_UTF8):
+        bom = "utf-8-sig"
+    else:
+        bom = None
+    explicit = override or bom or declared_charset(raw)
+    candidates = (
+        [explicit]
+        if explicit
+        else [
+            "utf-8" if utf8_first else None,
+            preferred,
+            "utf-8",
+            "cp932",
+            "cp949",
+            "euc-jp",
+            "euc-kr",
+            "gbk",
+            "windows-1252",
+        ]
+    )
     for encoding in dict.fromkeys(candidates):
         if not encoding:
             continue
         try:
-            codec = "cp932" if encoding in {"shift_jis", "shift-jis"} else encoding
-            text = raw.decode(codec)
-            if "\x00" in text:
-                continue
-            return text, encoding
+            text = raw.decode(text_codec(encoding))
+            if "\x00" not in text:
+                return text.removeprefix("\ufeff"), encoding
         except (UnicodeError, LookupError):
-            pass
-    raise ValueError("텍스트 인코딩을 읽을 수 없습니다: " + str(path))
+            continue
+    raise ValueError("텍스트 인코딩을 읽을 수 없습니다.")
+
+
+def read_text(path, preferred=None, utf8_first=False, override=None):
+    try:
+        return decode_text(Path(path).read_bytes(), preferred, utf8_first, override)
+    except ValueError as exc:
+        raise ValueError(str(exc) + " " + str(path)) from exc
+
+
+def configured_encoding(folder):
+    path = metadata_file(folder, "character.yaml", "character.yml", "charactet.yaml")
+    if path.is_file():
+        try:
+            text, _ = read_text(path, "utf-8")
+            config = yaml.safe_load(text)
+        except (OSError, ValueError, yaml.YAMLError):
+            return None
+        if isinstance(config, dict) and isinstance(
+            config.get("text_file_encoding"), str
+        ):
+            return config["text_file_encoding"]
+    return None
 
 
 def load_settings(folder):
@@ -124,7 +193,7 @@ def load_settings(folder):
     if txt_path.exists():
         text, encoding = read_text(txt_path, preferred)
         preferred = preferred or encoding
-        for line in text.splitlines():
+        for line in CHARSET_LINE.sub("", text).splitlines():
             parts = re.split(r"[=：:]", line, maxsplit=1)
             key = parts[0].strip().lower()
             key = {"名前": "name", "created by": "author", "cv": "voice"}.get(key, key)
@@ -185,12 +254,7 @@ def metadata_files(folder, settings):
     if not data["name"]:
         raise ValueError("가수 이름을 입력해주세요.")
     encoding = str(data.get("text_file_encoding", "utf-8"))
-    codec = codecs.lookup(encoding).name
-    output_codec = (
-        "utf-8-sig"
-        if codec == "utf-8"
-        else "cp932" if codec == "shift_jis" else encoding
-    )
+    output_codec = text_codec(encoding, utf8_bom=True)
     for key in ("image", "portrait", "sample"):
         name = data[key]
         if not name:
@@ -311,19 +375,23 @@ def bank_files(folder):
 def generated_files(folder, data, report=None):
     files = metadata_files(folder, data)
     encoding = str(data.get("text_file_encoding", "utf-8"))
-    output_codec = (
-        "utf-8-sig"
-        if codecs.lookup(encoding).name == "utf-8"
-        else "cp932" if codecs.lookup(encoding).name == "shift_jis" else encoding
-    )
+    output_codec = text_codec(encoding, utf8_bom=True)
     # The config's encoding applies to all OTO sets and pitch maps as well.
     for name, path in bank_files(folder):
         if (
             path.name.lower() in {"oto.ini", "prefix.map"}
             or path.suffix.lower() == ".map"
         ):
-            text, _ = read_text(path, data.get("_source_encoding"))
-            text = re.sub(r"^#Charset:.*(?:\r?\n|$)", "", text, flags=re.I | re.M)
+            text, _ = read_text(
+                path,
+                data.get("_source_encoding"),
+                override=(
+                    data.get("_oto_input_encoding")
+                    if path.name.lower() == "oto.ini"
+                    else None
+                ),
+            )
+            text = CHARSET_LINE.sub("", text)
             files[name] = text.encode(output_codec)
     if report and report.get("entries"):
         groups = {}

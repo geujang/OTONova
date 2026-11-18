@@ -217,7 +217,7 @@ OTO 파일을 재 인식 할까요?|OTOファイルを再読み込みします�
 다시 로드|再読み込み|Reload|重新加载
 재인식|再認識|Read again|重新识别
 새 버전이 있습니다. 다운로드 페이지를 열까요?|新しいバージョンがあります。ダウンロードページを開きますか？|A new version is available. Open the download page?|有新版本可用。打开下载页面吗？
-현재 버전은 V2.0입니다. 더 새로운 공개 릴리스가 없습니다.|現在のバージョンはV2.0です。より新しい公開リリースはありません。|Current version: V2.0. No newer public release is available.|当前版本为 V2.0，暂无更新的公开版本。
+현재 버전은 V2.2입니다. 더 새로운 공개 릴리스가 없습니다.|現在のバージョンはV2.2です。より新しい公開リリースはありません。|Current version: V2.2. No newer public release is available.|当前版本为 V2.2，暂无更新的公开版本。
 업데이트 정보를 확인할 수 없습니다.|更新情報を確認できません。|Could not check for updates.|无法检查更新信息。
 """
 
@@ -238,6 +238,9 @@ Discord 피드백 포럼에 게시했습니다.|Discordのフィードバック�
 전송하지 못했습니다. 내용은 보관되어 있으니 다시 시도해주세요.|送信できませんでした。下書きは保存されています。再試行してください。|Could not send. Your draft is saved; please try again.|发送失败，草稿已保存，请重试。
 내용은 1~1,500자까지 입력해주세요.|内容は1～1,500文字で入力してください。|Enter between 1 and 1,500 characters.|请输入 1 至 1,500 个字符。
 연락처는 100자 이하로 입력해주세요.|連絡先は100文字以内で入力してください。|Keep contact details within 100 characters.|联系方式请勿超过 100 个字符。
+원본 OTO 다시 읽기 (인코딩 선택)|元のOTOを再読み込み（文字コード選択）|Reload original OTO with encoding|重新读取原始 OTO（选择编码）
+원본 OTO를 다시 읽으면 화면의 원설값이 교체됩니다.|元のOTOを読み込むと、現在の原音設定値が置き換わります。|Reloading the original OTO replaces the timing values shown in the editor.|重新读取原始 OTO 将替换编辑器中的时间参数。
+자동 감지|自動検出|Automatic detection|自动检测
 """
 
 TRANSLATIONS = {

@@ -43,10 +43,10 @@ jobs:
         run: test -s "$HOME/Library/Logs/OTONova/gui-preview.png"
       - uses: actions/upload-artifact@v4
         with:
-          name: OTONova-macOS-V2.0-arm64
+          name: OTONova-macOS-V2.2-arm64
           path: |
-            dist/OTONova-macOS-V2.0-*.zip
-            dist/OTONova-macOS-V2.0-*.dmg
+            dist/OTONova-macOS-V2.2-*.zip
+            dist/OTONova-macOS-V2.2-*.dmg
             dist/OTONova-macOS-DMG-SHA256SUMS.txt
           if-no-files-found: error
           retention-days: 7

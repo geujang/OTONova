@@ -6,14 +6,14 @@ import shutil
 import subprocess
 
 ROOT = Path(__file__).resolve().parent
-TARGET = ROOT / "release/OTONova-Windows-V2.0"
+TARGET = ROOT / "release/OTONova-Windows-V2.2"
 
 
 def main():
     if TARGET.exists():
         raise RuntimeError("Use a fresh distribution folder")
     shutil.copytree(
-        ROOT / "release/OTONova-Windows-V1.5",
+        ROOT / "release/OTONova-Windows-V2.0",
         TARGET,
         ignore=shutil.ignore_patterns(
             "*.log",
@@ -85,7 +85,7 @@ def main():
     (TARGET / "validation.json").write_text(
         json.dumps(
             dict(
-                version="2.0",
+                version="2.2",
                 product="OTONova",
                 inherited_validated_runtime=36,
                 english_cvvc="DELTA + Salem alignment and oto",

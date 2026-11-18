@@ -287,20 +287,22 @@ def detect(folder, template=None):
     )
 
 
-def read_templates(folder):
+def read_templates(folder, override=None):
     from vcv_core import read_existing_oto
+    from singer_settings import configured_encoding
 
     root = Path(folder)
-    template, encoding = read_existing_oto(root / "oto.ini")
+    template, encoding = read_existing_oto(root / "oto.ini", override=override)
     if template is not None:
         return template, encoding
+    preferred = configured_encoding(root)
     rows = []
     encodings = []
     for path in sorted(root.rglob("oto.ini")):
         relative = path.relative_to(root)
         if any(s.startswith("auto-") for s in relative.parts[:-1]):
             continue
-        items, enc = read_existing_oto(path)
+        items, enc = read_existing_oto(path, preferred, override)
         if items is None:
             continue
         encodings.append(enc)
@@ -311,10 +313,11 @@ def read_templates(folder):
     return (rows, "utf-8") if encodings else (None, encoding)
 
 
-def install_nested_oto(folder, backup=True, wav=None):
+def install_nested_oto(folder, backup=True, wav=None, override=None):
     """Write VCCV otos beside their WAVs; never leave stale nested templates active."""
     from datetime import datetime
-    from vcv_core import output_dir, atomic_write, read_existing_oto
+    from vcv_core import output_dir, atomic_write, read_existing_oto, encode_oto_rows
+    from singer_settings import configured_encoding, has_charset_header
 
     root = Path(folder).resolve()
     report = json.loads(
@@ -334,17 +337,15 @@ def install_nested_oto(folder, backup=True, wav=None):
             )
     writes = []
     for target, rows in grouped.items():
-        _, encoding = read_existing_oto(target)
-        content = "".join(
-            row["wav"]
-            + "="
-            + row["alias"]
-            + ","
-            + ",".join(f"{v:.3f}" for v in row["values"])
-            + "\n"
-            for row in rows
+        _, encoding = read_existing_oto(target, configured_encoding(root), override)
+        writes.append(
+            (
+                target,
+                encode_oto_rows(
+                    rows, encoding, charset_header=has_charset_header(target)
+                ),
+            )
         )
-        writes.append((target, content.encode(encoding)))
     for target, data in writes:
         target.parent.mkdir(parents=True, exist_ok=True)
         if backup and target.exists():

@@ -1,6 +1,7 @@
 import sys
 import os
 import json
+import hashlib
 from copy import deepcopy
 import ui_settings as ui
 from PySide6.QtCore import QSettings
@@ -29,6 +30,7 @@ from PySide6.QtWidgets import (
     QMenuBar,
     QLineEdit,
     QFileDialog,
+    QInputDialog,
     QProgressBar,
     QTableWidget,
     QTableWidgetItem,
@@ -68,6 +70,7 @@ from format_detection import resolve_mode
 from project_store import PROJECT_NAME, save_project, open_project
 from feedback_client import FeedbackDialog, endpoint_from_config
 from singer_setup import SingerSettingsPanel
+from singer_settings import TEXT_ENCODINGS
 
 from gui_workers import FileScanner, ExternalReload, FolderLoader
 from gui_dialogs import select_voicebank_format
@@ -78,11 +81,14 @@ class Worker(QThread):
     completed = Signal(dict)
     failed = Signal(str)
 
-    def __init__(self, folder, mode="vcv", only_files=None, base_report=None):
+    def __init__(
+        self, folder, mode="vcv", only_files=None, base_report=None, input_encoding=None
+    ):
         super().__init__()
         self.folder = folder
         self.only_files = only_files
         self.base_report = base_report
+        self.input_encoding = input_encoding
         self.mode = mode
 
     def run(self):
@@ -95,6 +101,11 @@ class Worker(QThread):
                     self.mode,
                     only_files=self.only_files,
                     base_report=self.base_report,
+                    **(
+                        {"input_encoding": self.input_encoding}
+                        if self.input_encoding
+                        else {}
+                    ),
                 )
             )
         except Exception as exc:
@@ -113,7 +124,7 @@ class Window(QMainWindow):
         ui.theme = str(self.preferences.value("theme", "dark"))
         if ui.theme not in ("dark", "light"):
             ui.theme = "dark"
-        ui.set_title(self, "OTONova V2.0 · 일본어 / 한국어 / 영어 자동 원설기")
+        ui.set_title(self, "OTONova V2.2 · 일본어 / 한국어 / 영어 자동 원설기")
         self.setWindowIcon(QIcon(str(RESOURCE_ROOT / "assets/otonova.ico")))
         self.resize(1320, 1000)
         ui.spectrum_palette = str(self.preferences.value("spectrum_palette", "fire"))
@@ -182,7 +193,7 @@ class Window(QMainWindow):
         central = QWidget()
         self.setCentralWidget(central)
         layout = QVBoxLayout(central)
-        title = ui.label("OTONova V2.0")
+        title = ui.label("OTONova V2.2")
         title.setStyleSheet("font-size:24px;font-weight:700;padding:10px")
         title_bar = QHBoxLayout()
         logo = ui.label()
@@ -220,6 +231,9 @@ class Window(QMainWindow):
         )
         self.stop.setEnabled(False)
         self.work_menu.addSeparator()
+        self.reload_oto_encoding = work_action(
+            "원본 OTO 다시 읽기 (인코딩 선택)", self.choose_oto_encoding
+        )
         self.save = work_action("oto.ini 저장 (기존 파일 백업)", self.save_oto)
         self.save.setEnabled(False)
         layout.addLayout(bar)
@@ -510,7 +524,7 @@ class Window(QMainWindow):
         QMessageBox.about(
             self,
             ui.translate("버전 정보"),
-            "OTONova V2.0\nKURO\nWFL 기반 UTAU 자동 원설기\nhttps://github.com/geujang/OTONova",
+            "OTONova V2.2\nKURO\nWFL 기반 UTAU 자동 원설기\nhttps://github.com/geujang/OTONova",
         )
 
     def show_feedback(self):
@@ -521,7 +535,7 @@ class Window(QMainWindow):
         request = QNetworkRequest(
             QUrl("https://api.github.com/repos/geujang/OTONova/releases/latest")
         )
-        request.setRawHeader(b"User-Agent", b"OTONova/2.0")
+        request.setRawHeader(b"User-Agent", b"OTONova/2.2")
         request.setTransferTimeout(10000)
         reply = self.network.get(request)
         reply.finished.connect(lambda: self.update_reply(reply))
@@ -536,7 +550,7 @@ class Window(QMainWindow):
 
             version = tuple(int(n) for n in re.findall(r"\d+", data["tag_name"])[:3])
             version = version + (0,) * (3 - len(version))
-            if version > (2, 0, 0):
+            if version > (2, 2, 0):
                 answer = QMessageBox.question(
                     self,
                     ui.translate("업데이트 확인"),
@@ -553,7 +567,7 @@ class Window(QMainWindow):
                     self,
                     ui.translate("업데이트 확인"),
                     ui.translate(
-                        "현재 버전은 V2.0입니다. 더 새로운 공개 릴리스가 없습니다."
+                        "현재 버전은 V2.2입니다. 더 새로운 공개 릴리스가 없습니다."
                     ),
                 )
         except Exception as exc:
@@ -650,7 +664,9 @@ class Window(QMainWindow):
                 self.browse_button.setEnabled(False)
                 self.open_project_button.setEnabled(False)
                 self.save.setEnabled(False)
-                self.reload_worker = ExternalReload(folder, wavs, oto)
+                self.reload_worker = ExternalReload(
+                    folder, wavs, oto, self.oto_input_encoding(folder)
+                )
                 self.reload_worker.completed.connect(self.external_reloaded)
                 self.reload_worker.start()
         finally:
@@ -679,6 +695,59 @@ class Window(QMainWindow):
         )
         box.button(QMessageBox.Cancel).setText(ui.translate("취소"))
         return box.exec() == QMessageBox.Ok
+
+    def oto_encoding_key(self, folder=None):
+        path = os.path.normcase(str(Path(folder or self.folder.text()).resolve()))
+        return "oto-input/" + hashlib.sha256(path.encode("utf-8")).hexdigest()
+
+    def oto_input_encoding(self, folder=None):
+        return (
+            self.preferences.value(self.oto_encoding_key(folder), "", type=str) or None
+        )
+
+    def singer_encoding_saved(self, encoding):
+        from singer_settings import text_codec
+
+        self.preferences.remove(self.oto_encoding_key())
+        self.singer_setup.base.pop("_oto_input_encoding", None)
+        if self.report is not None:
+            self.report["oto_encoding"] = text_codec(encoding, utf8_bom=True)
+
+    def choose_oto_encoding(self):
+        if not self._watch_folder or any(
+            worker and worker.isRunning()
+            for worker in (self.worker, self.reload_worker, self.asset_worker)
+        ):
+            return
+        folder = self._watch_folder
+        options = [(ui.translate("자동 감지"), "")] + list(TEXT_ENCODINGS)
+        keys = [key for _, key in options]
+        current = self.oto_input_encoding(folder) or ""
+        label, accepted = QInputDialog.getItem(
+            self,
+            ui.translate("텍스트 인코딩"),
+            ui.translate("원본 OTO를 다시 읽으면 화면의 원설값이 교체됩니다."),
+            [name for name, _ in options],
+            keys.index(current) if current in keys else 0,
+            False,
+        )
+        if not accepted:
+            return
+        encoding = dict(options)[label]
+        self.reload_worker = ExternalReload(folder, [], True, encoding or None)
+
+        self.reload_worker.completed.connect(self.apply_oto_encoding_reload)
+        self.reload_worker.start()
+
+    def apply_oto_encoding_reload(self, result):
+        worker = self.reload_worker
+        if worker and worker.folder.resolve() == Path(self.folder.text()).resolve():
+            if result["report"] is not None:
+                encoding = worker.input_encoding or ""
+                self.preferences.setValue(
+                    self.oto_encoding_key(worker.folder), encoding
+                )
+            self.external_reloaded(result)
 
     def external_reloaded(self, result):
         selected = str(self.wave.path.resolve()) if self.wave.path else None
@@ -752,7 +821,10 @@ class Window(QMainWindow):
             self.asset_worker.wait()
 
     def open_folder(self, folder):
-        if self.worker and self.worker.isRunning():
+        if any(
+            worker and worker.isRunning()
+            for worker in (self.worker, self.reload_worker)
+        ):
             return
         self._stop_assets()
         self.project_path = Path(folder) / PROJECT_NAME
@@ -772,7 +844,9 @@ class Window(QMainWindow):
         self.files.clear()
         self.table.setRowCount(0)
         self.generate.setEnabled(False)
-        self.asset_worker = FolderLoader(folder)
+        self.asset_worker = FolderLoader(
+            folder, input_encoding=self.oto_input_encoding(folder)
+        )
         self.asset_worker.indexed.connect(
             lambda i, r, s, f=str(folder): (
                 self.folder_indexed(i, r, s) if self.folder.text() == f else None
@@ -916,7 +990,9 @@ class Window(QMainWindow):
         if mode not in FORMATS:
             raise ValueError(mode)
         self.selected_mode = public_mode(mode)
-        template, _ = read_existing_oto(Path(self.folder.text()) / "oto.ini")
+        template, _ = read_existing_oto(
+            Path(self.folder.text()) / "oto.ini", override=self.oto_input_encoding()
+        )
         if self.selected_mode == "en_vccv":
             from english_vccv import read_templates
 
@@ -966,7 +1042,9 @@ class Window(QMainWindow):
         path = output_dir(self.folder.text(), self.mode) / "report.json"
         if path.exists():
             report = json.loads(path.read_text(encoding="utf-8"))
-            template, _ = read_existing_oto(Path(self.folder.text()) / "oto.ini")
+            template, _ = read_existing_oto(
+                Path(self.folder.text()) / "oto.ini", override=self.oto_input_encoding()
+            )
             if self.mode == "en_vccv":
                 from english_vccv import read_templates
 
@@ -1119,6 +1197,7 @@ class Window(QMainWindow):
             getattr(self, "selected_mode", self.mode),
             only_files,
             previous,
+            self.oto_input_encoding(),
         )
         self.worker.progress.connect(self.update_progress)
         self.worker.completed.connect(self.generated_done)
@@ -1187,6 +1266,10 @@ class Window(QMainWindow):
     def bind_singer_folder(self, folder, draft=None, force=False):
         try:
             self.singer_setup.bind_folder(folder, draft, force)
+            if self.singer_setup.folder is not None:
+                self.singer_setup.base["_oto_input_encoding"] = self.oto_input_encoding(
+                    folder
+                )
         except Exception as exc:
             self.singer_setup.folder = None
             self.singer_setup.setEnabled(False)
@@ -1574,12 +1657,17 @@ class Window(QMainWindow):
                 ui.set_text(self.status, self.summary() + " · 음소 경계 저장 완료")
                 return
             if not self.edit_backup_done:
-                install_oto(folder, self.mode)
+                install_oto(folder, self.mode, self.oto_input_encoding())
                 self.edit_backup_done = True
             elif self.mode == "en_vccv" and not (folder / "oto.ini").exists():
                 from english_vccv import install_nested_oto
 
-                install_nested_oto(folder, backup=False, wav=self.current_record["wav"])
+                install_nested_oto(
+                    folder,
+                    backup=False,
+                    wav=self.current_record["wav"],
+                    override=self.oto_input_encoding(),
+                )
             else:
                 atomic_write(
                     folder / "oto.ini",
@@ -1670,7 +1758,9 @@ class Window(QMainWindow):
                 save_record(self.folder.text(), self.current_record)
             if self.report:
                 persist_report(self.folder.text(), self.report)
-            target = install_oto(self.folder.text(), self.mode)
+            target = install_oto(
+                self.folder.text(), self.mode, self.oto_input_encoding()
+            )
             self.acknowledge_oto_writes()
             self.update_progress(f"저장 완료: {target}")
         except Exception as exc:
@@ -1739,7 +1829,7 @@ if __name__ == "__main__":
         sys.exit(0)
     app = QApplication(sys.argv)
     app.setApplicationName("OTONova")
-    app.setApplicationDisplayName("OTONova V2.0")
+    app.setApplicationDisplayName("OTONova V2.2")
     app.setWindowIcon(QIcon(str(RESOURCE_ROOT / "assets/otonova.ico")))
     ui.apply_font()
     window = Window()
